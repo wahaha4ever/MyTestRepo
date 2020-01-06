@@ -24,41 +24,53 @@
 <body>
 <div data-ng-app="myApp" data-ng-controller="myController">
     <div class="container">
-        <div class="row align-items-start" data-ng-repeat="datum in data">
+        <div class="row" data-ng-repeat="datum in data">
             <div class="col-sm-2 col-2"><span>{{datum.Name}}</span></div>
             <div class="col-sm-4 col-4"><span>{{datum.City}}</span></div>
-			<div class="col-sm-4 col-10"><span>{{datum.Country}}</span></div>
-            <div class="col-sm-1 col-1"><button type="button" class="btn btn-primary"data-ng-click="editRecord(datum.Id)">Edit</button></div>
-			<div class="col-sm-1 col-1"><button type="button" class="btn btn-primary"data-ng-click="deleteRecord(datum.Id)">X</button></div>
+			<div class="col-sm-4 col-9"><span>{{datum.Country}}</span></div>
+            <div class="col-sm-2 col-2">
+				<div class="btn-group btn-group-sm">
+					<button type="button" class="btn btn-secondary" data-ng-click="editRecord(datum.Id)">Edit</button>
+					<button type="button" class="btn btn-secondary" data-ng-click="deleteRecord(datum.Id)">X</button>
+				</div>
+			</div>
         </div>
     </div>
     <button type="button" class="btn btn-primary" data-ng-click="InitData()">Get</button>
 
     <button type="button" class="btn btn-primary" data-ng-click="editRecord(-1)">Create Record</button>
 
-    <form data-ng-submit="mySubmitForm()" data-ng-hide="hideform">
-        <div class="form-group row">
-            <label for="name" class="col-sm-2 col-form-label">Name</label>
-            <div class="col-sm-10">
-                <input type="text" class="form-control" id="name" placeholder="Name" data-ng-model="record.Name" />
-            </div>
-        </div>
-        <div class="form-group row">
-            <label for="city" class="col-sm-2 col-form-label">City</label>
-            <div class="col-sm-10">
-                <input type="text" class="form-control" id="city" placeholder="City" data-ng-model="record.City" />
-            </div>
-        </div>
-        <div class="form-group row">
-            <label for="ctry" class="col-sm-2 col-form-label">Country</label>
-            <div class="col-sm-10">
-                <input type="text" class="form-control" id="ctry" placeholder="Country" data-ng-model="record.Country" />
-            </div>
-        </div>
-		<input type="hidden" id="id" data-ng-model="record.Id" />
-		<button type="submit" class="btn btn-primary mb-2" data-ng-disabled="error || incomplete">Submit</button>
-
-    </form>
+	<form data-ng-submit="mySubmitForm()" data-ng-hide="hideform">
+		<div class="card">
+			<div class="card-header text-white bg-primary">
+				<span> Record # {{record.Id}}</span>
+			</div>
+			<div class="card-body">			
+				<div class="form-group row">
+					<label for="name" class="col-sm-2 col-form-label">Name</label>
+					<div class="col-sm-10">
+						<input type="text" class="form-control" id="name" placeholder="Name" data-ng-model="record.Name" />
+					</div>
+				</div>
+				<div class="form-group row">
+					<label for="city" class="col-sm-2 col-form-label">City</label>
+					<div class="col-sm-10">
+						<input type="text" class="form-control" id="city" placeholder="City" data-ng-model="record.City" />
+					</div>
+				</div>
+				<div class="form-group row">
+					<label for="ctry" class="col-sm-2 col-form-label">Country</label>
+					<div class="col-sm-10">
+						<input type="text" class="form-control" id="ctry" placeholder="Country" data-ng-model="record.Country" />
+					</div>
+				</div>
+				<input type="hidden" id="id" data-ng-model="record.Id" />
+			</div>
+			<div class="card-footer">
+				<button type="submit" class="btn btn-primary mb-2" data-ng-disabled="error || incomplete">Submit</button>
+			</div>
+		</div>
+	</form>
 </div>
 
     <script>
@@ -76,20 +88,8 @@
 			$scope.error = false;
 			$scope.incomplete = false;
 			$scope.hideform = true;
-			$scope.color = "red";
-			
-			$scope.record = {
-				Name: "",
-				City: "",
-				Country: "",
-				Id: -1
-			};
-			
-			//$scope.data = [
-			//	{ Id: 1, Name: "A", City: "Apple", Country: "Apple Tree" },
-			//	{ Id: 2, Name: "B", City: "Banana", Country: "Banana Garden" },
-			//	{ Id: 3, Name: "C", City: "Cat", Country: "Cat City" }
-			//];		
+			$scope.color = "red";			
+			$scope.record = newRecord();			
 			$scope.data = init();
 			
             $scope.InitData = function () {				
@@ -104,12 +104,7 @@
 			$scope.editRecord = function(id) {
 				$scope.hideform = false;
 				if (id == -1) {
-					$scope.record = {
-						Name: "",
-						City: "",
-						Country: "",
-						Id: -1
-					};
+					$scope.record = newRecord();
 				}
 				else {
 					angular.forEach($scope.data, function (value, key) {
@@ -150,6 +145,14 @@
 				});
 			}
 			
+			function newRecord() {
+				return {
+						Name: "",
+						City: "",
+						Country: "",
+						Id: -1
+					};
+			}
 			function init() {
 				var data = storageService.Load();
 				if (data)
