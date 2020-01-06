@@ -28,7 +28,8 @@
             <div class="col-sm-2 col-2"><span>{{datum.Name}}</span></div>
             <div class="col-sm-4 col-4"><span>{{datum.City}}</span></div>
 			<div class="col-sm-4 col-10"><span>{{datum.Country}}</span></div>
-            <div class="col-sm-2 col-2"><button type="button" class="btn btn-primary"data-ng-click="editRecord(datum.Id)">Edit</button></div>
+            <div class="col-sm-1 col-1"><button type="button" class="btn btn-primary"data-ng-click="editRecord(datum.Id)">Edit</button></div>
+			<div class="col-sm-1 col-1"><button type="button" class="btn btn-primary"data-ng-click="deleteRecord(datum.Id)">X</button></div>
         </div>
     </div>
     <button type="button" class="btn btn-primary" data-ng-click="InitData()">Get</button>
@@ -63,7 +64,15 @@
     <script>
 		var app = angular.module('myApp', []);
 
-        app.controller("myController", function ($scope, $http) {
+		app.service('storageService', function() {
+			this.Save = function(model) {
+				sessionStorage.userStorage = angular.toJson(model);
+			}
+			this.Load = function() {
+				return angular.fromJson(sessionStorage.userStorage);
+			}
+		});
+        app.controller("myController", function ($scope, $http, storageService) {
 			$scope.error = false;
 			$scope.incomplete = false;
 			$scope.hideform = true;
@@ -76,41 +85,22 @@
 				Id: -1
 			};
 			
-			$scope.data = [
-				{ Id: 1, Name: "A", City: "Apple", Country: "Apple Tree" },
-				{ Id: 2, Name: "B", City: "Banana", Country: "Banana Garden" },
-				{ Id: 3, Name: "C", City: "Cat", Country: "Cat City" }
-			];
+			//$scope.data = [
+			//	{ Id: 1, Name: "A", City: "Apple", Country: "Apple Tree" },
+			//	{ Id: 2, Name: "B", City: "Banana", Country: "Banana Garden" },
+			//	{ Id: 3, Name: "C", City: "Cat", Country: "Cat City" }
+			//];		
+			$scope.data = init();
 			
-            $scope.InitData = function () {
-				//$scope.data = [
-				//	{ id: 1, name: "A", description: "Apple" },
-				//	{ id: 2, name: "B", description: "Banana" },
-				//	{ id: 3, name: "C", description: "Cat" }
-				//];
-				
+            $scope.InitData = function () {				
 				$http.get("jsondata.json").then(
 				function(response) {
 					$scope.data = response.data.records;
 				}
 				, function(response){
-				});
-				
+				});				
 			};
-            //    //$html.get("/Angular/GetData")
-            //    //    .then(
-            //    //        function (response) {
-            //    //            $scope.data = [
-            //    //                { id: 1, name: "A", description: "Apple" },
-            //    //                { id: 2, name: "B", description: "Banana" },
-            //    //                { id: 3, name: "C", description: "Cat" },
-            //    //            ]
-            //    //        },
-            //    //        function (response) {
-            //    //            alert('Error');
-            //    //            }
-            //    //    );
-            //}
+
 			$scope.editRecord = function(id) {
 				$scope.hideform = false;
 				if (id == -1) {
@@ -122,18 +112,55 @@
 					};
 				}
 				else {
-					$scope.record = {
-						Name: $scope.data[id - 1].Name,
-						City: $scope.data[id - 1].City,
-						Country: $scope.data[id - 1].Country,
-						Id: $scope.data[id - 1].Id
-					};
+					angular.forEach($scope.data, function (value, key) {
+						if (value.Id == id){
+							$scope.record = value;
+						}
+					});
 				}
 			};
 			
+			$scope.deleteRecord = function(id) {
+				for (var i = $scope.data.length - 1; i >= 0; i--) {
+					if ($scope.data[i].Id == id) {
+						$scope.data.splice(i, 1);
+					}
+				}
+			}
+			
             $scope.mySubmitForm = function () {
+				if ($scope.record.Id == -1) {
+					$scope.record.Id = guid();
+					$scope.data.push($scope.record);
+				}
+				else {
+					angular.forEach($scope.data, function (value, key) {
+						if (value.Id == $scope.record.Id)
+							$scope.data[key] = $scope.record;
+					});
+				}
 				
+				storageService.Save($scope.data);
             }
+			
+			function guid() {
+				return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+					var r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8);
+					return v.toString(16);
+				});
+			}
+			
+			function init() {
+				var data = storageService.Load();
+				if (data)
+					return data;
+				else 
+					return [
+						{ Id: 1, Name: "A", City: "Apple", Country: "Apple Tree" },
+						{ Id: 2, Name: "B", City: "Banana", Country: "Banana Garden" },
+						{ Id: 3, Name: "C", City: "Cat", Country: "Cat City" }
+					];		
+			}
         });
     </script>
 </body>
