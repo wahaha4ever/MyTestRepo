@@ -28,7 +28,7 @@
             <div class="col-sm-2"><span>{{datum.Name}}</span></div>
             <div class="col-sm-4"><span>{{datum.City}}</span></div>
 			<div class="col-sm-4"><span>{{datum.Country}}</span></div>
-            <div class="col-sm-2"><button type="button" data-ng-click="editRecord(datum.id)">Edit</button></div>
+            <div class="col-sm-2"><button type="button" data-ng-click="editRecord(datum.Id)">Edit</button></div>
         </div>
     </div>
     <button type="button" class="btn btn-primary" data-ng-click="InitData()">Get</button>
@@ -43,15 +43,15 @@
             </div>
         </div>
         <div class="form-group row">
-            <label for="desc" class="col-sm-2 col-form-label">City</label>
+            <label for="city" class="col-sm-2 col-form-label">City</label>
             <div class="col-sm-10">
-                <input type="text" class="form-control" id="desc" placeholder="Description" data-ng-model="record.City" />
+                <input type="text" class="form-control" id="city" placeholder="City" data-ng-model="record.City" />
             </div>
         </div>
         <div class="form-group row">
-            <label for="desc" class="col-sm-2 col-form-label">Country</label>
+            <label for="ctry" class="col-sm-2 col-form-label">Country</label>
             <div class="col-sm-10">
-                <input type="text" class="form-control" id="desc" placeholder="Description" data-ng-model="record.Country" />
+                <input type="text" class="form-control" id="ctry" placeholder="Country" data-ng-model="record.Country" />
             </div>
         </div>
         <div class="form-group row">
