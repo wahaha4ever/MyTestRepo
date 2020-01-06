@@ -24,11 +24,11 @@
 <body>
 <div data-ng-app="myApp" data-ng-controller="myController">
     <div class="container">
-        <div class="row" data-ng-repeat="datum in data">
-            <div class="col-sm-2"><span>{{datum.Name}}</span></div>
-            <div class="col-sm-4"><span>{{datum.City}}</span></div>
-			<div class="col-sm-4"><span>{{datum.Country}}</span></div>
-            <div class="col-sm-2"><button type="button" data-ng-click="editRecord(datum.Id)">Edit</button></div>
+        <div class="row align-items-start" data-ng-repeat="datum in data">
+            <div class="col-sm-2 col-2"><span>{{datum.Name}}</span></div>
+            <div class="col-sm-4 col-4"><span>{{datum.City}}</span></div>
+			<div class="col-sm-4 col-10"><span>{{datum.Country}}</span></div>
+            <div class="col-sm-2 col-2"><button type="button" class="btn btn-primary"data-ng-click="editRecord(datum.Id)">Edit</button></div>
         </div>
     </div>
     <button type="button" class="btn btn-primary" data-ng-click="InitData()">Get</button>
@@ -54,10 +54,9 @@
                 <input type="text" class="form-control" id="ctry" placeholder="Country" data-ng-model="record.Country" />
             </div>
         </div>
-        <div class="form-group row">
-			<input type="hidden" id="id" data-ng-model="record.Id" />
-            <button type="submit" class="btn btn-primary mb-2" data-ng-disabled="error || incomplete">Submit</button>
-        </div>
+		<input type="hidden" id="id" data-ng-model="record.Id" />
+		<button type="submit" class="btn btn-primary mb-2" data-ng-disabled="error || incomplete">Submit</button>
+
     </form>
 </div>
 
@@ -78,9 +77,9 @@
 			};
 			
 			$scope.data = [
-				//{ id: 1, name: "A", description: "Apple" },
-				//{ id: 2, name: "B", description: "Banana" },
-				//{ id: 3, name: "C", description: "Cat" }
+				{ Id: 1, Name: "A", City: "Apple", Country: "Apple Tree" },
+				{ Id: 2, Name: "B", City: "Banana", Country: "Banana Garden" },
+				{ Id: 3, Name: "C", City: "Cat", Country: "Cat City" }
 			];
 			
             $scope.InitData = function () {
