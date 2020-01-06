@@ -7,6 +7,9 @@
 <meta content="yes" name="apple-mobile-web-app-capable" />
 <meta content="black" name="apple-mobile-web-app-status-bar-style" />
 <meta content="telephone=no,email=no" name="format-detection" />
+<meta name="apple-mobile-web-app-title" content="My Testing Angular">
+
+
 <style>
 @media screen and (max-width: 900px){
     body { background: green;}
@@ -22,8 +25,9 @@
 <div data-ng-app="myApp" data-ng-controller="myController">
     <div class="container">
         <div class="row" data-ng-repeat="datum in data">
-            <div class="col-sm-2"><span>{{datum.name}}</span></div>
-            <div class="col-sm-8"><span>{{datum.description}}</span></div>
+            <div class="col-sm-2"><span>{{datum.Name}}</span></div>
+            <div class="col-sm-4"><span>{{datum.City}}</span></div>
+			<div class="col-sm-4"><span>{{datum.Country}}</span></div>
             <div class="col-sm-2"><button type="button" data-ng-click="editRecord(datum.id)">Edit</button></div>
         </div>
     </div>
@@ -35,17 +39,23 @@
         <div class="form-group row">
             <label for="name" class="col-sm-2 col-form-label">Name</label>
             <div class="col-sm-10">
-                <input type="text" class="form-control" id="name" placeholder="Name" data-ng-model="record.name" />
+                <input type="text" class="form-control" id="name" placeholder="Name" data-ng-model="record.Name" />
             </div>
         </div>
         <div class="form-group row">
-            <label for="desc" class="col-sm-2 col-form-label">Description</label>
+            <label for="desc" class="col-sm-2 col-form-label">City</label>
             <div class="col-sm-10">
-                <input type="text" class="form-control" id="desc" placeholder="Description" data-ng-model="record.description" />
+                <input type="text" class="form-control" id="desc" placeholder="Description" data-ng-model="record.City" />
             </div>
         </div>
         <div class="form-group row">
-			<input type="hidden" id="id" data-ng-model="record.id" />
+            <label for="desc" class="col-sm-2 col-form-label">Country</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control" id="desc" placeholder="Description" data-ng-model="record.Country" />
+            </div>
+        </div>
+        <div class="form-group row">
+			<input type="hidden" id="id" data-ng-model="record.Id" />
             <button type="submit" class="btn btn-primary mb-2" data-ng-disabled="error || incomplete">Submit</button>
         </div>
     </form>
@@ -61,9 +71,10 @@
 			$scope.color = "red";
 			
 			$scope.record = {
-				name: "",
-				description: "",
-				id: -1
+				Name: "",
+				City: "",
+				Country: "",
+				Id: -1
 			};
 			
 			$scope.data = [
@@ -73,11 +84,19 @@
 			];
 			
             $scope.InitData = function () {
-				$scope.data = [
-					{ id: 1, name: "A", description: "Apple" },
-					{ id: 2, name: "B", description: "Banana" },
-					{ id: 3, name: "C", description: "Cat" }
-				];
+				//$scope.data = [
+				//	{ id: 1, name: "A", description: "Apple" },
+				//	{ id: 2, name: "B", description: "Banana" },
+				//	{ id: 3, name: "C", description: "Cat" }
+				//];
+				
+				$html.get("jsondata.json").then(
+				function(response) {
+					$scope.data = response.data.records;
+				}
+				, function(response){
+				});
+				
 			};
             //    //$html.get("/Angular/GetData")
             //    //    .then(
@@ -97,16 +116,18 @@
 				$scope.hideform = false;
 				if (id == -1) {
 					$scope.record = {
-						name: "",
-						description: "",
-						id: -1
+						Name: "",
+						City: "",
+						Country: "",
+						Id: -1
 					};
 				}
 				else {
 					$scope.record = {
-						name: $scope.data[id - 1].name,
-						description: $scope.data[id - 1].description,
-						id: $scope.data[id - 1].id
+						Name: $scope.data[id - 1].Name,
+						City: $scope.data[id - 1].City,
+						Country: $scope.data[id - 1].Country,
+						Id: $scope.data[id - 1].Id
 					};
 				}
 			};
