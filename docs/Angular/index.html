@@ -8,6 +8,7 @@
 <meta content="black" name="apple-mobile-web-app-status-bar-style" />
 <meta content="telephone=no,email=no" name="format-detection" />
 <meta name="apple-mobile-web-app-title" content="My Testing Angular">
+<link rel="apple-touch-icon" href="icon-192x192.png">
 
 
 <style>
@@ -121,6 +122,7 @@
 						$scope.data.splice(i, 1);
 					}
 				}
+				$scope.hideform = true;
 			}
 			
             $scope.mySubmitForm = function () {
@@ -136,6 +138,7 @@
 				}
 				
 				storageService.Save($scope.data);
+				$scope.hideform = true;
             }
 			
 			function guid() {
