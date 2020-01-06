@@ -62,7 +62,7 @@
 </div>
 
     <script>
-		var app = angular.module('myApp', []);
+		var app = angular.module('myApp', [$http]);
 
         app.controller("myController", function ($scope, $http) {
 			$scope.error = false;
@@ -90,7 +90,7 @@
 				//	{ id: 3, name: "C", description: "Cat" }
 				//];
 				
-				$html.get("jsondata.json").then(
+				$http.get("jsondata.json").then(
 				function(response) {
 					$scope.data = response.data.records;
 				}
