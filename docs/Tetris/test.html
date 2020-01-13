@@ -23,23 +23,20 @@
 	<canvas id="myCanvas" width="100" height="200" style="border:1px solid #000000;">
 	</canvas>
 </div>
-<div id="leftCtrl" style="position:fixed; left:0;top:10;width:50px;background-color:red;">
-	<button type="button">Left</button>
-	<button type="button">Rotate</button>
-</div>
-<div id="rightCtrl" style="position:fixed; right:0;top:10;width:50px;background-color:blue;">
-	<button type="button">Right</button>
-	<button type="button">Down</button>
-</div>	
-	<script src="tetris.js"></script>
 	<script>	  
-		function Test() {
-			var startTime = new Date().getTime();
-			window.setTimeout(function() { 
-				var endTime = new Date().getTime();
-				console.log('Time elapsed: ' + (endTime - startTime) + ' ms');
-			}, 1000);
+		let myReq;
+		function run() {
+			let canvas = document.getElementById("myCanvas");
+			let ctx = canvas.getContext("2d");
+			ctx.strokeStyle = "#000";
+			ctx.lineWidth = 2;
+			ctx.moveTo(0, 0);
+			ctx.lineTo(100, 100);
+			ctx.stroke();
+			myReq = requestAnimationFrame( run );
+
 		}
+		myReq = requestAnimationFrame ( run );
 	</script>
 </body>
 <html>
