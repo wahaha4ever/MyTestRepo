@@ -26,15 +26,17 @@
 	<script>	  
 		let myReq;
 		function run() {
-			//let canvas = document.getElementById("myCanvas");
-			//let ctx = canvas.getContext("2d");
-			//ctx.strokeStyle = "#000";
-			//ctx.lineWidth = 2;
-			//ctx.moveTo(0, 0);
-			//ctx.lineTo(100, 100);
-			//ctx.stroke();
-			  var canvas = document.getElementById('canvas');
-			  var ctx = canvas.getContext('2d');
+			let canvas = document.getElementById("myCanvas");
+			let ctx = canvas.getContext("2d");
+			ctx.strokeStyle = "#000";
+			ctx.lineWidth = 2;
+			ctx.moveTo(0, 0);
+			ctx.lineTo(100, 100);
+			ctx.stroke();
+			
+			
+			  //var canvas = document.getElementById('canvas');
+			  //var ctx = canvas.getContext('2d');
 			  ctx.lineJoin = ctx.lineCap = 'round';
 
 			  // Draw a Blue dot on the middle of the canvas
