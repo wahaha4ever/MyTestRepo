@@ -168,6 +168,30 @@
 		}
 	}
 
+	if ( !window.requestAnimationFrame ) {
+
+		window.requestAnimationFrame = ( function() {
+
+			return window.webkitRequestAnimationFrame ||
+			window.mozRequestAnimationFrame ||
+			window.oRequestAnimationFrame ||
+			window.msRequestAnimationFrame ||
+			function( /* function FrameRequestCallback */ callback, /* DOMElement Element */ element ) {
+
+				window.setTimeout( callback, 1000 / 60 );
+
+			};
+
+		} )();
+
+	}
+	
+	if ( !window.cancelAnimationFrame ) {
+		window.cancelAnimationFrame = (function() {
+			return window.cancelAnimationFrame || window.mozCancelAnimationFrame;
+		})();
+	}
+
 	
 	
 	
@@ -203,13 +227,14 @@
 	}
 	
 	var drawGridBG = function(ctx, grid, blockSize){
-		ctx.clearRect(0,0, 100,100);
+		//ctx.clearRect(0,0, 100,100);
 		ctx.fillStyle = "#000";
 		ctx.fillRect(0, 0, grid.noOfCol * blockSize, grid.noOfRow * blockSize);		
 	}
 
 	var drawGridLine = function(ctx, grid, blockSize) {
 		ctx.strokeStyle = "#fff";
+		ctx.lineWidth = 2;
 		for (var i = 0; i < grid.noOfCol; i++){
 			ctx.moveTo(i * blockSize, 0);
 			ctx.lineTo(i * blockSize, grid.noOfRow * blockSize);
@@ -276,11 +301,11 @@
 	var pause = function() {
 		if (gameStatus == STATUS_PROCESS) {
 			gameStatus = STATUS_PAUSE;
-			window.clearTimeout(mainLoopTimeout);
+			cancelAnimationFrame(myReq);
 		}
 		else {
 			gameStatus = STATUS_PROCESS;
-			mainLoop();
+			myReq = requestAnimationFrame( mainLoop );
 		}
 	}
 	
@@ -303,6 +328,8 @@
 	
 
 	let primaryCtx;
+	let buffCanvasShape;
+	let buffCtxShape;
 	let buffCanvas;
 	let buffCtx;
 	
@@ -314,6 +341,11 @@
 		buffCanvas.width = canvas.width;
 		buffCanvas.height = canvas.height;
 		buffCtx = buffCanvas.getContext("2d");
+		
+		buffCanvasShape = document.createElement('canvas');
+		buffCanvasShape.width = blockSize * 5;
+		buffCanvasShape.height = blockSize * 5;
+		buffCtxShape = buffCanvasShape.getContext("2d");
 	}
 	initCanvas();
 
@@ -324,57 +356,52 @@
 		nextShape.fnInit();
 		gameStatus = STATUS_PROCESS;
 		
-		drawGridBG(buffCtx, grid, blockSize);
-		drawGridLine(buffCtx, grid, blockSize);
-		buffCtx.save();
+		
+		drawBuff();
+		
+		//buffCtx.save();
 		//mainLoop();
+		
+		drawShapeBuff(shape, blockSize);
 		myReq = requestAnimationFrame( mainLoop );	
 	}
 
-	var drawRow = function(color, py, blockSize) {
-		//var primaryCtx = document.getElementById("myCanvas").getContext("2d");
-		//primaryCtx.save();
-		buffCtx.fillStyle = color;
-		buffCtx.fillRect(0, py * blockSize, 1000, blockSize);
-		//primaryCtx.restore();
+	var drawRow = function(ctx, color, py, blockSize) {
+		ctx.fillStyle = color;
+		ctx.fillRect(0, py * blockSize, 1000, blockSize);
 	}
 	
 	var drawBuff = function() {
-		//var primaryCtx = document.getElementById("myCanvas").getContext("2d");
-		//primaryCtx.save();
-		//drawGridBG(buffCtx, grid, blockSize);
-		buffCtx.restore();
+		drawGridBG(buffCtx, grid, blockSize);
+		drawGridLine(buffCtx, grid, blockSize);
 		drawGridData(buffCtx, grid, blockSize);
-		drawShape(buffCtx, blockSize, shape, currX, currY);
-		//drawGridLine(buffCtx, grid, blockSize);
-		//primaryCtx.restore();
 	}
 	
-	var drawScreen = function() {
+	var drawBuff2Screen = function(px, py, blockSize) {
 		primaryCtx.drawImage(buffCanvas, 0, 0);
+		if (gameStatus == STATUS_PROCESS)
+			primaryCtx.drawImage(buffCanvasShape, px * blockSize, py * blockSize);
 	}
-
-	//var collisionDetection = function() {
-	//	//collision detection
-	//	currY++;
-	//	if (!grid.fnIsValid(shape, getIndexR(grid, currY), currX))
-	//	{
-	//		currY--;						
-	//		grid.fnApplyShape(shape, getIndexR(grid, currY), currX);
-	//		shape.fnInit();
-	//		currY = deftY;
-	//		currX = deftX;
-	//		let arrIdx = grid.fnGetFullRowIdx();
-	//		for(var i = 0; i<arrIdx.length; i++)
-	//		{
-	//
-	//		}
-	//	}
-	//	else {
-	//	}		
-	//	drawScreen();
-	//	return true;
-	//}
+	
+	var drawShapeBuff2Buff = function(px, py, blockSize) {
+		buffCtx.drawImage(buffCanvasShape, px * blockSize, py * blockSize);
+	}
+	
+	
+	var drawShapeBuff = function(shape, blockSize){
+		let ctx = buffCtxShape;
+		let shapeArray = shape.fnGetContent();
+		ctx.clearRect(0, 0, blockSize * 5, blockSize * 5);
+		for ( var r = 0; r < shapeArray.length; r++ ) {
+			for ( var c = 0; c < shapeArray[r].length; c++ ) {
+				if (shapeArray[r][c] != 0) {
+					ctx.fillStyle = getColor(shapeArray[r][c]);
+					ctx.fillRect(c * blockSize, r * blockSize, blockSize, blockSize);
+				}
+			}
+		}
+	}
+	
 	
 	
 	
@@ -396,27 +423,29 @@
 		
 		if (keyConfig.Left.Value) {
 			moveLeft(grid, shape);
-			drawBuff();
+			//drawBuff();
 		}
 		if (keyConfig.Right.Value) {
 			moveRight(grid, shape);
-			drawBuff();
+			//drawBuff();
 		}
 		if (keyConfig.Down.Value) {
 			moveDown(grid, shape);
-			drawBuff();
+			//drawBuff();
 		}
 		if (keyConfig.RotateC.Value) {
 			moveRotation(grid, shape, true);
-			drawBuff();
+			drawShapeBuff(shape, blockSize);
+			//drawBuff();
 		}
 		if (keyConfig.RotateCA.Value) {			
 			moveRotation(grid, shape, false);		
-			drawBuff();
+			drawShapeBuff(shape, blockSize);
+			//drawBuff();
 		}
 		if (keyConfig.Pause.Value) {
 			pause();
-			drawBuff();
+			//drawBuff();
 		}
 	};
 		
@@ -433,100 +462,20 @@
 	
 	
 	
-	
-	
-	
+	// variable for animation (remove row)
 	var animeID = 0
 	var arrIdx = [];
-	var startTime = new Date().getTime();
-	var count = -1;
+	var animateInterval = 80;
 	
-	//var mainLoopTimeout
-	//var mainLoop = function() {
-	//	var endTime = new Date().getTime();
-	//	count++;
-	//	console.log('Time elapsed: ' + (endTime - (startTime + count * 1000)) + ' ms');
-	//
-	//	
-	//	if (count < 20){
-	//		mainLoopTimeout = window.setTimeout(mainLoop, 1000);			
-	//	}
-	//	//currY++;
-	//	//if (!grid.fnIsValid(shape, getIndexR(grid, currY), currX))
-	//	//{
-	//	//	currY--;						
-	//	//	//grid.fnApplyShape(shape, getIndexR(grid, currY), currX);
-	//	//	shape.fnInit();
-	//	//	nextShape.fnInit();
-	//	//	currY = deftY;
-	//	//	currX = deftX;
-	//	//	arrIdx = grid.fnGetFullRowIdx();
-	//	//	if (arrIdx.length > 0)
-	//	//	{
-	//	//		//gameStatus = STATUS_REMOVING;
-	//	//		//window.clearTimeout(mainLoopTimeout);
-	//	//		//
-	//	//		//var animeRemoveRow = function() {
-	//	//		//	if (arrIdx.length > 0) {
-	//	//		//		animeID++						
-	//	//		//		if (animeID >= 10) {
-	//	//		//			// animation finish
-	//	//		//			grid.fnRemoveRow(arrIdx[0]);
-	//	//		//			drawScreen();
-	//	//		//			arrIdx.splice(0, 1);
-	//	//		//			animeID = 0;
-	//	//		//			return true;
-	//	//		//		}
-	//	//		//		else {
-	//	//		//			// animation for row removing
-	//	//		//			let color = "rgba(255, 255, 255, "+(animeID / 10)+")";
-	//	//		//			drawRow(color, getY(grid, arrIdx[0]), blockSize);
-	//	//		//			return true;
-	//	//		//		}
-	//	//		//	}
-	//	//		//	else {
-	//	//		//		// all row removed and continue to normal flow : STATUS_PROCESS
-	//	//		//		gameStatus = STATUS_PROCESS;
-	//	//		//		mainLoop();
-	//	//		//		return false;
-	//	//		//	}
-	//	//		//}
-	//	//		//render(100, animeRemoveRow);
-	//	//		
-	//	//		for(var i=0; i<arrIdx.length; i++) {
-	//	//			grid.fnRemoveRow(arrIdx[i]);
-	//	//		}
-	//	//		arrIdx = [];
-	//	//	}
-	//	//}		
-	//	//if (gameStatus == STATUS_PROCESS) {
-	//	//	drawScreen();
-	//	//	mainLoopTimeout = window.setTimeout(mainLoop, 1000);
-	//	//}
-	//}	
-	
-	
-
-	
-	var render = function(refreshRate, fnAction) {
-		var fn = function() {
-			let result = fnAction();
-			if (result)
-				window.setTimeout(fn, refreshRate);	
-		}
-		fn();
-	}
-	
+	// variable for refresh per frame
 	var then = Date.now();
-	var now;
-	var elapsed;
-	var fpsInterval = 1000 / 90
-	var actionInterval = 1000;	
+	var now;	
+	var actionInterval = 1000;		
 	var myReq;
+	
 	//function run() {
 	//	
-	//	//https://stackoverflow.com/questions/19764018/controlling-fps-with-requestanimationframe
-	//	//https://medium.com/javascript-in-plain-english/better-understanding-of-timers-in-javascript-settimeout-vs-requestanimationframe-bf7f99b9ff9b
+
 	//	now = Date.now();
 	//	elapsed = now - then;
 	//	console.log(elapsed);
@@ -548,7 +497,7 @@
 		//https://stackoverflow.com/questions/19764018/controlling-fps-with-requestanimationframe
 		//https://medium.com/javascript-in-plain-english/better-understanding-of-timers-in-javascript-settimeout-vs-requestanimationframe-bf7f99b9ff9b
 		now = Date.now();
-		elapsed = now - then;
+		let elapsed = now - then;
 		//console.log(elapsed);
 		if (elapsed > actionInterval) {
 			then = now - (elapsed % actionInterval)
@@ -558,7 +507,8 @@
 			if (!grid.fnIsValid(shape, getIndexR(grid, currY), currX))
 			{
 				currY--;
-				//grid.fnApplyShape(shape, getIndexR(grid, currY), currX);
+				grid.fnApplyShape(shape, getIndexR(grid, currY), currX);
+				drawShapeBuff2Buff(currX, currY, blockSize);
 				shape.fnInit();
 				nextShape.fnInit();
 				currY = deftY;
@@ -566,23 +516,97 @@
 				arrIdx = grid.fnGetFullRowIdx();
 				if (arrIdx.length > 0)
 				{
-					for(var i=0; i<arrIdx.length; i++) {
-						grid.fnRemoveRow(arrIdx[i]);
-					}
-					arrIdx = [];
+					//for(var i=0; i<arrIdx.length; i++) {
+					//	grid.fnRemoveRow(arrIdx[i]);
+					//	drawBuff();
+					//}
+					cancelAnimationFrame(myReq);					
+					gameStatus = STATUS_REMOVING;
+					//renderLoop(animateInterval, animeLoop, animeFinish);					
+					myReq = requestAnimationFrame( () => renderLoop(animateInterval, animeLoop, animeFinish) );
+					//arrIdx = [];
+				}
+				drawShapeBuff(shape, blockSize);
+				
+				if (!grid.fnIsValid(shape, getIndexR(grid, currY), currX)) {
+					console.log("Game Over");
+					gameStatus = STATUS_GAMEOVER;
 				}
 			}
-			drawBuff();
-			
-			//drawScreen();
 		}
-		drawScreen();
-		//drawBuff();
-		cancelAnimationFrame(myReq);
-		myReq = requestAnimationFrame( mainLoop );	
-		
+		drawBuff2Screen(currX, currY, blockSize);
+
+		if (gameStatus == STATUS_PROCESS) {		
+			cancelAnimationFrame(myReq);
+			myReq = requestAnimationFrame( mainLoop );
+		}
 	}
 	
+	//function animeRemoveRow() {
+	//	if (window.requestAnimationFrame) {
+	//		window.requestAnimationFrame(Gamepad.tick);
+	//	} else if (window.mozRequestAnimationFrame) {
+	//		window.mozRequestAnimationFrame(Gamepad.tick);
+	//	} else if (window.webkitRequestAnimationFrame) {
+	//		window.webkitRequestAnimationFrame(Gamepad.tick);
+	//	}
+	//}
+	
+	function animeLoop(){
+		console.log("fnAction");
+		if (arrIdx.length > 0) {
+			animeID++						
+			if (animeID >= 10) {
+				// animation finish
+				grid.fnRemoveRow(arrIdx[0]);
+				drawBuff();
+				drawBuff2Screen(currX, currY, blockSize);
+				arrIdx.splice(0, 1);
+				animeID = 0;
+				return true;	// to next arrIdx
+			}
+			else {
+				// animation for row removing
+				let color = "rgba(255, 255, 255, "+(animeID / 10)+")";
+				drawRow(buffCtx, color, getY(grid, arrIdx[0]), blockSize);
+				drawBuff2Screen(currX, currY, blockSize);
+				return true;
+			}
+		}
+		else {
+			return false;	// no more arrIdx
+		}
+	}
+	
+	function animeFinish() {
+		animeID = 0;
+		arrIdx = [];
+		gameStatus = STATUS_PROCESS;
+		myReq = requestAnimationFrame( mainLoop );			
+	}
+	
+	
+	function renderLoop(interval, fnAction, fnFinishAction) {
+		//https://stackoverflow.com/questions/19764018/controlling-fps-with-requestanimationframe
+		//https://medium.com/javascript-in-plain-english/better-understanding-of-timers-in-javascript-settimeout-vs-requestanimationframe-bf7f99b9ff9b
+		now = Date.now();
+		let elapsed = now - then;
+		let result = true;
+		if (elapsed > interval) {
+			then = now - (elapsed % interval)
+			result = fnAction();			
+		}
+		
+		cancelAnimationFrame(myReq);
+		if (result) {	
+			// start again
+			myReq = requestAnimationFrame( () => renderLoop(interval, fnAction, fnFinishAction) );
+		}
+		else {
+			// finish
+			fnFinishAction();
+		}
+	}
 	
 	init();
 	

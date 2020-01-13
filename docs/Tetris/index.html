@@ -6,6 +6,29 @@
 <body>
 <canvas id="myCanvas" width="100" height="200" style="border:1px solid #000000;">
 </canvas>
+<div id="leftCtrl" style="position:fixed; left:0;top:10;width:100px;height:100px;">
+	<button type="button">Left</button>
+	<button type="button">Down</button>
+	<button type="button">Rotate</button>
+	<button type="button">Right</button>
+</div>
+<div id="rightCtrl" style="position:fixed; right:0;top:10;width:100px;height:100px;">
+	<button type="button">Left</button>
+	<button type="button">Down</button>
+	<button type="button">Rotate</button>
+	<button type="button">Right</button>
+</div>
+
+	<button type="button" onclick="Test()">Test</button>
 	<script src="tetris.js"></script>
+	<script>
+		function Test() {
+			var startTime = new Date().getTime();
+			window.setTimeout(function() { 
+				var endTime = new Date().getTime();
+				console.log('Time elapsed: ' + (endTime - startTime) + ' ms');
+			}, 1000);
+		}
+	</script>
 </body>
 <html>
