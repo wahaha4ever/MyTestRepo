@@ -352,6 +352,8 @@
 		buffCanvasShape.height = blockSize * 5;
 		buffCtxShape = buffCanvasShape.getContext("2d");
 		
+		primaryCtx.save();
+		
 		window.addEventListener('resize', resizeCanvas, false);
 
 		function resizeCanvas() {
@@ -364,6 +366,10 @@
 			let blockH = Math.floor(canvas.height / grid.noOfRow);
 			let blockV = Math.floor(canvas.width / grid.noOfCol);		
 			blockSize = Math.min(blockH, blockV);
+			
+			let margin = Math.floor((canvas.width - (blockSize * 10))/ 2);
+			primaryCtx.restore();
+			primaryCtx.translate(margin, 0);
 			
 			buffCanvasShape.width = blockSize * 5;
 			buffCanvasShape.height = blockSize * 5;
