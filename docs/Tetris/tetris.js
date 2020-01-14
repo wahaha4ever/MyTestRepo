@@ -1,201 +1,201 @@
 (function(window){
 	'use strict';	
-	class Shape {
-		content = [];
-		shapeCode = 0;
-		constructor(shapeCode) {
-			if (shapeCode)
-				this.fnInit(shapeCode);
-			else
-				this.fnInit(0);
-		}
-		fnApply = function(shapeCode, shapeArray){
-			this.shapeCode = shapeCode;
-			this.content = shapeArray.map(function(x) { return x.slice(); });
-		}
-		fnInit = function(shapeCode) {
-			shapeCode = shapeCode || Math.floor(Math.random() * 10);
-			this.shapeCode = shapeCode
-			if (shapeCode == 1){
-				this.content = [
-					[0,0,0,0],
-					[1,1,1,1],
-					[0,0,0,0],
-					[0,0,0,0]
-				]
-			}
-			else if (shapeCode == 2){
-				this.content = [
-					[2,2,0],
-					[0,2,2],
-					[0,0,0]
-				]
-			}
-			else if (shapeCode == 3){
-				this.content = [
-					[0,3,3],
-					[3,3,0],
-					[0,0,0]
-				]
-			}
-			else if (shapeCode == 4){
-				this.content = [
-					[0,4,0],
-					[4,4,4],
-					[0,0,0]
-				]
-			}
-			else if (shapeCode == 5){
-				this.content = [
-					[5,5],
-					[5,5]
-				]
-			}
-			else if (shapeCode == 6){
-				this.content = [
-					[6,0,0],
-					[6,6,6],
-					[0,0,0]
-				]
-			}
-			else if (shapeCode == 7){
-				this.content = [
-					[0,0,7],
-					[7,7,7],
-					[0,0,0]
-				]
-			}
-			else {
-				this.content = [
-					[8,0,8],
-					[0,8,0],
-					[0,8,0]
-				]
-				//this.content = [
-				//	[1,2,3,4],
-				//	[1,2,3,4],
-				//	[1,2,3,4],
-				//	[1,2,3,4]
-				//]
-			}
-		}
-		fnRotate = function(bClockwise) {
-			//let shapeArray = this.content.map((x) => x);
-			let shapeArray = this.content.map(function(x) { return x.slice(); });
-			let n = this.content.length - 1;
-			if (bClockwise) {
-				for ( var r = 0; r < this.content.length; r++ )
-					for ( var c = 0; c < this.content[r].length; c++ )
-						shapeArray[c][n-r] = this.content[r][c];					
-			}
-			else {
-				for ( var r = 0; r < this.content.length; r++ )
-					for ( var c = 0; c < this.content[r].length; c++ )
-						shapeArray[n-c][r] = this.content[r][c];					
-			}
-			//return shapeArray;
-			this.content = shapeArray;
-		}
-		fnGetContent = function(){
-			return this.content;
-		}
-		//fnSetContent = function(shapeArray){
-		//	this.content = shapeArray;
-		//}
-	}
-
-	class Grid {
-		noOfRow = 0;
-		noOfCol = 0;
-		content = [];
-		constructor(noOfRow, noOfCol) {
-			this.noOfCol = noOfCol;
-			this.noOfRow = noOfRow;
-			this.fnInit();
-		}
-		fnInit = function() {
-			for ( var r = 0; r < this.noOfRow; r++ ){
-				let data = []
-				for ( var c = 0; c < this.noOfCol; c++ ){
-					let value = 0;//Math.floor(Math.random() * 10);
-					data.push(value);
-				}
-				this.content.push(data);
-			}
-		}
-		fnApplyShape = function(shape, ixR, ixC) {
-			let shapeArray = shape.fnGetContent();
-			for ( var r = 0; r < shapeArray.length; r++ )
-				for ( var c = 0; c < shapeArray[r].length; c++ )
-					if (shapeArray[r][c] != 0)
-						this.content[ixR - r][ixC + c] = shapeArray[r][c];
-		}
-		fnIsValid = function(shape, ixR, ixC) {
-			let shapeArray = shape.fnGetContent();
-			for ( var r = 0; r < shapeArray.length; r++ ) {
-				for ( var c = 0; c < shapeArray[r].length; c++ ) {
-					if (shapeArray[r][c] != 0) {
-						if (ixR - r < 0 || ixR - r > this.noOfRow)
-							return false;
-						if (ixC + c < 0 || ixC + c > this.noOfCol)
-							return false;
-						if (this.content[ixR - r][ixC + c] != 0)
-							return false;
-					}
-				}
-			}					
-			return true;
-		}
-		fnGetData = function(ixR, ixC){
-			return this.content[ixR][ixC];
-		}
-		fnGetFullRowIdx = function() {
-			let fullRowIdx = [];
-			for ( var r = this.content.length - 1; r >=0 ; r-- ) {
-				let bIsFullRow = true;
-				for ( var c = 0; c < this.content[r].length; c++ ) {
-					if (this.content[r][c] == 0)
-						bIsFullRow = false;
-				}
-				if (bIsFullRow)
-					fullRowIdx.push(r);
-			}
-			return fullRowIdx;
-		}
-		fnRemoveRow = function(ixR){
-			this.content.splice(ixR, 1);
-			let data = [];
-			for ( var c = 0; c < this.noOfCol; c++ ){
-				let value = 0;
-				data.push(value);
-			}
-			this.content.push(data);
-		}
-	}
-
-	if ( !window.requestAnimationFrame ) {
-
-		window.requestAnimationFrame = ( function() {
-
-			return window.webkitRequestAnimationFrame ||
-			window.mozRequestAnimationFrame ||
-			window.oRequestAnimationFrame ||
-			window.msRequestAnimationFrame ||
-			function( /* function FrameRequestCallback */ callback, /* DOMElement Element */ element ) {
-
-				window.setTimeout( callback, 1000 / 60 );
-
-			};
-
-		} )();
-
-	}
-	
-	if ( !window.cancelAnimationFrame ) {
-		window.cancelAnimationFrame = (function() {
-			return window.cancelAnimationFrame || window.mozCancelAnimationFrame;
-		})();
-	}
+	//class Shape {
+	//	content = [];
+	//	shapeCode = 0;
+	//	constructor(shapeCode) {
+	//		if (shapeCode)
+	//			this.fnInit(shapeCode);
+	//		else
+	//			this.fnInit(0);
+	//	}
+	//	fnApply = function(shapeCode, shapeArray){
+	//		this.shapeCode = shapeCode;
+	//		this.content = shapeArray.map(function(x) { return x.slice(); });
+	//	}
+	//	fnInit = function(shapeCode) {
+	//		shapeCode = shapeCode || Math.floor(Math.random() * 10);
+	//		this.shapeCode = shapeCode
+	//		if (shapeCode == 1){
+	//			this.content = [
+	//				[0,0,0,0],
+	//				[1,1,1,1],
+	//				[0,0,0,0],
+	//				[0,0,0,0]
+	//			]
+	//		}
+	//		else if (shapeCode == 2){
+	//			this.content = [
+	//				[2,2,0],
+	//				[0,2,2],
+	//				[0,0,0]
+	//			]
+	//		}
+	//		else if (shapeCode == 3){
+	//			this.content = [
+	//				[0,3,3],
+	//				[3,3,0],
+	//				[0,0,0]
+	//			]
+	//		}
+	//		else if (shapeCode == 4){
+	//			this.content = [
+	//				[0,4,0],
+	//				[4,4,4],
+	//				[0,0,0]
+	//			]
+	//		}
+	//		else if (shapeCode == 5){
+	//			this.content = [
+	//				[5,5],
+	//				[5,5]
+	//			]
+	//		}
+	//		else if (shapeCode == 6){
+	//			this.content = [
+	//				[6,0,0],
+	//				[6,6,6],
+	//				[0,0,0]
+	//			]
+	//		}
+	//		else if (shapeCode == 7){
+	//			this.content = [
+	//				[0,0,7],
+	//				[7,7,7],
+	//				[0,0,0]
+	//			]
+	//		}
+	//		else {
+	//			this.content = [
+	//				[8,0,8],
+	//				[0,8,0],
+	//				[0,8,0]
+	//			]
+	//			//this.content = [
+	//			//	[1,2,3,4],
+	//			//	[1,2,3,4],
+	//			//	[1,2,3,4],
+	//			//	[1,2,3,4]
+	//			//]
+	//		}
+	//	}
+	//	fnRotate = function(bClockwise) {
+	//		//let shapeArray = this.content.map((x) => x);
+	//		let shapeArray = this.content.map(function(x) { return x.slice(); });
+	//		let n = this.content.length - 1;
+	//		if (bClockwise) {
+	//			for ( var r = 0; r < this.content.length; r++ )
+	//				for ( var c = 0; c < this.content[r].length; c++ )
+	//					shapeArray[c][n-r] = this.content[r][c];					
+	//		}
+	//		else {
+	//			for ( var r = 0; r < this.content.length; r++ )
+	//				for ( var c = 0; c < this.content[r].length; c++ )
+	//					shapeArray[n-c][r] = this.content[r][c];					
+	//		}
+	//		//return shapeArray;
+	//		this.content = shapeArray;
+	//	}
+	//	fnGetContent = function(){
+	//		return this.content;
+	//	}
+	//	//fnSetContent = function(shapeArray){
+	//	//	this.content = shapeArray;
+	//	//}
+	//}
+	//
+	//class Grid {
+	//	noOfRow = 0;
+	//	noOfCol = 0;
+	//	content = [];
+	//	constructor(noOfRow, noOfCol) {
+	//		this.noOfCol = noOfCol;
+	//		this.noOfRow = noOfRow;
+	//		this.fnInit();
+	//	}
+	//	fnInit = function() {
+	//		for ( var r = 0; r < this.noOfRow; r++ ){
+	//			let data = []
+	//			for ( var c = 0; c < this.noOfCol; c++ ){
+	//				let value = 0;//Math.floor(Math.random() * 10);
+	//				data.push(value);
+	//			}
+	//			this.content.push(data);
+	//		}
+	//	}
+	//	fnApplyShape = function(shape, ixR, ixC) {
+	//		let shapeArray = shape.fnGetContent();
+	//		for ( var r = 0; r < shapeArray.length; r++ )
+	//			for ( var c = 0; c < shapeArray[r].length; c++ )
+	//				if (shapeArray[r][c] != 0)
+	//					this.content[ixR - r][ixC + c] = shapeArray[r][c];
+	//	}
+	//	fnIsValid = function(shape, ixR, ixC) {
+	//		let shapeArray = shape.fnGetContent();
+	//		for ( var r = 0; r < shapeArray.length; r++ ) {
+	//			for ( var c = 0; c < shapeArray[r].length; c++ ) {
+	//				if (shapeArray[r][c] != 0) {
+	//					if (ixR - r < 0 || ixR - r > this.noOfRow)
+	//						return false;
+	//					if (ixC + c < 0 || ixC + c > this.noOfCol)
+	//						return false;
+	//					if (this.content[ixR - r][ixC + c] != 0)
+	//						return false;
+	//				}
+	//			}
+	//		}					
+	//		return true;
+	//	}
+	//	fnGetData = function(ixR, ixC){
+	//		return this.content[ixR][ixC];
+	//	}
+	//	fnGetFullRowIdx = function() {
+	//		let fullRowIdx = [];
+	//		for ( var r = this.content.length - 1; r >=0 ; r-- ) {
+	//			let bIsFullRow = true;
+	//			for ( var c = 0; c < this.content[r].length; c++ ) {
+	//				if (this.content[r][c] == 0)
+	//					bIsFullRow = false;
+	//			}
+	//			if (bIsFullRow)
+	//				fullRowIdx.push(r);
+	//		}
+	//		return fullRowIdx;
+	//	}
+	//	fnRemoveRow = function(ixR){
+	//		this.content.splice(ixR, 1);
+	//		let data = [];
+	//		for ( var c = 0; c < this.noOfCol; c++ ){
+	//			let value = 0;
+	//			data.push(value);
+	//		}
+	//		this.content.push(data);
+	//	}
+	//}
+	//
+	//if ( !window.requestAnimationFrame ) {
+	//
+	//	window.requestAnimationFrame = ( function() {
+	//
+	//		return window.webkitRequestAnimationFrame ||
+	//		window.mozRequestAnimationFrame ||
+	//		window.oRequestAnimationFrame ||
+	//		window.msRequestAnimationFrame ||
+	//		function( /* function FrameRequestCallback */ callback, /* DOMElement Element */ element ) {
+	//
+	//			window.setTimeout( callback, 1000 / 60 );
+	//
+	//		};
+	//
+	//	} )();
+	//
+	//}
+	//
+	//if ( !window.cancelAnimationFrame ) {
+	//	window.cancelAnimationFrame = (function() {
+	//		return window.cancelAnimationFrame || window.mozCancelAnimationFrame;
+	//	})();
+	//}
 
 	
 	
@@ -641,6 +641,7 @@
 	//	}
 	//}
 	
+	let myReq;
 	function testrun() {
 		let canvas = document.getElementById("myCanvas");
 		let ctx = canvas.getContext("2d");
