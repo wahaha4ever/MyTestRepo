@@ -200,78 +200,78 @@
 	//
 	//
 	//
-	var getIndexR = function(grid, y){
-		return grid.noOfRow - 1 - y;
-	}
-	var getY = function(grid, r){
-		return grid.noOfRow - 1 - r;
-	}
-	
-	var drawGridData = function(ctx, grid, blockSize){
-		for (var r = 0; r < grid.noOfRow; r++){	
-			for (var c = 0; c < grid.noOfCol; c++){
-				if (grid.fnGetData(r, c) != 0) {
-					let y = getY(grid, r);
-					ctx.fillStyle = getColor(grid.fnGetData(r, c));
-					ctx.fillRect(c * blockSize, y * blockSize, blockSize, blockSize);
-				}
-			}
-		}
-	}
-	
-	var drawShape = function(ctx, blockSize, shape, px, py){
-		let shapeArray = shape.fnGetContent();
-		for ( var r = 0; r < shapeArray.length; r++ ) {
-			for ( var c = 0; c < shapeArray[r].length; c++ ) {
-				if (shapeArray[r][c] != 0) {
-					ctx.fillStyle = getColor(shapeArray[r][c]);
-					ctx.fillRect((px + c) * blockSize, (py + r) * blockSize, blockSize, blockSize);
-				}
-			}
-		}
-	}
-	
-	var drawGridBG = function(ctx, grid, blockSize){
-		//ctx.clearRect(0,0, 100,100);
-		ctx.fillStyle = "#000";
-		ctx.fillRect(0, 0, grid.noOfCol * blockSize, grid.noOfRow * blockSize);		
-	}
-	
-	var drawGridLine = function(ctx, grid, blockSize) {
-		ctx.strokeStyle = "#fff";
-		ctx.lineWidth = 2;
-		for (var i = 0; i < grid.noOfCol; i++){
-			ctx.moveTo(i * blockSize, 0);
-			ctx.lineTo(i * blockSize, grid.noOfRow * blockSize);
-			ctx.stroke();
-		}
-		for (var i = 0; i < grid.noOfRow; i++){
-			ctx.moveTo(0, i * blockSize);
-			ctx.lineTo(grid.noOfCol * blockSize, i * blockSize);
-			ctx.stroke();
-		}
-	}
-	
-	var getColor = function(code){
-		switch (code) {
-			case 0:
-				return "#00f";
-			case 1:
-				return "#0f0";
-			case 2:
-				return "#0ff";
-			case 3:
-				return "#f00";
-			case 4:
-				return "#f0f";
-			case 5:
-				return "#ff0";
-			case 6:
-				return "#fff";
-			default:
-				return "#f82";
-		}
-	}
+	//var getIndexR = function(grid, y){
+	//	return grid.noOfRow - 1 - y;
+	//}
+	//var getY = function(grid, r){
+	//	return grid.noOfRow - 1 - r;
+	//}
+	//
+	//var drawGridData = function(ctx, grid, blockSize){
+	//	for (var r = 0; r < grid.noOfRow; r++){	
+	//		for (var c = 0; c < grid.noOfCol; c++){
+	//			if (grid.fnGetData(r, c) != 0) {
+	//				let y = getY(grid, r);
+	//				ctx.fillStyle = getColor(grid.fnGetData(r, c));
+	//				ctx.fillRect(c * blockSize, y * blockSize, blockSize, blockSize);
+	//			}
+	//		}
+	//	}
+	//}
+	//
+	//var drawShape = function(ctx, blockSize, shape, px, py){
+	//	let shapeArray = shape.fnGetContent();
+	//	for ( var r = 0; r < shapeArray.length; r++ ) {
+	//		for ( var c = 0; c < shapeArray[r].length; c++ ) {
+	//			if (shapeArray[r][c] != 0) {
+	//				ctx.fillStyle = getColor(shapeArray[r][c]);
+	//				ctx.fillRect((px + c) * blockSize, (py + r) * blockSize, blockSize, blockSize);
+	//			}
+	//		}
+	//	}
+	//}
+	//
+	//var drawGridBG = function(ctx, grid, blockSize){
+	//	//ctx.clearRect(0,0, 100,100);
+	//	ctx.fillStyle = "#000";
+	//	ctx.fillRect(0, 0, grid.noOfCol * blockSize, grid.noOfRow * blockSize);		
+	//}
+	//
+	//var drawGridLine = function(ctx, grid, blockSize) {
+	//	ctx.strokeStyle = "#fff";
+	//	ctx.lineWidth = 2;
+	//	for (var i = 0; i < grid.noOfCol; i++){
+	//		ctx.moveTo(i * blockSize, 0);
+	//		ctx.lineTo(i * blockSize, grid.noOfRow * blockSize);
+	//		ctx.stroke();
+	//	}
+	//	for (var i = 0; i < grid.noOfRow; i++){
+	//		ctx.moveTo(0, i * blockSize);
+	//		ctx.lineTo(grid.noOfCol * blockSize, i * blockSize);
+	//		ctx.stroke();
+	//	}
+	//}
+	//
+	//var getColor = function(code){
+	//	switch (code) {
+	//		case 0:
+	//			return "#00f";
+	//		case 1:
+	//			return "#0f0";
+	//		case 2:
+	//			return "#0ff";
+	//		case 3:
+	//			return "#f00";
+	//		case 4:
+	//			return "#f0f";
+	//		case 5:
+	//			return "#ff0";
+	//		case 6:
+	//			return "#fff";
+	//		default:
+	//			return "#f82";
+	//	}
+	//}
 	//
 	//var moveLeft = function(grid, shape){
 	//	if (gameStatus != STATUS_PROCESS)
