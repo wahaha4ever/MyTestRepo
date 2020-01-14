@@ -711,7 +711,7 @@
 		// Draw a diagonal Red line on the canvas
 		ctx.beginPath();
 		ctx.lineWidth = 5;
-		ctx.strokeStyle = '#c0F';
+		ctx.strokeStyle = '#a0F';
 		ctx.moveTo(10, 20);
 		ctx.lineTo(canvas.width - 20, canvas.height - 20);
 		ctx.stroke();
