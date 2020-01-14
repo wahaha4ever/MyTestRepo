@@ -42,109 +42,109 @@
 	
 (function(window){
 	'use strict';	
-	//class Shape {
+	class Shape {
 	//	content = [];
 	//	shapeCode = 0;
-	//	constructor(shapeCode) {
-	//		if (shapeCode)
-	//			this.fnInit(shapeCode);
-	//		else
-	//			this.fnInit(0);
-	//	}
-	//	fnApply = function(shapeCode, shapeArray){
-	//		this.shapeCode = shapeCode;
-	//		this.content = shapeArray.map(function(x) { return x.slice(); });
-	//	}
-	//	fnInit = function(shapeCode) {
-	//		shapeCode = shapeCode || Math.floor(Math.random() * 10);
-	//		this.shapeCode = shapeCode
-	//		if (shapeCode == 1){
-	//			this.content = [
-	//				[0,0,0,0],
-	//				[1,1,1,1],
-	//				[0,0,0,0],
-	//				[0,0,0,0]
-	//			]
-	//		}
-	//		else if (shapeCode == 2){
-	//			this.content = [
-	//				[2,2,0],
-	//				[0,2,2],
-	//				[0,0,0]
-	//			]
-	//		}
-	//		else if (shapeCode == 3){
-	//			this.content = [
-	//				[0,3,3],
-	//				[3,3,0],
-	//				[0,0,0]
-	//			]
-	//		}
-	//		else if (shapeCode == 4){
-	//			this.content = [
-	//				[0,4,0],
-	//				[4,4,4],
-	//				[0,0,0]
-	//			]
-	//		}
-	//		else if (shapeCode == 5){
-	//			this.content = [
-	//				[5,5],
-	//				[5,5]
-	//			]
-	//		}
-	//		else if (shapeCode == 6){
-	//			this.content = [
-	//				[6,0,0],
-	//				[6,6,6],
-	//				[0,0,0]
-	//			]
-	//		}
-	//		else if (shapeCode == 7){
-	//			this.content = [
-	//				[0,0,7],
-	//				[7,7,7],
-	//				[0,0,0]
-	//			]
-	//		}
-	//		else {
-	//			this.content = [
-	//				[8,0,8],
-	//				[0,8,0],
-	//				[0,8,0]
-	//			]
-	//			//this.content = [
-	//			//	[1,2,3,4],
-	//			//	[1,2,3,4],
-	//			//	[1,2,3,4],
-	//			//	[1,2,3,4]
-	//			//]
-	//		}
-	//	}
-	//	fnRotate = function(bClockwise) {
-	//		//let shapeArray = this.content.map((x) => x);
-	//		let shapeArray = this.content.map(function(x) { return x.slice(); });
-	//		let n = this.content.length - 1;
-	//		if (bClockwise) {
-	//			for ( var r = 0; r < this.content.length; r++ )
-	//				for ( var c = 0; c < this.content[r].length; c++ )
-	//					shapeArray[c][n-r] = this.content[r][c];					
-	//		}
-	//		else {
-	//			for ( var r = 0; r < this.content.length; r++ )
-	//				for ( var c = 0; c < this.content[r].length; c++ )
-	//					shapeArray[n-c][r] = this.content[r][c];					
-	//		}
-	//		//return shapeArray;
-	//		this.content = shapeArray;
-	//	}
-	//	fnGetContent = function(){
-	//		return this.content;
-	//	}
-	//	//fnSetContent = function(shapeArray){
-	//	//	this.content = shapeArray;
-	//	//}
-	//}
+		constructor(shapeCode) {
+			if (shapeCode)
+				this.fnInit(shapeCode);
+			else
+				this.fnInit(0);
+		}
+		fnApply(shapeCode, shapeArray){
+			this.shapeCode = shapeCode;
+			this.content = shapeArray.map(function(x) { return x.slice(); });
+		}
+		fnInit(shapeCode) {
+			shapeCode = shapeCode || Math.floor(Math.random() * 10);
+			this.shapeCode = shapeCode
+			if (shapeCode == 1){
+				this.content = [
+					[0,0,0,0],
+					[1,1,1,1],
+					[0,0,0,0],
+					[0,0,0,0]
+				]
+			}
+			else if (shapeCode == 2){
+				this.content = [
+					[2,2,0],
+					[0,2,2],
+					[0,0,0]
+				]
+			}
+			else if (shapeCode == 3){
+				this.content = [
+					[0,3,3],
+					[3,3,0],
+					[0,0,0]
+				]
+			}
+			else if (shapeCode == 4){
+				this.content = [
+					[0,4,0],
+					[4,4,4],
+					[0,0,0]
+				]
+			}
+			else if (shapeCode == 5){
+				this.content = [
+					[5,5],
+					[5,5]
+				]
+			}
+			else if (shapeCode == 6){
+				this.content = [
+					[6,0,0],
+					[6,6,6],
+					[0,0,0]
+				]
+			}
+			else if (shapeCode == 7){
+				this.content = [
+					[0,0,7],
+					[7,7,7],
+					[0,0,0]
+				]
+			}
+			else {
+				this.content = [
+					[8,0,8],
+					[0,8,0],
+					[0,8,0]
+				]
+				//this.content = [
+				//	[1,2,3,4],
+				//	[1,2,3,4],
+				//	[1,2,3,4],
+				//	[1,2,3,4]
+				//]
+			}
+		}
+		fnRotate(bClockwise) {
+			//let shapeArray = this.content.map((x) => x);
+			let shapeArray = this.content.map(function(x) { return x.slice(); });
+			let n = this.content.length - 1;
+			if (bClockwise) {
+				for ( var r = 0; r < this.content.length; r++ )
+					for ( var c = 0; c < this.content[r].length; c++ )
+						shapeArray[c][n-r] = this.content[r][c];					
+			}
+			else {
+				for ( var r = 0; r < this.content.length; r++ )
+					for ( var c = 0; c < this.content[r].length; c++ )
+						shapeArray[n-c][r] = this.content[r][c];					
+			}
+			//return shapeArray;
+			this.content = shapeArray;
+		}
+		fnGetContent(){
+			return this.content;
+		}
+		//fnSetContent = function(shapeArray){
+		//	this.content = shapeArray;
+		//}
+	}
 	
 	//class Grid {
 	//	noOfRow = 0;
