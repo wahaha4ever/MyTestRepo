@@ -8,6 +8,13 @@
 			this.shapeCode = shapeCode || Math.floor(Math.random() * 8) + 1;
 			this.fnInit(this.shapeCode);
 		}
+		fnAllowRotate() {
+			if (this.shapeCode == 5)
+				return false;
+			if (this.shapeCode == 8)
+				return false;
+			return true;
+		}
 		fnIsBoom() {
 			return (this.shapeCode == 8);
 		}
@@ -73,12 +80,6 @@
 					[0,8,0],
 					[0,8,0]
 				]
-				//this.content = [
-				//	[1,2,3,4],
-				//	[1,2,3,4],
-				//	[1,2,3,4],
-				//	[1,2,3,4]
-				//]
 			}
 		}
 		fnRotate(bClockwise) {
@@ -316,12 +317,15 @@
 	}
 	
 	var moveRotation = function(grid, shape, bClockwise) {
+		if (gameStatus != STATUS_PROCESS)
+			return;
+		if (!shape.fnAllowRotate())
+			return;
 		let org = shape.fnGetContent();
 		shape.fnRotate(bClockwise);
 		if (!grid.fnIsValid(shape, getIndexR(grid, currY), currX)){
 			shape.fnApply(shape.shapeCode, org);
-		}
-		
+		}		
 		predY = calcY(grid, shape, currX, currY);
 	}
 	
@@ -353,6 +357,17 @@
 	let grid = new Grid(20, 10);	
 	let shape = new Shape(Math.floor(Math.random() * 10));
 	let nextShape = new Shape(Math.floor(Math.random() * 10));
+	
+	// variable for animation (remove row)
+	var animeID = 0
+	var arrIdx = [];
+	var animateInterval = 80;
+	
+	// variable for refresh per frame
+	var then = Date.now();
+	var now;	
+	var actionInterval = 1000;		
+	var myReq;
 	
 	
 	let primaryCtx;
@@ -417,7 +432,8 @@
 		grid.fnInit();
 		drawBuff(grid, blockSize);
 		
-		initNext();
+		nextShape.fnInit();
+		initFromNext();
 		
 		//shape.fnInit();
 		//nextShape.fnInit();
@@ -431,13 +447,14 @@
 		myReq = requestAnimationFrame( mainLoop );	
 	}
 	
-	var initNext = function() {
-		shape.fnInit();
-		nextShape.fnInit();
+	var initFromNext = function() {
+		shape.fnInit(nextShape.fnGetShapeCode());
 		drawShapeBuff(shape, blockSize);
+		
 		currY = deftY;
 		currX = deftX;
 		predY = calcY(grid, shape, currX, currY);
+		nextShape.fnInit();
 	}
 	
 	var drawRow = function(ctx, color, py, blockSize, width) {
@@ -554,16 +571,7 @@
 	
 	
 	
-	// variable for animation (remove row)
-	var animeID = 0
-	var arrIdx = [];
-	var animateInterval = 80;
-	
-	// variable for refresh per frame
-	var then = Date.now();
-	var now;	
-	var actionInterval = 1000;		
-	var myReq;
+
 	
 	//function run() {
 	//	
@@ -604,7 +612,7 @@
 				grid.fnApplyShape(shape, getIndexR(grid, currY), currX);
 				drawShapeBuff2Buff(currX, currY, blockSize);				
 				
-				initNext();
+				initFromNext();
 				
 				arrIdx = grid.fnGetFullRowIdx();
 				if (arrIdx.length > 0)
