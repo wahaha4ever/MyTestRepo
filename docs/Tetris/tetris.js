@@ -98,7 +98,10 @@
 			//return shapeArray;
 			this.content = shapeArray;
 		}
-		fnGetContent(){
+		fnGetShapeCode() {
+			return this.shapeCode;
+		}
+		fnGetContent() {
 			return this.content;
 		}
 		//fnSetContent = function(shapeArray){
@@ -276,12 +279,23 @@
 		}
 	}
 	
+	var calcY = function(grid, shape, cx, cy){
+		let py = cy;
+		while (grid.fnIsValid(shape, getIndexR(grid, py), cx))
+			py++;
+		py--;
+		
+		return py;
+	}
+	
 	var moveLeft = function(grid, shape){
 		if (gameStatus != STATUS_PROCESS)
 			return;
 		currX--;
 		if (!grid.fnIsValid(shape, getIndexR(grid, currY), currX))
 			currX++;
+		
+		predY = calcY(grid, shape, currX, currY);
 	}
 	var moveRight = function(grid, shape){
 		if (gameStatus != STATUS_PROCESS)
@@ -289,13 +303,16 @@
 		currX++;
 		if (!grid.fnIsValid(shape, getIndexR(grid, currY), currX))
 			currX--;
+		
+		predY = calcY(grid, shape, currX, currY);
 	}
 	var moveDown = function(grid, shape){		
 		if (gameStatus != STATUS_PROCESS)
 			return;
-		while (grid.fnIsValid(shape, getIndexR(grid, currY), currX))
-			currY++;
-		currY--;
+		currY = calcY(grid, shape, currX, currY);
+		//while (grid.fnIsValid(shape, getIndexR(grid, currY), currX))
+		//	currY++;
+		//currY--;
 	}
 	
 	var moveRotation = function(grid, shape, bClockwise) {
@@ -304,6 +321,8 @@
 		if (!grid.fnIsValid(shape, getIndexR(grid, currY), currX)){
 			shape.fnApply(shape.shapeCode, org);
 		}
+		
+		predY = calcY(grid, shape, currX, currY);
 	}
 	
 	var pause = function() {
@@ -320,7 +339,8 @@
 	let deftX = 5,
 		deftY = 0,
 		currX = 5,
-		currY = -1;
+		currY = -1,
+		predY = currY;
 	
 	let STATUS_INIT = 0;
 	let STATUS_PROCESS = 1;
@@ -354,6 +374,11 @@
 		buffCanvasShape.width = blockSize * 5;
 		buffCanvasShape.height = blockSize * 5;
 		buffCtxShape = buffCanvasShape.getContext("2d");
+		
+		//buffCanvasShapePred = document.createElement('canvas');
+		//buffCanvasShapePred.width = blockSize * 5;
+		//buffCanvasShapePred.height = blockSize * 5;
+		//buffCtxShapePred = buffCanvasShapePred.getContext("2d");
 		
 		primaryCtx.save();
 		
@@ -390,14 +415,29 @@
 	
 	var init = function() {
 		grid.fnInit();
-		shape.fnInit();
-		nextShape.fnInit();
+		drawBuff(grid, blockSize);
+		
+		initNext();
+		
+		//shape.fnInit();
+		//nextShape.fnInit();
 		gameStatus = STATUS_PROCESS;		
 		
-		drawBuff(grid, blockSize);		
-		drawShapeBuff(shape, blockSize);
+		
+		//drawShapeBuff(shape, blockSize);
+		
+		//predY = calcY(grid, shape, currX, currY);
 		
 		myReq = requestAnimationFrame( mainLoop );	
+	}
+	
+	var initNext = function() {
+		shape.fnInit();
+		nextShape.fnInit();
+		drawShapeBuff(shape, blockSize);
+		currY = deftY;
+		currX = deftX;
+		predY = calcY(grid, shape, currX, currY);
 	}
 	
 	var drawRow = function(ctx, color, py, blockSize, width) {
@@ -411,10 +451,15 @@
 		drawGridData(buffCtx, grid, blockSize);
 	}
 	
-	var drawBuff2Screen = function(px, py, blockSize) {
+	var drawBuff2Screen = function(px, py, blockSize, predY) {
 		primaryCtx.drawImage(buffCanvas, 0, 0);
-		if (gameStatus == STATUS_PROCESS)
+		if (gameStatus == STATUS_PROCESS) {
 			primaryCtx.drawImage(buffCanvasShape, px * blockSize, py * blockSize);
+			primaryCtx.save();
+			primaryCtx.globalAlpha = 0.4;
+			primaryCtx.drawImage(buffCanvasShape, px * blockSize, predY * blockSize);
+			primaryCtx.restore();
+		}
 	}
 	
 	var drawShapeBuff2Buff = function(px, py, blockSize) {
@@ -435,6 +480,7 @@
 			}
 		}
 	}
+
 	
 	
 	document.getElementById("btnLeft").addEventListener("click", function(){
@@ -553,26 +599,21 @@
 			if (!grid.fnIsValid(shape, getIndexR(grid, currY), currX))
 			{
 				currY--;
+				
+				// apply data and screen image into grid
 				grid.fnApplyShape(shape, getIndexR(grid, currY), currX);
-				drawShapeBuff2Buff(currX, currY, blockSize);
-				shape.fnInit();
-				nextShape.fnInit();
-				currY = deftY;
-				currX = deftX;
+				drawShapeBuff2Buff(currX, currY, blockSize);				
+				
+				initNext();
+				
 				arrIdx = grid.fnGetFullRowIdx();
 				if (arrIdx.length > 0)
 				{
-					//for(var i=0; i<arrIdx.length; i++) {
-					//	grid.fnRemoveRow(arrIdx[i]);
-					//	drawBuff();
-					//}
 					cancelAnimationFrame(myReq);					
 					gameStatus = STATUS_REMOVING;
-					//renderLoop(animateInterval, animeLoop, animeFinish);					
 					myReq = requestAnimationFrame( () => renderLoop(animateInterval, animeLoop, animeFinish) );
-					//arrIdx = [];
 				}
-				drawShapeBuff(shape, blockSize);
+				
 				
 				if (!grid.fnIsValid(shape, getIndexR(grid, currY), currX)) {
 					console.log("Game Over");
@@ -580,7 +621,7 @@
 				}
 			}
 		}
-		drawBuff2Screen(currX, currY, blockSize);
+		drawBuff2Screen(currX, currY, blockSize, predY);
 	
 		if (gameStatus == STATUS_PROCESS) {		
 			cancelAnimationFrame(myReq);
@@ -596,7 +637,7 @@
 				// animation finish
 				grid.fnRemoveRow(arrIdx[0]);
 				drawBuff(grid, blockSize);
-				drawBuff2Screen(currX, currY, blockSize);
+				drawBuff2Screen(currX, currY, blockSize, predY);
 				arrIdx.splice(0, 1);
 				animeID = 0;
 				return true;	// to next arrIdx
@@ -605,7 +646,7 @@
 				// animation for row removing
 				let color = "rgba(255, 255, 255, "+(animeID / 10)+")";
 				drawRow(buffCtx, color, getY(grid, arrIdx[0]), blockSize, grid.noOfCol * blockSize);
-				drawBuff2Screen(currX, currY, blockSize);
+				drawBuff2Screen(currX, currY, blockSize, predY);
 				return true;
 			}
 		}
@@ -618,6 +659,7 @@
 		animeID = 0;
 		arrIdx = [];
 		gameStatus = STATUS_PROCESS;
+		predY = calcY(grid, shape, currX, currY);
 		myReq = requestAnimationFrame( mainLoop );			
 	}
 	
