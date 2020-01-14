@@ -24,10 +24,15 @@
 	</canvas>
 </div>
 	<script>	  
+	(function(window){
+		'use strict';
 		let myReq;
 		function run() {
 			let canvas = document.getElementById("myCanvas");
 			let ctx = canvas.getContext("2d");
+			
+			ctx.clearRect(0,0, 100,100);
+			
 			ctx.strokeStyle = "#000";
 			ctx.lineWidth = 2;
 			ctx.moveTo(0, 0);
@@ -59,6 +64,7 @@
 
 		}
 		myReq = requestAnimationFrame ( run );
+	})(this);
 	</script>
 </body>
 <html>
