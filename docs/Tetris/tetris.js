@@ -103,75 +103,75 @@
 		//	this.content = shapeArray;
 		//}
 	}
-	//
-	//class Grid {
-	//	noOfRow = 0;
-	//	noOfCol = 0;
-	//	content = [];
-	//	constructor(noOfRow, noOfCol) {
-	//		this.noOfCol = noOfCol;
-	//		this.noOfRow = noOfRow;
-	//		this.fnInit();
-	//	}
-	//	fnInit = function() {
-	//		for ( var r = 0; r < this.noOfRow; r++ ){
-	//			let data = []
-	//			for ( var c = 0; c < this.noOfCol; c++ ){
-	//				let value = 0;//Math.floor(Math.random() * 10);
-	//				data.push(value);
-	//			}
-	//			this.content.push(data);
-	//		}
-	//	}
-	//	fnApplyShape = function(shape, ixR, ixC) {
-	//		let shapeArray = shape.fnGetContent();
-	//		for ( var r = 0; r < shapeArray.length; r++ )
-	//			for ( var c = 0; c < shapeArray[r].length; c++ )
-	//				if (shapeArray[r][c] != 0)
-	//					this.content[ixR - r][ixC + c] = shapeArray[r][c];
-	//	}
-	//	fnIsValid = function(shape, ixR, ixC) {
-	//		let shapeArray = shape.fnGetContent();
-	//		for ( var r = 0; r < shapeArray.length; r++ ) {
-	//			for ( var c = 0; c < shapeArray[r].length; c++ ) {
-	//				if (shapeArray[r][c] != 0) {
-	//					if (ixR - r < 0 || ixR - r > this.noOfRow)
-	//						return false;
-	//					if (ixC + c < 0 || ixC + c > this.noOfCol)
-	//						return false;
-	//					if (this.content[ixR - r][ixC + c] != 0)
-	//						return false;
-	//				}
-	//			}
-	//		}					
-	//		return true;
-	//	}
-	//	fnGetData = function(ixR, ixC){
-	//		return this.content[ixR][ixC];
-	//	}
-	//	fnGetFullRowIdx = function() {
-	//		let fullRowIdx = [];
-	//		for ( var r = this.content.length - 1; r >=0 ; r-- ) {
-	//			let bIsFullRow = true;
-	//			for ( var c = 0; c < this.content[r].length; c++ ) {
-	//				if (this.content[r][c] == 0)
-	//					bIsFullRow = false;
-	//			}
-	//			if (bIsFullRow)
-	//				fullRowIdx.push(r);
-	//		}
-	//		return fullRowIdx;
-	//	}
-	//	fnRemoveRow = function(ixR){
-	//		this.content.splice(ixR, 1);
-	//		let data = [];
-	//		for ( var c = 0; c < this.noOfCol; c++ ){
-	//			let value = 0;
-	//			data.push(value);
-	//		}
-	//		this.content.push(data);
-	//	}
-	//}
+	
+	class Grid {
+		noOfRow = 0;
+		noOfCol = 0;
+		content = [];
+		constructor(noOfRow, noOfCol) {
+			this.noOfCol = noOfCol;
+			this.noOfRow = noOfRow;
+			this.fnInit();
+		}
+		fnInit = function() {
+			for ( var r = 0; r < this.noOfRow; r++ ){
+				let data = []
+				for ( var c = 0; c < this.noOfCol; c++ ){
+					let value = 0;//Math.floor(Math.random() * 10);
+					data.push(value);
+				}
+				this.content.push(data);
+			}
+		}
+		fnApplyShape = function(shape, ixR, ixC) {
+			let shapeArray = shape.fnGetContent();
+			for ( var r = 0; r < shapeArray.length; r++ )
+				for ( var c = 0; c < shapeArray[r].length; c++ )
+					if (shapeArray[r][c] != 0)
+						this.content[ixR - r][ixC + c] = shapeArray[r][c];
+		}
+		fnIsValid = function(shape, ixR, ixC) {
+			let shapeArray = shape.fnGetContent();
+			for ( var r = 0; r < shapeArray.length; r++ ) {
+				for ( var c = 0; c < shapeArray[r].length; c++ ) {
+					if (shapeArray[r][c] != 0) {
+						if (ixR - r < 0 || ixR - r > this.noOfRow)
+							return false;
+						if (ixC + c < 0 || ixC + c > this.noOfCol)
+							return false;
+						if (this.content[ixR - r][ixC + c] != 0)
+							return false;
+					}
+				}
+			}					
+			return true;
+		}
+		fnGetData = function(ixR, ixC){
+			return this.content[ixR][ixC];
+		}
+		fnGetFullRowIdx = function() {
+			let fullRowIdx = [];
+			for ( var r = this.content.length - 1; r >=0 ; r-- ) {
+				let bIsFullRow = true;
+				for ( var c = 0; c < this.content[r].length; c++ ) {
+					if (this.content[r][c] == 0)
+						bIsFullRow = false;
+				}
+				if (bIsFullRow)
+					fullRowIdx.push(r);
+			}
+			return fullRowIdx;
+		}
+		fnRemoveRow = function(ixR){
+			this.content.splice(ixR, 1);
+			let data = [];
+			for ( var c = 0; c < this.noOfCol; c++ ){
+				let value = 0;
+				data.push(value);
+			}
+			this.content.push(data);
+		}
+	}
 	//
 	//if ( !window.requestAnimationFrame ) {
 	//
@@ -669,7 +669,7 @@
 		// Draw a diagonal Red line on the canvas
 		ctx.beginPath();
 		ctx.lineWidth = 5;
-		ctx.strokeStyle = '#FF0';
+		ctx.strokeStyle = '#F0F';
 		ctx.moveTo(20, 20);
 		ctx.lineTo(canvas.width - 20, canvas.height - 20);
 		ctx.stroke();
