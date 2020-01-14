@@ -680,7 +680,7 @@
 	}
 	myReq = requestAnimationFrame ( testrun );
 	
-	alert("ASDF");
+	//alert("ASDF");
 	//init();
 	
 })(this);
