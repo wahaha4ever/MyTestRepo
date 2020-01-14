@@ -4,6 +4,7 @@
 	//	content = [];
 	//	shapeCode = 0;
 		constructor(shapeCode) {
+			this.content = [];
 			if (shapeCode)
 				this.fnInit(shapeCode);
 			else
@@ -109,6 +110,7 @@
 		//noOfCol = 0;
 		//content = [];
 		constructor(noOfRow, noOfCol) {
+			this.content = [];
 			this.noOfCol = noOfCol;
 			this.noOfRow = noOfRow;
 			this.fnInit();
@@ -354,33 +356,33 @@
 		
 		primaryCtx.save();
 		
-		//window.addEventListener('resize', resizeCanvas, false);
-		//
-		//function resizeCanvas() {
-        //    canvas.width = window.innerWidth;
-        //    canvas.height = window.innerHeight;
-		//	
-		//	buffCanvas.width = canvas.width;
-		//	buffCanvas.height = canvas.height;
-		//	
-		//	let blockH = Math.floor(canvas.height / grid.noOfRow);
-		//	let blockV = Math.floor(canvas.width / grid.noOfCol);		
-		//	blockSize = Math.min(blockH, blockV);
-		//	
-		//	let margin = Math.floor((canvas.width - (blockSize * 10))/ 2);
-		//	primaryCtx.restore();
-		//	primaryCtx.translate(margin, 0);
-		//	
-		//	buffCanvasShape.width = blockSize * 5;
-		//	buffCanvasShape.height = blockSize * 5;
-		//	
-		//	if (gameStatus == STATUS_PROCESS)
-		//	{
-		//		drawBuff(grid, blockSize);
-		//		drawShapeBuff(shape, blockSize);
-		//	}
-		//}
-		//resizeCanvas();
+		window.addEventListener('resize', resizeCanvas, false);
+		
+		function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+			
+			buffCanvas.width = canvas.width;
+			buffCanvas.height = canvas.height;
+			
+			let blockH = Math.floor(canvas.height / grid.noOfRow);
+			let blockV = Math.floor(canvas.width / grid.noOfCol);		
+			blockSize = Math.min(blockH, blockV);
+			
+			let margin = Math.floor((canvas.width - (blockSize * 10))/ 2);
+			primaryCtx.restore();
+			primaryCtx.translate(margin, 0);
+			
+			buffCanvasShape.width = blockSize * 5;
+			buffCanvasShape.height = blockSize * 5;
+			
+			if (gameStatus == STATUS_PROCESS)
+			{
+				drawBuff(grid, blockSize);
+				drawShapeBuff(shape, blockSize);
+			}
+		}
+		resizeCanvas();
 	}
 	initCanvas();
 	
@@ -681,6 +683,6 @@
 	//myReq = requestAnimationFrame ( testrun );
 	
 	//alert("ASDF");
-	//init();
+	init();
 	
 })(this);
