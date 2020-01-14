@@ -67,11 +67,16 @@
 			}
 			else {
 				this.content = [
-					[1,2,3,4],
-					[1,2,3,4],
-					[1,2,3,4],
-					[1,2,3,4]
+					[8,0,8],
+					[0,8,0],
+					[0,8,0]
 				]
+				//this.content = [
+				//	[1,2,3,4],
+				//	[1,2,3,4],
+				//	[1,2,3,4],
+				//	[1,2,3,4]
+				//]
 			}
 		}
 		fnRotate = function(bClockwise) {
@@ -335,7 +340,7 @@
 	
 	var initCanvas = function() {
 		let canvas = document.getElementById("myCanvas");
-		primaryCtx = canvas.getContext("2d");
+		primaryCtx = canvas.getContext("2d");	
 		
 		buffCanvas = document.createElement('canvas');
 		buffCanvas.width = canvas.width;
@@ -346,6 +351,30 @@
 		buffCanvasShape.width = blockSize * 5;
 		buffCanvasShape.height = blockSize * 5;
 		buffCtxShape = buffCanvasShape.getContext("2d");
+		
+		window.addEventListener('resize', resizeCanvas, false);
+
+		function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+			
+			buffCanvas.width = canvas.width;
+			buffCanvas.height = canvas.height;
+			
+			let blockH = Math.floor(canvas.height / grid.noOfRow);
+			let blockV = Math.floor(canvas.width / grid.noOfCol);		
+			blockSize = Math.min(blockH, blockV);
+			
+			buffCanvasShape.width = blockSize * 5;
+			buffCanvasShape.height = blockSize * 5;
+			
+			if (gameStatus == STATUS_PROCESS)
+			{
+				drawBuff(grid, blockSize);
+				drawShapeBuff(shape, blockSize);
+			}
+		}
+		resizeCanvas();
 	}
 	initCanvas();
 
@@ -354,24 +383,20 @@
 		grid.fnInit();
 		shape.fnInit();
 		nextShape.fnInit();
-		gameStatus = STATUS_PROCESS;
+		gameStatus = STATUS_PROCESS;		
 		
-		
-		drawBuff();
-		
-		//buffCtx.save();
-		//mainLoop();
-		
+		drawBuff(grid, blockSize);		
 		drawShapeBuff(shape, blockSize);
+		
 		myReq = requestAnimationFrame( mainLoop );	
 	}
 
-	var drawRow = function(ctx, color, py, blockSize) {
+	var drawRow = function(ctx, color, py, blockSize, width) {
 		ctx.fillStyle = color;
-		ctx.fillRect(0, py * blockSize, 1000, blockSize);
+		ctx.fillRect(0, py * blockSize, width, blockSize);
 	}
 	
-	var drawBuff = function() {
+	var drawBuff = function(grid, blockSize) {
 		drawGridBG(buffCtx, grid, blockSize);
 		drawGridLine(buffCtx, grid, blockSize);
 		drawGridData(buffCtx, grid, blockSize);
@@ -403,7 +428,19 @@
 	}
 	
 	
-	
+	document.getElementById("btnLeft").addEventListener("click", function(){
+		moveLeft(grid, shape);
+	});
+	document.getElementById("btnRight").addEventListener("click", function(){
+		moveRight(grid, shape);
+	});
+	document.getElementById("btnDown").addEventListener("click", function(){
+		moveDown(grid, shape);
+	});
+	document.getElementById("btnRotate").addEventListener("click", function(){
+		moveRotation(grid, shape, true);
+		drawShapeBuff(shape, blockSize);
+	});
 	
 	var keyConfig = {
 		Left : { Code : 37, Value : false },
@@ -542,16 +579,6 @@
 		}
 	}
 	
-	//function animeRemoveRow() {
-	//	if (window.requestAnimationFrame) {
-	//		window.requestAnimationFrame(Gamepad.tick);
-	//	} else if (window.mozRequestAnimationFrame) {
-	//		window.mozRequestAnimationFrame(Gamepad.tick);
-	//	} else if (window.webkitRequestAnimationFrame) {
-	//		window.webkitRequestAnimationFrame(Gamepad.tick);
-	//	}
-	//}
-	
 	function animeLoop(){
 		console.log("fnAction");
 		if (arrIdx.length > 0) {
@@ -559,7 +586,7 @@
 			if (animeID >= 10) {
 				// animation finish
 				grid.fnRemoveRow(arrIdx[0]);
-				drawBuff();
+				drawBuff(grid, blockSize);
 				drawBuff2Screen(currX, currY, blockSize);
 				arrIdx.splice(0, 1);
 				animeID = 0;
@@ -568,7 +595,7 @@
 			else {
 				// animation for row removing
 				let color = "rgba(255, 255, 255, "+(animeID / 10)+")";
-				drawRow(buffCtx, color, getY(grid, arrIdx[0]), blockSize);
+				drawRow(buffCtx, color, getY(grid, arrIdx[0]), blockSize, grid.noOfCol * blockSize);
 				drawBuff2Screen(currX, currY, blockSize);
 				return true;
 			}
@@ -609,9 +636,5 @@
 	}
 	
 	init();
-	
-	
-	
-
 	
 })(this);
