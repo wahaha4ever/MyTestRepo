@@ -670,7 +670,7 @@
 		ctx.beginPath();
 		ctx.lineWidth = 5;
 		ctx.strokeStyle = '#F0F';
-		ctx.moveTo(20, 20);
+		ctx.moveTo(10, 20);
 		ctx.lineTo(canvas.width - 20, canvas.height - 20);
 		ctx.stroke();
 		
