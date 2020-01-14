@@ -1,5 +1,5 @@
 (function(window){
-	'use strict';	
+	//'use strict';	
 	class Shape {
 		content = [];
 		shapeCode = 0;
