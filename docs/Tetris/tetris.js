@@ -1,5 +1,5 @@
 (function(window){
-	'use strict';	
+	//'use strict';	
 	//class Shape {
 	//	content = [];
 	//	shapeCode = 0;
@@ -196,10 +196,10 @@
 	//		return window.cancelAnimationFrame || window.mozCancelAnimationFrame;
 	//	})();
 	//}
-
-	
-	
-	
+	//
+	//
+	//
+	//
 	//var getIndexR = function(grid, y){
 	//	return grid.noOfRow - 1 - y;
 	//}
@@ -313,31 +313,31 @@
 	//		myReq = requestAnimationFrame( mainLoop );
 	//	}
 	//}
-	
-	let deftX = 5,
-		deftY = 0,
-		currX = 5,
-		currY = -1;
-
-	let STATUS_INIT = 0;
-	let STATUS_PROCESS = 1;
-	let STATUS_REMOVING = 2;
-	let STATUS_PAUSE = 3;
-	let STATUS_GAMEOVER = 4;
-	
-	let gameStatus = STATUS_INIT;	
-	let blockSize = 10;	
-	let grid = new Grid(20, 10);	
-	let shape = new Shape(Math.floor(Math.random() * 10));
-	let nextShape = new Shape(Math.floor(Math.random() * 10));
-	
-
-	let primaryCtx;
-	let buffCanvasShape;
-	let buffCtxShape;
-	let buffCanvas;
-	let buffCtx;
-	
+	//
+	//let deftX = 5,
+	//	deftY = 0,
+	//	currX = 5,
+	//	currY = -1;
+	//
+	//let STATUS_INIT = 0;
+	//let STATUS_PROCESS = 1;
+	//let STATUS_REMOVING = 2;
+	//let STATUS_PAUSE = 3;
+	//let STATUS_GAMEOVER = 4;
+	//
+	//let gameStatus = STATUS_INIT;	
+	//let blockSize = 10;	
+	//let grid = new Grid(20, 10);	
+	//let shape = new Shape(Math.floor(Math.random() * 10));
+	//let nextShape = new Shape(Math.floor(Math.random() * 10));
+	//
+	//
+	//let primaryCtx;
+	//let buffCanvasShape;
+	//let buffCtxShape;
+	//let buffCanvas;
+	//let buffCtx;
+	//
 	//var initCanvas = function() {
 	//	let canvas = document.getElementById("myCanvas");
 	//	primaryCtx = canvas.getContext("2d");	
@@ -383,8 +383,8 @@
 	//	//resizeCanvas();
 	//}
 	//initCanvas();
-
-	
+	//
+	//
 	//var init = function() {
 	//	grid.fnInit();
 	//	shape.fnInit();
@@ -641,7 +641,7 @@
 	//	}
 	//}
 	
-	let myReq;
+	var myReq;
 	function testrun() {
 		let canvas = document.getElementById("myCanvas");
 		let ctx = canvas.getContext("2d");
