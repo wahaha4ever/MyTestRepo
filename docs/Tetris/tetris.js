@@ -123,6 +123,7 @@
 			this.fnInit();
 		}
 		fnInit() {
+			this.content = [];
 			for ( var r = 0; r < this.noOfRow; r++ ){
 				let data = []
 				for ( var c = 0; c < this.noOfCol; c++ ){
@@ -489,7 +490,15 @@
 		nextShape.fnInit();
 	}
 	
-
+	var drawStatus = function() {
+		var element = document.getElementById("infoGameOver");
+		if (gameStatus == STATUS_GAMEOVER) {			
+			element.classList.add("infoShow");
+		}
+		else {
+			element.classList.remove("infoShow");
+		}
+	}
 	
 	var drawBuff = function(grid, blockSize) {
 		drawGridBG(buffCtx, grid, blockSize);
@@ -597,6 +606,10 @@
 		moveRotation(grid, shape, true);
 		drawShapeBuff(shape, blockSize);
 	});
+	document.getElementById("btnRetry").addEventListener("click", function(){
+		init();
+		drawStatus();		
+	});
 	
 	
 
@@ -663,13 +676,14 @@
 						if (!grid.fnIsValid(shape, getIndexR(grid, currY), currX)) {
 							console.log("Game Over");
 							gameStatus = STATUS_GAMEOVER;
+							drawStatus();
 						}
 					}
 				}
 			}
 		}	
-		if (gameStatus == STATUS_PROCESS) {		
-			drawBuff2Screen(currX, currY, blockSize, predY);
+		drawBuff2Screen(currX, currY, blockSize, predY);
+		if (gameStatus == STATUS_PROCESS) {					
 			cancelAnimationFrame(myReq);
 			myReq = requestAnimationFrame( mainLoop );
 		}
