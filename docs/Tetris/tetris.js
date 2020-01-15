@@ -7,6 +7,8 @@
 			this.content = [];
 			this.shapeCode = shapeCode || Math.floor(Math.random() * 8) + 1;
 			this.fnInit(this.shapeCode);
+			//this.offsetX = 1;
+			//this.offsetY = 1;
 		}
 		fnAllowRotate() {
 			if (this.shapeCode == 5)
@@ -626,19 +628,24 @@
 				drawShapeBuff2Buff(currX, currY, blockSize);
 				
 				if (shape.fnIsBoom()){
+					// boom
 					cancelAnimationFrame(myReq);					
 					gameStatus = STATUS_REMOVING;
+					animeID = 0;
 					myReq = requestAnimationFrame( () => renderLoop(animateInterval, animeBoomLoop, null, animeFinish) );
 				}
 				else {				
 					arrIdx = grid.fnGetFullRowIdx();
 					if (arrIdx.length > 0)
 					{
+						// remove row
 						cancelAnimationFrame(myReq);					
 						gameStatus = STATUS_REMOVING;
+						animeID = 0;
 						myReq = requestAnimationFrame( () => renderLoop(animateInterval, animeLoop, null, animeFinish) );
 					}
 					else {
+						// normal flow
 						initFromNext();
 						if (!grid.fnIsValid(shape, getIndexR(grid, currY), currX)) {
 							console.log("Game Over");
