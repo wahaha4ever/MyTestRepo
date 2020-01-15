@@ -169,6 +169,11 @@
 			}
 			return fullRowIdx;
 		}
+		fnClearData(ixR, ixC) {
+			console.log(ixR, ixC);
+			if (ixR >= 0 && ixR < this.noOfRow && ixC >=0 && ixC < this.noOfCol)
+				this.content[ixR][ixC] = 0;
+		}
 		fnRemoveRow(ixR){
 			this.content.splice(ixR, 1);
 			let data = [];
@@ -214,6 +219,7 @@
 		return grid.noOfRow - 1 - r;
 	}
 	
+	
 	var drawGridData = function(ctx, grid, blockSize){
 		for (var r = 0; r < grid.noOfRow; r++){	
 			for (var c = 0; c < grid.noOfCol; c++){
@@ -238,10 +244,22 @@
 		}
 	}
 	
+	var drawArea = function(ctx, color, x, y, width, height) {
+		ctx.fillStyle = color;
+		ctx.fillRect(x, y, width, height);
+	}
+	
+	var drawRow = function(ctx, color, py, blockSize, width) {
+		drawArea(ctx, color, 0, py * blockSize, width, blockSize);
+		//ctx.fillStyle = color;
+		//ctx.fillRect(0, py * blockSize, width, blockSize);
+	}
+	
 	var drawGridBG = function(ctx, grid, blockSize){
-		//ctx.clearRect(0,0, 100,100);
-		ctx.fillStyle = "#000";
-		ctx.fillRect(0, 0, grid.noOfCol * blockSize, grid.noOfRow * blockSize);		
+		drawArea(ctx, "#000", 0, 0, grid.noOfCol * blockSize, grid.noOfRow * blockSize);
+		////ctx.clearRect(0,0, 100,100);
+		//ctx.fillStyle = "#000";
+		//ctx.fillRect(0, 0, grid.noOfCol * blockSize, grid.noOfRow * blockSize);		
 	}
 	
 	var drawGridLine = function(ctx, grid, blockSize) {
@@ -457,10 +475,7 @@
 		nextShape.fnInit();
 	}
 	
-	var drawRow = function(ctx, color, py, blockSize, width) {
-		ctx.fillStyle = color;
-		ctx.fillRect(0, py * blockSize, width, blockSize);
-	}
+
 	
 	var drawBuff = function(grid, blockSize) {
 		drawGridBG(buffCtx, grid, blockSize);
@@ -479,11 +494,6 @@
 		}
 	}
 	
-	var drawShapeBuff2Buff = function(px, py, blockSize) {
-		buffCtx.drawImage(buffCanvasShape, px * blockSize, py * blockSize);
-	}
-	
-	
 	var drawShapeBuff = function(shape, blockSize){
 		let ctx = buffCtxShape;
 		let shapeArray = shape.fnGetContent();
@@ -497,22 +507,13 @@
 			}
 		}
 	}
+	var drawShapeBuff2Buff = function(px, py, blockSize) {
+		buffCtx.drawImage(buffCanvasShape, px * blockSize, py * blockSize);
+	}
 
 	
 	
-	document.getElementById("btnLeft").addEventListener("click", function(){
-		moveLeft(grid, shape);
-	});
-	document.getElementById("btnRight").addEventListener("click", function(){
-		moveRight(grid, shape);
-	});
-	document.getElementById("btnDown").addEventListener("click", function(){
-		moveDown(grid, shape);
-	});
-	document.getElementById("btnRotate").addEventListener("click", function(){
-		moveRotation(grid, shape, true);
-		drawShapeBuff(shape, blockSize);
-	});
+
 	
 	var keyConfig = {
 		Left : { Code : 37, Value : false },
@@ -568,7 +569,19 @@
 	
 	document.addEventListener( 'keydown', onKeyDown, false );
 	document.addEventListener( 'keyup', onKeyUp, false );
-	
+	document.getElementById("btnLeft").addEventListener("click", function(){
+		moveLeft(grid, shape);
+	});
+	document.getElementById("btnRight").addEventListener("click", function(){
+		moveRight(grid, shape);
+	});
+	document.getElementById("btnDown").addEventListener("click", function(){
+		moveDown(grid, shape);
+	});
+	document.getElementById("btnRotate").addEventListener("click", function(){
+		moveRotation(grid, shape, true);
+		drawShapeBuff(shape, blockSize);
+	});
 	
 	
 
@@ -610,30 +623,62 @@
 				
 				// apply data and screen image into grid
 				grid.fnApplyShape(shape, getIndexR(grid, currY), currX);
-				drawShapeBuff2Buff(currX, currY, blockSize);				
+				drawShapeBuff2Buff(currX, currY, blockSize);
 				
-				initFromNext();
-				
-				arrIdx = grid.fnGetFullRowIdx();
-				if (arrIdx.length > 0)
-				{
+				if (shape.fnIsBoom()){
 					cancelAnimationFrame(myReq);					
 					gameStatus = STATUS_REMOVING;
-					myReq = requestAnimationFrame( () => renderLoop(animateInterval, animeLoop, animeFinish) );
+					myReq = requestAnimationFrame( () => renderLoop(animateInterval, animeBoomLoop, null, animeFinish) );
 				}
-				
-				
-				if (!grid.fnIsValid(shape, getIndexR(grid, currY), currX)) {
-					console.log("Game Over");
-					gameStatus = STATUS_GAMEOVER;
+				else {				
+					arrIdx = grid.fnGetFullRowIdx();
+					if (arrIdx.length > 0)
+					{
+						cancelAnimationFrame(myReq);					
+						gameStatus = STATUS_REMOVING;
+						myReq = requestAnimationFrame( () => renderLoop(animateInterval, animeLoop, null, animeFinish) );
+					}
+					else {
+						initFromNext();
+						if (!grid.fnIsValid(shape, getIndexR(grid, currY), currX)) {
+							console.log("Game Over");
+							gameStatus = STATUS_GAMEOVER;
+						}
+					}
 				}
 			}
-		}
-		drawBuff2Screen(currX, currY, blockSize, predY);
-	
+		}	
 		if (gameStatus == STATUS_PROCESS) {		
+			drawBuff2Screen(currX, currY, blockSize, predY);
 			cancelAnimationFrame(myReq);
 			myReq = requestAnimationFrame( mainLoop );
+		}
+	}
+
+	function animeBoomLoop() {
+		console.log("fnBoom");
+		
+		if (animeID < 10) {
+			animeID++
+			// animation for removing blocks
+			//var rx = currX;
+			//var ry = getY(grid, currY);
+			let color = "rgba(255, 255, 255, "+(animeID / 10)+")";			
+			drawArea(buffCtx, color, (currX - 1) * blockSize, (currY - 1) * blockSize, blockSize * 5, blockSize * 5);
+			drawBuff2Screen(currX, currY, blockSize, predY);
+			return true;
+		}
+		else {
+			// animation finish
+			var ix = currX - 1;
+			var iy = getIndexR(grid, currY - 1);
+			
+			for (let r = 0; r<5; r++)
+				for (let c = 0; c<5; c++)
+					grid.fnClearData(iy-r, ix+c);
+			drawBuff(grid, blockSize);
+			drawBuff2Screen(currX, currY, blockSize, predY);
+			return false;
 		}
 	}
 	
@@ -667,12 +712,13 @@
 		animeID = 0;
 		arrIdx = [];
 		gameStatus = STATUS_PROCESS;
+		initFromNext();
 		predY = calcY(grid, shape, currX, currY);
 		myReq = requestAnimationFrame( mainLoop );			
 	}
 	
 	
-	function renderLoop(interval, fnAction, fnFinishAction) {
+	function renderLoop(interval, fnAction, fnStdAction, fnFinishAction) {
 		//https://stackoverflow.com/questions/19764018/controlling-fps-with-requestanimationframe
 		//https://medium.com/javascript-in-plain-english/better-understanding-of-timers-in-javascript-settimeout-vs-requestanimationframe-bf7f99b9ff9b
 		now = Date.now();
@@ -680,17 +726,21 @@
 		let result = true;
 		if (elapsed > interval) {
 			then = now - (elapsed % interval)
-			result = fnAction();			
+			if (fnAction)
+				result = fnAction();			
 		}
+		if (fnStdAction)
+			fnStdAction();
 		
 		cancelAnimationFrame(myReq);
 		if (result) {	
 			// start again
-			myReq = requestAnimationFrame( () => renderLoop(interval, fnAction, fnFinishAction) );
+			myReq = requestAnimationFrame( () => renderLoop(interval, fnAction, fnStdAction, fnFinishAction) );
 		}
 		else {
 			// finish
-			fnFinishAction();
+			if (fnFinishAction)
+				fnFinishAction();
 		}
 	}
 
