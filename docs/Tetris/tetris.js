@@ -7,8 +7,8 @@
 			this.content = [];
 			this.shapeCode = shapeCode || Math.floor(Math.random() * 8) + 1;
 			this.fnInit(this.shapeCode);
-			//this.offsetX = 1;
-			//this.offsetY = 1;
+			this.offsetX = 1;
+			this.offsetY = 1;
 		}
 		fnAllowRotate() {
 			if (this.shapeCode == 5)
@@ -281,22 +281,24 @@
 	
 	var getColor = function(code){
 		switch (code) {
-			case 0:
-				return "#00f";
 			case 1:
-				return "#0f0";
+				return "red";
 			case 2:
-				return "#0ff";
+				return "orange";
 			case 3:
-				return "#f00";
+				return "yellow";
 			case 4:
-				return "#f0f";
+				return "greenyellow";
 			case 5:
-				return "#ff0";
+				return "green";
 			case 6:
-				return "#fff";
+				return "lightblue";
+			case 7:
+				return "blueviolet";
+			case 8:
+				return "white"
 			default:
-				return "#f82";
+				return "black";
 		}
 	}
 	
@@ -392,9 +394,11 @@
 	
 	let primaryCtx;
 	let buffCanvasShape;
-	let buffCtxShape;
+	let buffCtxShape;	
 	let buffCanvas;
-	let buffCtx;
+	let buffCtx;	
+	let buffCanvasGridLine;
+	let buffCtxGridLine
 	
 	var initCanvas = function() {
 		let canvas = document.getElementById("myCanvas");
@@ -404,6 +408,11 @@
 		buffCanvas.width = canvas.width;
 		buffCanvas.height = canvas.height;
 		buffCtx = buffCanvas.getContext("2d");
+		
+		buffCanvasGridLine = document.createElement('canvas');
+		buffCanvasGridLine.width = canvas.width;
+		buffCanvasGridLine.height = canvas.height;
+		buffCtxGridLine = buffCanvasGridLine.getContext("2d");
 		
 		buffCanvasShape = document.createElement('canvas');
 		buffCanvasShape.width = blockSize * 5;
@@ -425,6 +434,9 @@
 			
 			buffCanvas.width = canvas.width;
 			buffCanvas.height = canvas.height;
+			
+			buffCanvasGridLine.width = canvas.width;
+			buffCanvasGridLine.height = canvas.height;
 			
 			let blockH = Math.floor(canvas.height / grid.noOfRow);
 			let blockV = Math.floor(canvas.width / grid.noOfCol);		
@@ -481,7 +493,7 @@
 	
 	var drawBuff = function(grid, blockSize) {
 		drawGridBG(buffCtx, grid, blockSize);
-		drawGridLine(buffCtx, grid, blockSize);
+		drawGridLine(buffCtxGridLine, grid, blockSize);
 		drawGridData(buffCtx, grid, blockSize);
 	}
 	
@@ -494,6 +506,7 @@
 			primaryCtx.drawImage(buffCanvasShape, px * blockSize, predY * blockSize);
 			primaryCtx.restore();
 		}
+		primaryCtx.drawImage(buffCanvasGridLine, 0, 0);
 	}
 	
 	var drawShapeBuff = function(shape, blockSize){
