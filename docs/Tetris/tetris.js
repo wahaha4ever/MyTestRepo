@@ -428,8 +428,12 @@
 		primaryCtx.save();
 		
 		window.addEventListener('resize', resizeCanvas, false);
+		window.addEventListener('orientationchange', resizeCanvas, false);
 		
 		function resizeCanvas() {
+			
+			let devicePixelRatio = window.devicePixelRatio !== undefined ? window.devicePixelRatio : 1;
+			
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
 			
