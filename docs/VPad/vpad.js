@@ -7,11 +7,27 @@
 	VPad.CONTROLS_CSS =  'background-color: red; ' + VPad.CONTROLS_CSS_NOFILL;
 	VPad.DPAD_BUTTON_WIDTH_PERCENT = 18;
 	VPad.DPAD_BUTTON_HEIGHT_PERCENT = 12;
+	VPad.COLOR_BUTTON_PRESS = "yellow";
+	VPad.COLOR_BUTTON_UNPRESS = "red";
 
 	var dpad = {};
 	var buttons = {};
 	var keyStatus = {};
 	var lastDPadPressed = null;
+	
+	function initButton(id, fnPress, fnUnpress){
+		let button = document.createElement("div");
+		button.id = id;
+		button.style.cssText = VPad.CONTROLS_CSS;
+		button.style.width = VPad.DPAD_BUTTON_WIDTH_PERCENT + '%';
+		button.style.height = VPad.DPAD_BUTTON_HEIGHT_PERCENT + '%';
+		button.style.backgroundColor = VPad.COLOR_BUTTON_UNPRESS;
+		button.style.position = 'absolute';
+		button.press = () => { button.style.backgroundColor = "yellow"; fnPress(); };
+		button.unpress = () => { button.style.backgroundColor = "red"; fnUnpress(); };
+		
+		return button;
+	}
 	
 	function createDPad(bIsEightWay) {
 		let button;
@@ -103,14 +119,16 @@
 	}
 	
 	function createDPadButton(id, fnPress, fnUnpress) {
-		let button = document.createElement("div");
-		button.id = id;
-		button.style.cssText = VPad.CONTROLS_CSS;
-		button.style.width = VPad.DPAD_BUTTON_WIDTH_PERCENT + '%';
-		button.style.height = VPad.DPAD_BUTTON_HEIGHT_PERCENT + '%';
-		button.style.position = 'absolute';
-		button.press = () => { button.style.backgroundColor = "yellow"; fnPress(); };
-		button.unpress = () => { button.style.backgroundColor = "red"; fnUnpress(); };
+		//let button = document.createElement("div");
+		//button.id = id;
+		//button.style.cssText = VPad.CONTROLS_CSS;
+		//button.style.width = VPad.DPAD_BUTTON_WIDTH_PERCENT + '%';
+		//button.style.height = VPad.DPAD_BUTTON_HEIGHT_PERCENT + '%';
+		//button.style.backgroundColor = VPad.COLOR_BUTTON_UNPRESS;
+		//button.style.position = 'absolute';
+		//button.press = () => { button.style.backgroundColor = "yellow"; fnPress(); };
+		//button.unpress = () => { button.style.backgroundColor = "red"; fnUnpress(); };
+		let button = initButton(id, fnPress, fnUnpress);
 		
 		// press handler for basic touchstart case
 		button.addEventListener('touchstart', function(event) {
@@ -178,28 +196,46 @@
 			return null;
 		}
 	};
+
 	
-	function createAction() {
-		let button = createActionButton("A", function() { keyStatus["A"] = true; writeInfo("Press A");}, function() { keyStatus["A"] = false; writeInfo("UnPress A");});
-		button.style.bottom = (VPad.DPAD_BUTTON_HEIGHT_PERCENT * 0) + '%';
-		button.style.right = (VPad.DPAD_BUTTON_WIDTH_PERCENT * 0) + '%';
-		buttons["A"] = button;
-		
-		button = createActionButton("B", function() { keyStatus["B"] = true; writeInfo("Press B");}, function() { keyStatus["B"] = false; writeInfo("UnPress B");});
-		button.style.bottom = (VPad.DPAD_BUTTON_HEIGHT_PERCENT * 1) + '%';
-		button.style.right = (VPad.DPAD_BUTTON_WIDTH_PERCENT * 0) + '%';
-		buttons["B"] = button;
+	function createAction(intBtnCnt) {
+		let button;
+		if (intBtnCnt >= 1) {
+			button = createActionButton("A", function() { keyStatus["A"] = true; writeInfo("Press A");}, function() { keyStatus["A"] = false; writeInfo("UnPress A");});
+			button.style.bottom = (VPad.DPAD_BUTTON_HEIGHT_PERCENT * 0) + '%';
+			button.style.right = (VPad.DPAD_BUTTON_WIDTH_PERCENT * 0) + '%';
+			buttons["A"] = button;
+		}
+		if (intBtnCnt >= 2) {
+			button = createActionButton("B", function() { keyStatus["B"] = true; writeInfo("Press B");}, function() { keyStatus["B"] = false; writeInfo("UnPress B");});
+			button.style.bottom = (VPad.DPAD_BUTTON_HEIGHT_PERCENT * 1) + '%';
+			button.style.right = (VPad.DPAD_BUTTON_WIDTH_PERCENT * 0) + '%';
+			buttons["B"] = button;
+		}
+		if (intBtnCnt >= 3) {
+			button = createActionButton("X", function() { keyStatus["X"] = true; writeInfo("Press X");}, function() { keyStatus["X"] = false; writeInfo("UnPress X");});
+			button.style.bottom = (VPad.DPAD_BUTTON_HEIGHT_PERCENT * 0) + '%';
+			button.style.right = (VPad.DPAD_BUTTON_WIDTH_PERCENT * 1) + '%';
+			buttons["X"] = button;
+		}
+		if (intBtnCnt >= 4) {
+			button = createActionButton("Y", function() { keyStatus["Y"] = true; writeInfo("Press Y");}, function() { keyStatus["Y"] = false; writeInfo("UnPress Y");});
+			button.style.bottom = (VPad.DPAD_BUTTON_HEIGHT_PERCENT * 1) + '%';
+			button.style.right = (VPad.DPAD_BUTTON_WIDTH_PERCENT * 1) + '%';
+			buttons["Y"] = button;
+		}
 	}
 	
 	function createActionButton(id, fnPress, fnUnpress) {
-		let button = document.createElement("div");
-		button.id = id;
-		button.style.cssText = VPad.CONTROLS_CSS;
-		button.style.width = VPad.DPAD_BUTTON_WIDTH_PERCENT + '%';
-		button.style.height = VPad.DPAD_BUTTON_HEIGHT_PERCENT + '%';
-		button.style.position = 'absolute';
-		button.press = fnPress;
-		button.unpress = fnUnpress;
+		//let button = document.createElement("div");
+		//button.id = id;
+		//button.style.cssText = VPad.CONTROLS_CSS;
+		//button.style.width = VPad.DPAD_BUTTON_WIDTH_PERCENT + '%';
+		//button.style.height = VPad.DPAD_BUTTON_HEIGHT_PERCENT + '%';
+		//button.style.position = 'absolute';
+		//button.press = () => { button.style.backgroundColor = "yellow"; fnPress(); };
+		//button.unpress = () => { button.style.backgroundColor = "red"; fnUnpress(); };
+		let button = initButton(id, fnPress, fnUnpress);
 		
 		// press handler for basic touchstart case
 		button.addEventListener('touchstart', function(event) {
@@ -264,9 +300,18 @@
 		//document.getElementById("info").innerHTML = orgText;
 	}
 	
-	VPad.init = function(bIsEightWay) {
+	VPad.init = function(size, bIsEightWay, intBtnCnt) {
+		intBtnCnt = intBtnCnt || 1;
+		if (size == "S") {
+			VPad.DPAD_BUTTON_WIDTH_PERCENT = 6;
+			VPad.DPAD_BUTTON_HEIGHT_PERCENT = 4;
+		}
+		if (size == "M") {
+			VPad.DPAD_BUTTON_WIDTH_PERCENT = 12;
+			VPad.DPAD_BUTTON_HEIGHT_PERCENT = 8;
+		}
 		createDPad(bIsEightWay);
-		createAction();
+		createAction(intBtnCnt);
 	}
 
 	VPad.getStatus = function() {
