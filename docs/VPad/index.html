@@ -16,6 +16,17 @@
 	<div id="info"></div>
 	<script>
 	VPad.init();
+	(function() {
+		var myReq = null;
+		function run() {
+			var sts = VPad.getStatus();					
+			document.getElementById("info").innerHTML = JSON.stringify(sts);
+			
+			cancelAnimationFrame(myReq);
+			myReq = requestAnimationFrame( run );
+		}
+		myReq = requestAnimationFrame( run );
+	})();
 	</script>
 </body>
 <html>

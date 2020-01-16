@@ -2,61 +2,96 @@
 // heavy modification from http://air.github.io/encounter/js/Touch.js
 (function(VPad) {
 	'use strict';
-	VPad.dpad = {};
-	VPad.buttons = {};
+
 	VPad.CONTROLS_CSS_NOFILL = 'opacity:0.1; z-index: 11000; border-style: dashed; border-width: 1px';
 	VPad.CONTROLS_CSS =  'background-color: red; ' + VPad.CONTROLS_CSS_NOFILL;
 	VPad.DPAD_BUTTON_WIDTH_PERCENT = 18;
 	VPad.DPAD_BUTTON_HEIGHT_PERCENT = 12;
-	
+
+	var dpad = {};
+	var buttons = {};
+	var keyStatus = {};
 	var lastDPadPressed = null;
 	
-	function createDPad() {
+	function createDPad(intWays) {
 		
-		let button = createDPadButton("1", function() { writeInfo("Press 1");}, function() {writeInfo("UnPress 1");});
+		let button = createDPadButton("1", function() { 
+			keyStatus["left"] = true; keyStatus["down"] = true; writeInfo("Press 1");
+		}, function() { 
+			keyStatus["left"] = false; keyStatus["down"] = false; writeInfo("UnPress 1");
+		});
 		button.style.bottom = (VPad.DPAD_BUTTON_HEIGHT_PERCENT * 0) + '%';
 		button.style.left = (VPad.DPAD_BUTTON_WIDTH_PERCENT * 0) + '%';
-		VPad.dpad["1"] = button;
+		dpad["1"] = button;
 		
-		button = createDPadButton("2", function() { writeInfo("Press 2");}, function() {writeInfo("UnPress 2");});
+		button = createDPadButton("2", function() { 
+			keyStatus["down"] = true; writeInfo("Press 2");
+		}, function() { 
+			keyStatus["down"] = false; writeInfo("UnPress 2");
+		});
 		button.style.bottom = (VPad.DPAD_BUTTON_HEIGHT_PERCENT * 0) + '%';
 		button.style.left = (VPad.DPAD_BUTTON_WIDTH_PERCENT * 1) + '%';
-		VPad.dpad["2"] = button;
+		dpad["2"] = button;
 		
-		button = createDPadButton("3", function() { writeInfo("Press 3");}, function() {writeInfo("UnPress 3");});
+		button = createDPadButton("3", function() { 
+			keyStatus["right"] = true; keyStatus["down"] = true;  writeInfo("Press 3");
+		}, function() { 
+			keyStatus["right"] = false; keyStatus["down"] = false;  writeInfo("UnPress 3");
+		});
 		button.style.bottom = (VPad.DPAD_BUTTON_HEIGHT_PERCENT * 0) + '%';
 		button.style.left = (VPad.DPAD_BUTTON_WIDTH_PERCENT * 2) + '%';
-		VPad.dpad["3"] = button;		
+		dpad["3"] = button;
 
-		button = createDPadButton("4", function() { writeInfo("Press 4");}, function() {writeInfo("UnPress 4");});
+		button = createDPadButton("4", function() { 
+			keyStatus["left"] = true; writeInfo("Press 4");
+		}, function() { 
+			keyStatus["left"] = false; writeInfo("UnPress 4");
+		});
 		button.style.bottom = (VPad.DPAD_BUTTON_HEIGHT_PERCENT * 1) + '%';
 		button.style.left = (VPad.DPAD_BUTTON_WIDTH_PERCENT * 0) + '%';
-		VPad.dpad["4"] = button;	
+		dpad["4"] = button;	
 		
 		button = createDPadButton("5", function() {}, function() {});
 		button.style.bottom = (VPad.DPAD_BUTTON_HEIGHT_PERCENT * 1) + '%';
 		button.style.left = (VPad.DPAD_BUTTON_WIDTH_PERCENT * 1) + '%';
-		VPad.dpad["5"] = button;	
+		dpad["5"] = button;	
 		
-		button = createDPadButton("6", function() { writeInfo("Press 6");}, function() {writeInfo("UnPress 6");});
+		button = createDPadButton("6", function() { 
+			keyStatus["right"] = true; writeInfo("Press 6");
+		}, function() { 
+			keyStatus["right"] = false; writeInfo("UnPress 6");
+		});
 		button.style.bottom = (VPad.DPAD_BUTTON_HEIGHT_PERCENT * 1) + '%';
 		button.style.left = (VPad.DPAD_BUTTON_WIDTH_PERCENT * 2) + '%';
-		VPad.dpad["6"] = button;	
+		dpad["6"] = button;	
 		
-		button = createDPadButton("7", function() { writeInfo("Press 7");}, function() {writeInfo("UnPress 7");});
+		button = createDPadButton("7", function() { 
+			keyStatus["left"] = true; keyStatus["up"] = true;  writeInfo("Press 7");
+		}, function() { 
+			keyStatus["left"] = false; keyStatus["up"] = false;  writeInfo("UnPress 7");
+		});
 		button.style.bottom = (VPad.DPAD_BUTTON_HEIGHT_PERCENT * 2) + '%';
 		button.style.left = (VPad.DPAD_BUTTON_WIDTH_PERCENT * 0) + '%';
-		VPad.dpad["7"] = button;
+		dpad["7"] = button;
 		
-		button = createDPadButton("8", function() { writeInfo("Press 8");}, function() {writeInfo("UnPress 8");});
+		button = createDPadButton("8", function() { 
+			keyStatus["up"] = true; writeInfo("Press 8");
+		}, function() { 
+			keyStatus["up"] = false; writeInfo("UnPress 8");
+		});
 		button.style.bottom = (VPad.DPAD_BUTTON_HEIGHT_PERCENT * 2) + '%';
 		button.style.left = (VPad.DPAD_BUTTON_WIDTH_PERCENT * 1) + '%';
-		VPad.dpad["8"] = button;
+		dpad["8"] = button;
 		
-		button = createDPadButton("9", function() { writeInfo("Press 9");}, function() {writeInfo("UnPress 9");});
+		button = createDPadButton("9", function() { 
+			keyStatus["right"] = true; keyStatus["up"] = true; writeInfo("Press 9");
+		}, function() { 
+			keyStatus["right"] = false; keyStatus["up"] = false; writeInfo("UnPress 9");
+		});
 		button.style.bottom = (VPad.DPAD_BUTTON_HEIGHT_PERCENT * 2) + '%';
 		button.style.left = (VPad.DPAD_BUTTON_WIDTH_PERCENT * 2) + '%';
-		VPad.dpad["9"] = button;		
+		dpad["9"] = button;		
+
 	}
 	
 	function createDPadButton(id, fnPress, fnUnpress) {
@@ -66,8 +101,8 @@
 		button.style.width = VPad.DPAD_BUTTON_WIDTH_PERCENT + '%';
 		button.style.height = VPad.DPAD_BUTTON_HEIGHT_PERCENT + '%';
 		button.style.position = 'absolute';
-		button.press = fnPress;
-		button.unpress = fnUnpress;
+		button.press = () => { button.style.backgroundColor = "yellow"; fnPress(); };
+		button.unpress = () => { button.style.backgroundColor = "red"; fnUnpress(); };
 		
 		// press handler for basic touchstart case
 		button.addEventListener('touchstart', function(event) {
@@ -84,9 +119,9 @@
 		button.addEventListener('touchend', function(event) {
 			event.preventDefault();
 			var elementBeingTouched = getIdOfTouchedElement(event);
-			if (elementBeingTouched in VPad.dpad)
+			if (elementBeingTouched in dpad)
 			{
-				VPad.dpad[elementBeingTouched].unpress();
+				dpad[elementBeingTouched].unpress();
 			}
 		});
 		// if a touch has moved onto another button, unpress this and press the other one
@@ -97,23 +132,23 @@
 			{
 				// no change, no op
 			}
-			else if (elementBeingTouched in VPad.dpad) // verify we moved onto a dpad button
+			else if (elementBeingTouched in dpad) // verify we moved onto a dpad button
 			{
 				// unpress the last button if that's appropriate
-				if (lastDPadPressed in VPad.dpad)
+				if (lastDPadPressed in dpad)
 				{
-					VPad.dpad[lastDPadPressed].unpress();
+					dpad[lastDPadPressed].unpress();
 				}
 				// press the new button
-				VPad.dpad[elementBeingTouched].press();
+				dpad[elementBeingTouched].press();
 				lastDPadPressed = elementBeingTouched;
 			}
 			else // we moved off the dpad
 			{
 				// unpress the last button if that's appropriate
-				if (lastDPadPressed in VPad.dpad)
+				if (lastDPadPressed in dpad)
 				{
-					VPad.dpad[lastDPadPressed].unpress();
+					dpad[lastDPadPressed].unpress();
 				}
 				lastDPadPressed = null;
 			}
@@ -137,15 +172,15 @@
 	};
 	
 	function createAction() {
-		let button = createActionButton("A", function() { writeInfo("Press A");}, function() {writeInfo("UnPress A");});
+		let button = createActionButton("A", function() { keyStatus["A"] = true; writeInfo("Press A");}, function() { keyStatus["A"] = false; writeInfo("UnPress A");});
 		button.style.bottom = (VPad.DPAD_BUTTON_HEIGHT_PERCENT * 0) + '%';
 		button.style.right = (VPad.DPAD_BUTTON_WIDTH_PERCENT * 0) + '%';
-		VPad.buttons["A"] = button;
+		buttons["A"] = button;
 		
-		button = createActionButton("B", function() { writeInfo("Press B");}, function() {writeInfo("UnPress B");});
+		button = createActionButton("B", function() { keyStatus["B"] = true; writeInfo("Press B");}, function() { keyStatus["B"] = false; writeInfo("UnPress B");});
 		button.style.bottom = (VPad.DPAD_BUTTON_HEIGHT_PERCENT * 1) + '%';
 		button.style.right = (VPad.DPAD_BUTTON_WIDTH_PERCENT * 0) + '%';
-		VPad.buttons["B"] = button;
+		buttons["B"] = button;
 	}
 	
 	function createActionButton(id, fnPress, fnUnpress) {
@@ -173,9 +208,9 @@
 			event.preventDefault();
 			button.unpress();
 			//var elementBeingTouched = getIdOfTouchedElement(event);
-			//if (elementBeingTouched in VPad.dpad)
+			//if (elementBeingTouched in dpad)
 			//{
-			//	VPad.dpad[elementBeingTouched].unpress();
+			//	dpad[elementBeingTouched].unpress();
 			//}
 		});
 		//// if a touch has moved onto another button, unpress this and press the other one
@@ -186,23 +221,23 @@
 		//	{
 		//		// no change, no op
 		//	}
-		//	else if (elementBeingTouched in VPad.dpad) // verify we moved onto a dpad button
+		//	else if (elementBeingTouched in dpad) // verify we moved onto a dpad button
 		//	{
 		//		// unpress the last button if that's appropriate
-		//		if (lastDPadPressed in VPad.dpad)
+		//		if (lastDPadPressed in dpad)
 		//		{
-		//			VPad.dpad[lastDPadPressed].unpress();
+		//			dpad[lastDPadPressed].unpress();
 		//		}
 		//		// press the new button
-		//		VPad.dpad[elementBeingTouched].press();
+		//		dpad[elementBeingTouched].press();
 		//		lastDPadPressed = elementBeingTouched;
 		//	}
 		//	else // we moved off the dpad
 		//	{
 		//		// unpress the last button if that's appropriate
-		//		if (lastDPadPressed in VPad.dpad)
+		//		if (lastDPadPressed in dpad)
 		//		{
-		//			VPad.dpad[lastDPadPressed].unpress();
+		//			dpad[lastDPadPressed].unpress();
 		//		}
 		//		lastDPadPressed = null;
 		//	}
@@ -216,14 +251,18 @@
 	}
 	
 	function writeInfo(txt) {
-		var orgText = document.getElementById("info").innerHTML;
-		orgText = txt + "</br>" + orgText;
-		document.getElementById("info").innerHTML = orgText;
+		//var orgText = document.getElementById("info").innerHTML;
+		//orgText = txt + "</br>" + orgText;
+		//document.getElementById("info").innerHTML = orgText;
 	}
 	
 	VPad.init = function() {
 		createDPad();
 		createAction();
-	}	
+	}
+
+	VPad.getStatus = function() {
+		return keyStatus;
+	}
 })(this.VPad = this.VPad || {});
 
