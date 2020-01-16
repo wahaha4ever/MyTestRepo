@@ -20,6 +20,7 @@
 	canvas { display:block; }
 	
 	#leftCtrl {
+		visibility : hidden;
 		position:fixed; 
 		left:0px;bottom:20px;
 		width:50px;
@@ -28,6 +29,7 @@
 		filter: alpha(opacity=50); /* For IE8 and earlier */
 	}
 	#rightCtrl {
+		visibility : hidden;
 		position:fixed; 
 		right:0px;bottom:20px;;
 		width:50px;
@@ -86,16 +88,7 @@
 	<span>Game Over</span></br>
 	<button type="button" id="btnRetry">Retry</button>
 </div>
-	<script src="tetris.js?v=4"></script>
-	<script>	  
-
-		function Test() {
-			var startTime = new Date().getTime();
-			window.setTimeout(function() { 
-				var endTime = new Date().getTime();
-				console.log('Time elapsed: ' + (endTime - startTime) + ' ms');
-			}, 1000);
-		}
-	</script>
+	<script src="vpad.js"></script>
+	<script src="tetris.js"></script>
 </body>
 <html>
