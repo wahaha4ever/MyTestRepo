@@ -23,8 +23,8 @@
 		button.style.height = VPad.DPAD_BUTTON_HEIGHT_PERCENT + '%';
 		button.style.backgroundColor = VPad.COLOR_BUTTON_UNPRESS;
 		button.style.position = 'absolute';
-		button.press = () => { button.style.backgroundColor = "yellow"; fnPress(); };
-		button.unpress = () => { button.style.backgroundColor = "red"; fnUnpress(); };
+		button.press = () => { if (fnPress) { button.style.backgroundColor = "yellow"; fnPress();} };
+		button.unpress = () => { if (fnUnpress) { button.style.backgroundColor = "red"; fnUnpress();} };
 		
 		return button;
 	}
@@ -53,9 +53,9 @@
 		
 		if (bIsEightWay) {
 			button = createDPadButton("3", function() { 
-				keyStatus["right"] = true; keyStatus["down"] = true;  writeInfo("Press 3");
+				keyStatus["right"] = true; keyStatus["down"] = true; writeInfo("Press 3");
 			}, function() { 
-				keyStatus["right"] = false; keyStatus["down"] = false;  writeInfo("UnPress 3");
+				keyStatus["right"] = false; keyStatus["down"] = false; writeInfo("UnPress 3");
 			});
 			button.style.bottom = (VPad.DPAD_BUTTON_HEIGHT_PERCENT * 0) + '%';
 			button.style.left = (VPad.DPAD_BUTTON_WIDTH_PERCENT * 2) + '%';
@@ -71,7 +71,7 @@
 		button.style.left = (VPad.DPAD_BUTTON_WIDTH_PERCENT * 0) + '%';
 		dpad["4"] = button;	
 		
-		button = createDPadButton("5", function() {}, function() {});
+		button = createDPadButton("5", null, null);
 		button.style.bottom = (VPad.DPAD_BUTTON_HEIGHT_PERCENT * 1) + '%';
 		button.style.left = (VPad.DPAD_BUTTON_WIDTH_PERCENT * 1) + '%';
 		dpad["5"] = button;	
@@ -87,9 +87,9 @@
 		
 		if (bIsEightWay) {
 			button = createDPadButton("7", function() { 
-				keyStatus["left"] = true; keyStatus["up"] = true;  writeInfo("Press 7");
+				keyStatus["left"] = true; keyStatus["up"] = true; writeInfo("Press 7");
 			}, function() { 
-				keyStatus["left"] = false; keyStatus["up"] = false;  writeInfo("UnPress 7");
+				keyStatus["left"] = false; keyStatus["up"] = false; writeInfo("UnPress 7");
 			});
 			button.style.bottom = (VPad.DPAD_BUTTON_HEIGHT_PERCENT * 2) + '%';
 			button.style.left = (VPad.DPAD_BUTTON_WIDTH_PERCENT * 0) + '%';
