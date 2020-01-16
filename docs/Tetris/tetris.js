@@ -1,4 +1,4 @@
-(function(window){
+(function(window, VPad){
 	'use strict';	
 	class Shape {
 	//	content = [];
@@ -392,6 +392,7 @@
 	var actionInterval = 1000;		
 	var myReq;
 	
+	var vpadConfig = {};
 	
 	let primaryCtx;
 	let buffCanvasShape;
@@ -644,6 +645,27 @@
 		now = Date.now();
 		let elapsed = now - then;
 		//console.log(elapsed);
+		
+		
+		var keyConfig = VPad.getStatus();	
+		if (gameStatus == STATUS_PROCESS) {
+			if (!vpadConfig["left"] && keyConfig["left"])
+				moveLeft(grid, shape);
+			if (!vpadConfig["right"] && keyConfig["right"])
+				moveRight(grid, shape);
+			if (!vpadConfig["down"] && keyConfig["down"])
+				moveDown(grid, shape);
+			if (!vpadConfig["A"] && keyConfig["A"]) {
+				moveRotation(grid, shape, true);
+				drawShapeBuff(shape, blockSize);
+			}
+			if (!vpadConfig["B"] && keyConfig["B"]) {
+				moveRotation(grid, shape, false);
+				drawShapeBuff(shape, blockSize);
+			}				
+		}
+		vpadConfig = JSON.parse(JSON.stringify(keyConfig));
+		
 		if (elapsed > actionInterval) {
 			then = now - (elapsed % actionInterval)
 			
@@ -686,8 +708,9 @@
 				}
 			}
 		}	
+		
 		drawBuff2Screen(currX, currY, blockSize, predY);
-		if (gameStatus == STATUS_PROCESS) {					
+		if (gameStatus == STATUS_PROCESS) {
 			cancelAnimationFrame(myReq);
 			myReq = requestAnimationFrame( mainLoop );
 		}
@@ -782,6 +805,7 @@
 		}
 	}
 
+	VPad.init();
 	init();
 	
-})(this);
+})(this, VPad);
