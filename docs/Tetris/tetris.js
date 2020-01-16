@@ -805,7 +805,7 @@
 		}
 	}
 
-	VPad.init();
+	VPad.init(false);
 	init();
 	
 })(this, VPad);

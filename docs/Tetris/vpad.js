@@ -13,16 +13,18 @@
 	var keyStatus = {};
 	var lastDPadPressed = null;
 	
-	function createDPad(intWays) {
-		
-		let button = createDPadButton("1", function() { 
-			keyStatus["left"] = true; keyStatus["down"] = true; writeInfo("Press 1");
-		}, function() { 
-			keyStatus["left"] = false; keyStatus["down"] = false; writeInfo("UnPress 1");
-		});
-		button.style.bottom = (VPad.DPAD_BUTTON_HEIGHT_PERCENT * 0) + '%';
-		button.style.left = (VPad.DPAD_BUTTON_WIDTH_PERCENT * 0) + '%';
-		dpad["1"] = button;
+	function createDPad(bIsEightWay) {
+		let button;
+		if (bIsEightWay) {
+			button = createDPadButton("1", function() { 
+				keyStatus["left"] = true; keyStatus["down"] = true; writeInfo("Press 1");
+			}, function() { 
+				keyStatus["left"] = false; keyStatus["down"] = false; writeInfo("UnPress 1");
+			});
+			button.style.bottom = (VPad.DPAD_BUTTON_HEIGHT_PERCENT * 0) + '%';
+			button.style.left = (VPad.DPAD_BUTTON_WIDTH_PERCENT * 0) + '%';
+			dpad["1"] = button;
+		}
 		
 		button = createDPadButton("2", function() { 
 			keyStatus["down"] = true; writeInfo("Press 2");
@@ -33,14 +35,16 @@
 		button.style.left = (VPad.DPAD_BUTTON_WIDTH_PERCENT * 1) + '%';
 		dpad["2"] = button;
 		
-		button = createDPadButton("3", function() { 
-			keyStatus["right"] = true; keyStatus["down"] = true;  writeInfo("Press 3");
-		}, function() { 
-			keyStatus["right"] = false; keyStatus["down"] = false;  writeInfo("UnPress 3");
-		});
-		button.style.bottom = (VPad.DPAD_BUTTON_HEIGHT_PERCENT * 0) + '%';
-		button.style.left = (VPad.DPAD_BUTTON_WIDTH_PERCENT * 2) + '%';
-		dpad["3"] = button;
+		if (bIsEightWay) {
+			button = createDPadButton("3", function() { 
+				keyStatus["right"] = true; keyStatus["down"] = true;  writeInfo("Press 3");
+			}, function() { 
+				keyStatus["right"] = false; keyStatus["down"] = false;  writeInfo("UnPress 3");
+			});
+			button.style.bottom = (VPad.DPAD_BUTTON_HEIGHT_PERCENT * 0) + '%';
+			button.style.left = (VPad.DPAD_BUTTON_WIDTH_PERCENT * 2) + '%';
+			dpad["3"] = button;
+		}
 
 		button = createDPadButton("4", function() { 
 			keyStatus["left"] = true; writeInfo("Press 4");
@@ -65,14 +69,16 @@
 		button.style.left = (VPad.DPAD_BUTTON_WIDTH_PERCENT * 2) + '%';
 		dpad["6"] = button;	
 		
-		button = createDPadButton("7", function() { 
-			keyStatus["left"] = true; keyStatus["up"] = true;  writeInfo("Press 7");
-		}, function() { 
-			keyStatus["left"] = false; keyStatus["up"] = false;  writeInfo("UnPress 7");
-		});
-		button.style.bottom = (VPad.DPAD_BUTTON_HEIGHT_PERCENT * 2) + '%';
-		button.style.left = (VPad.DPAD_BUTTON_WIDTH_PERCENT * 0) + '%';
-		dpad["7"] = button;
+		if (bIsEightWay) {
+			button = createDPadButton("7", function() { 
+				keyStatus["left"] = true; keyStatus["up"] = true;  writeInfo("Press 7");
+			}, function() { 
+				keyStatus["left"] = false; keyStatus["up"] = false;  writeInfo("UnPress 7");
+			});
+			button.style.bottom = (VPad.DPAD_BUTTON_HEIGHT_PERCENT * 2) + '%';
+			button.style.left = (VPad.DPAD_BUTTON_WIDTH_PERCENT * 0) + '%';
+			dpad["7"] = button;
+		}
 		
 		button = createDPadButton("8", function() { 
 			keyStatus["up"] = true; writeInfo("Press 8");
@@ -82,15 +88,17 @@
 		button.style.bottom = (VPad.DPAD_BUTTON_HEIGHT_PERCENT * 2) + '%';
 		button.style.left = (VPad.DPAD_BUTTON_WIDTH_PERCENT * 1) + '%';
 		dpad["8"] = button;
-		
-		button = createDPadButton("9", function() { 
-			keyStatus["right"] = true; keyStatus["up"] = true; writeInfo("Press 9");
-		}, function() { 
-			keyStatus["right"] = false; keyStatus["up"] = false; writeInfo("UnPress 9");
-		});
-		button.style.bottom = (VPad.DPAD_BUTTON_HEIGHT_PERCENT * 2) + '%';
-		button.style.left = (VPad.DPAD_BUTTON_WIDTH_PERCENT * 2) + '%';
-		dpad["9"] = button;		
+
+		if (bIsEightWay) {	
+			button = createDPadButton("9", function() { 
+				keyStatus["right"] = true; keyStatus["up"] = true; writeInfo("Press 9");
+			}, function() { 
+				keyStatus["right"] = false; keyStatus["up"] = false; writeInfo("UnPress 9");
+			});
+			button.style.bottom = (VPad.DPAD_BUTTON_HEIGHT_PERCENT * 2) + '%';
+			button.style.left = (VPad.DPAD_BUTTON_WIDTH_PERCENT * 2) + '%';
+			dpad["9"] = button;		
+		}
 
 	}
 	
@@ -256,8 +264,8 @@
 		//document.getElementById("info").innerHTML = orgText;
 	}
 	
-	VPad.init = function() {
-		createDPad();
+	VPad.init = function(bIsEightWay) {
+		createDPad(bIsEightWay);
 		createAction();
 	}
 
