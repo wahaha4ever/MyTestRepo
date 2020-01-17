@@ -24,8 +24,8 @@
 		button.style.height = DPAD_BUTTON_HEIGHT_PERCENT + '%';
 		button.style.backgroundColor = COLOR_BUTTON_UNPRESS;
 		button.style.position = 'absolute';
-		button.press = () => { if (fnPress) { button.style.backgroundColor = "yellow"; fnPress();} };
-		button.unpress = () => { if (fnUnpress) { button.style.backgroundColor = "red"; fnUnpress();} };
+		button.press = () => { if (fnPress) { button.style.backgroundColor = COLOR_BUTTON_PRESS; fnPress();} };
+		button.unpress = () => { if (fnUnpress) { button.style.backgroundColor = COLOR_BUTTON_UNPRESS; fnUnpress();} };
 		
 		return button;
 	}
