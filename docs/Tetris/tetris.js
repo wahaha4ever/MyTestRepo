@@ -404,9 +404,9 @@
 	
 	var resizeCanvas = function() {
 		let canvas = document.getElementById("myCanvas");
-		//let devicePixelRatio = window.devicePixelRatio !== undefined ? window.devicePixelRatio : 1;
-		//
-		document.getElementById("info").innerHTML = window.innerWidth + "X" + window.innerHeight;
+		let devicePixelRatio = window.devicePixelRatio !== undefined ? window.devicePixelRatio : 1;
+		
+		document.getElementById("info").innerHTML = window.innerWidth + "X" + window.innerHeight "</br>" + devicePixelRatio;
 		
 		canvas.width = window.innerWidth;
 		canvas.height = window.innerHeight;
