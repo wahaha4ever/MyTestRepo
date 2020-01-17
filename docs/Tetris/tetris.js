@@ -406,7 +406,7 @@
 		
 		let devicePixelRatio = window.devicePixelRatio !== undefined ? window.devicePixelRatio : 1;
 		
-		document.getElementById("info").innerHTML = window.innerHeight;
+		document.getElementById("info").innerHTML = window.innerHeight + "</br>" + screen.orientation.angle;
 		
 		canvas.width = window.innerWidth;
 		canvas.height = window.innerHeight;
