@@ -403,36 +403,36 @@
 	let buffCtxGridLine
 	
 	var resizeCanvas = function() {
-		let canvas = document.getElementById("myCanvas");
-		let devicePixelRatio = window.devicePixelRatio !== undefined ? window.devicePixelRatio : 1;
-		
-		document.getElementById("info").innerHTML = window.innerHeight
-		
-		canvas.width = window.innerWidth;
-		canvas.height = window.innerHeight;
-		
-		buffCanvas.width = canvas.width;
-		buffCanvas.height = canvas.height;
-		
-		buffCanvasGridLine.width = canvas.width;
-		buffCanvasGridLine.height = canvas.height;
-		
-		let blockH = Math.floor(canvas.height / grid.noOfRow);
-		let blockV = Math.floor(canvas.width / grid.noOfCol);		
-		blockSize = Math.min(blockH, blockV);
-		
-		let margin = Math.floor((canvas.width - (blockSize * 10))/ 2);
-		primaryCtx.restore();
-		primaryCtx.translate(margin, 0);
-		
-		buffCanvasShape.width = blockSize * 5;
-		buffCanvasShape.height = blockSize * 5;
-		
-		if (gameStatus == STATUS_PROCESS)
-		{
-			drawBuff(grid, blockSize);
-			drawShapeBuff(shape, blockSize);
-		}
+		//let canvas = document.getElementById("myCanvas");
+		//let devicePixelRatio = window.devicePixelRatio !== undefined ? window.devicePixelRatio : 1;
+		//
+		//document.getElementById("info").innerHTML = window.innerHeight
+		//
+		//canvas.width = window.innerWidth;
+		//canvas.height = window.innerHeight;
+		//
+		//buffCanvas.width = canvas.width;
+		//buffCanvas.height = canvas.height;
+		//
+		//buffCanvasGridLine.width = canvas.width;
+		//buffCanvasGridLine.height = canvas.height;
+		//
+		//let blockH = Math.floor(canvas.height / grid.noOfRow);
+		//let blockV = Math.floor(canvas.width / grid.noOfCol);		
+		//blockSize = Math.min(blockH, blockV);
+		//
+		//let margin = Math.floor((canvas.width - (blockSize * 10))/ 2);
+		//primaryCtx.restore();
+		//primaryCtx.translate(margin, 0);
+		//
+		//buffCanvasShape.width = blockSize * 5;
+		//buffCanvasShape.height = blockSize * 5;
+		//
+		//if (gameStatus == STATUS_PROCESS)
+		//{
+		//	drawBuff(grid, blockSize);
+		//	drawShapeBuff(shape, blockSize);
+		//}
 	}
 	
 	var initCanvas = function() {
