@@ -403,11 +403,11 @@
 	let buffCtxGridLine
 	
 	var resizeCanvas = function() {
-		//let canvas = document.getElementById("myCanvas");
+		let canvas = document.getElementById("myCanvas");
 		//let devicePixelRatio = window.devicePixelRatio !== undefined ? window.devicePixelRatio : 1;
 		//
 		document.getElementById("info").innerHTML = window.innerHeight
-		//
+		
 		//canvas.width = window.innerWidth;
 		//canvas.height = window.innerHeight;
 		//
@@ -427,12 +427,12 @@
 		//
 		//buffCanvasShape.width = blockSize * 5;
 		//buffCanvasShape.height = blockSize * 5;
-		//
-		//if (gameStatus == STATUS_PROCESS)
-		//{
-		//	drawBuff(grid, blockSize);
-		//	drawShapeBuff(shape, blockSize);
-		//}
+		
+		if (gameStatus == STATUS_PROCESS)
+		{
+			drawBuff(grid, blockSize);
+			drawShapeBuff(shape, blockSize);
+		}
 	}
 	
 	var initCanvas = function() {
