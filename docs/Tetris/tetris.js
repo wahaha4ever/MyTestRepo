@@ -403,7 +403,7 @@
 	let buffCtxGridLine
 	
 	function resizeCanvas() {
-		
+		let canvas = document.getElementById("myCanvas");
 		let devicePixelRatio = window.devicePixelRatio !== undefined ? window.devicePixelRatio : 1;
 		
 		document.getElementById("info").innerHTML = window.innerHeight + "</br>" + screen.orientation.angle;
