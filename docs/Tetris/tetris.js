@@ -406,17 +406,17 @@
 		let canvas = document.getElementById("myCanvas");
 		//let devicePixelRatio = window.devicePixelRatio !== undefined ? window.devicePixelRatio : 1;
 		//
-		document.getElementById("info").innerHTML = window.innerHeight
+		document.getElementById("info").innerHTML = window.innerWidth + "X" + window.innerHeight;
 		
 		canvas.width = window.innerWidth;
 		canvas.height = window.innerHeight;
-		//
-		//buffCanvas.width = canvas.width;
-		//buffCanvas.height = canvas.height;
-		//
-		//buffCanvasGridLine.width = canvas.width;
-		//buffCanvasGridLine.height = canvas.height;
-		//
+		
+		buffCanvas.width = canvas.width;
+		buffCanvas.height = canvas.height;
+		
+		buffCanvasGridLine.width = canvas.width;
+		buffCanvasGridLine.height = canvas.height;
+		
 		let blockH = Math.floor(canvas.height / grid.noOfRow);
 		let blockV = Math.floor(canvas.width / grid.noOfCol);		
 		blockSize = Math.min(blockH, blockV);
