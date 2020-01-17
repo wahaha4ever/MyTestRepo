@@ -402,7 +402,7 @@
 	let buffCanvasGridLine;
 	let buffCtxGridLine
 	
-	function resizeCanvas() {
+	var resizeCanvas = function() {
 		let canvas = document.getElementById("myCanvas");
 		let devicePixelRatio = window.devicePixelRatio !== undefined ? window.devicePixelRatio : 1;
 		
