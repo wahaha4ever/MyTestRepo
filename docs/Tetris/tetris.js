@@ -428,12 +428,11 @@
 		
 		primaryCtx.save();
 		
-		window.addEventListener('resize', resizeCanvas, false);
-		window.addEventListener('orientationchange', resizeCanvas, false);
-		
 		function resizeCanvas() {
 			
 			let devicePixelRatio = window.devicePixelRatio !== undefined ? window.devicePixelRatio : 1;
+			
+			document.getElementById("info").innerHTML = window.innerWidth;
 			
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
@@ -461,6 +460,8 @@
 				drawShapeBuff(shape, blockSize);
 			}
 		}
+		window.addEventListener('resize', resizeCanvas, false);
+		window.addEventListener('orientationchange', resizeCanvas, false);
 		resizeCanvas();
 	}
 	initCanvas();

@@ -3,7 +3,7 @@
 (function(VPad) {
 	'use strict';
 
-	VPad.CONTROLS_CSS_NOFILL = 'opacity:0.1; z-index: 11000; border-style: dashed; border-width: 1px';
+	VPad.CONTROLS_CSS_NOFILL = 'opacity:0.3; z-index: 11000; border-style: dashed; border-width: 1px';
 	VPad.CONTROLS_CSS =  'background-color: red; ' + VPad.CONTROLS_CSS_NOFILL;
 	VPad.DPAD_BUTTON_WIDTH_PERCENT = 18;
 	VPad.DPAD_BUTTON_HEIGHT_PERCENT = 12;
