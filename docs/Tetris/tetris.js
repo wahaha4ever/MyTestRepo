@@ -616,7 +616,9 @@
 		init();
 		drawStatus();		
 	});
-	
+	document.getElementById("btnResize").addEventListener("click", function() {
+		resizeCanvas();
+	});
 	
 
 	
