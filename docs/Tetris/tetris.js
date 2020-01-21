@@ -384,13 +384,15 @@
 	// variable for animation (remove row)
 	var animeID = 0
 	var arrIdx = [];
-	var animateInterval = 80;
+	var animateInterval = 80;	
 	
 	// variable for refresh per frame
 	var then = Date.now();
 	var now;	
 	var actionInterval = 1000;		
 	var myReq;
+	var level;
+	var score;
 	
 	var vpadConfig = {};
 	
@@ -473,6 +475,8 @@
 	resizeCanvas();
 	
 	var init = function() {
+		level = 1;
+		score = 0;
 		grid.fnInit();
 		drawBuff(grid, blockSize);
 		
@@ -625,7 +629,9 @@
 		resizeCanvas();
 	});
 	
-
+	function showScore(score){
+		document.getElementById("score").innerHTML = score;
+	}
 	
 	//function run() {
 	//	
@@ -707,6 +713,7 @@
 					else {
 						// normal flow
 						initFromNext();
+						showScore(score);
 						if (!grid.fnIsValid(shape, getIndexR(grid, currY), currX)) {
 							console.log("Game Over");
 							gameStatus = STATUS_GAMEOVER;
@@ -761,6 +768,7 @@
 				drawBuff(grid, blockSize);
 				drawBuff2Screen(currX, currY, blockSize, predY);
 				arrIdx.splice(0, 1);
+				score += 100;
 				animeID = 0;
 				return true;	// to next arrIdx
 			}
@@ -782,6 +790,7 @@
 		arrIdx = [];
 		gameStatus = STATUS_PROCESS;
 		initFromNext();
+		showScore(score);
 		predY = calcY(grid, shape, currX, currY);
 		myReq = requestAnimationFrame( mainLoop );			
 	}

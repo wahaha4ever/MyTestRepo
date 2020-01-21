@@ -88,12 +88,23 @@
 		height:20px;
 		text-align:center;
 	}
+	.gameInfo .left{
+		padding-left:2px;
+		padding-right:2px;
+		float: left;
+	}
+	.gameInfo .right{
+		padding-left:2px;
+		padding-right:2px;
+		float: right;
+	}
 	</style>
 </head>
 <body>
 <div id="gameInfo" class="gameInfo">
-<div id="info" style="z-index:1000; color:red;"></div>
-<span>Score : <span>100</span></span>
+<span class="right">Score : <div id="score"></div></span>
+<span class="left">Level : <div id="level"></div></span>
+<div id="info" style="color:red;"></div>
 </div>
 <div id="canvasCtrl">
 	<canvas id="myCanvas" width="100" height="50" style="border:1px solid #00ff00;">
