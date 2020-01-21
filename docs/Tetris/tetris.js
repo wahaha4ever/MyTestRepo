@@ -408,8 +408,13 @@
 		
 		document.getElementById("info").innerHTML = window.innerWidth + "X" + window.innerHeight + "</br>" + devicePixelRatio;
 		
-		canvas.width = window.innerWidth;
-		canvas.height = window.innerHeight;
+		canvas.style.width ='100%';
+		canvas.style.height='100%';
+		canvas.width  = canvas.offsetWidth;
+		canvas.height = canvas.offsetHeight;
+		
+		//canvas.width = window.innerWidth;
+		//canvas.height = window.innerHeight;
 		
 		buffCanvas.width = canvas.width;
 		buffCanvas.height = canvas.height;
