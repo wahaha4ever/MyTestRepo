@@ -4,7 +4,7 @@
 	'use strict';
 
 	
-	var CONTROLS_CSS_NOFILL = 'opacity:0.3; z-index: 11000; border-style: dashed; border-width: 1px';
+	var CONTROLS_CSS_NOFILL = 'opacity:0.3; z-index: 11000; border-style: dashed; border-width: 1px; text-align: center';
 	var CONTROLS_CSS =  'background-color: red; ' + CONTROLS_CSS_NOFILL;
 	var DPAD_BUTTON_WIDTH_PERCENT = 18;
 	var DPAD_BUTTON_HEIGHT_PERCENT = 12;
@@ -199,31 +199,35 @@
 	};
 
 	
-	function createAction(intBtnCnt) {
+	function createAction(txtA, txtB, txtX, txtY) {
 		let button;
-		if (intBtnCnt >= 1) {
+		if (txtA) {
 			button = createActionButton("A", function() { keyStatus["A"] = true; writeInfo("Press A");}, function() { keyStatus["A"] = false; writeInfo("UnPress A");});
 			button.style.bottom = (DPAD_BUTTON_HEIGHT_PERCENT * 0) + '%';
 			button.style.right = (DPAD_BUTTON_WIDTH_PERCENT * 0) + '%';
 			buttons["A"] = button;
+			buttons["A"].innerHTML = txtA;
 		}
-		if (intBtnCnt >= 2) {
+		if (txtB) {
 			button = createActionButton("B", function() { keyStatus["B"] = true; writeInfo("Press B");}, function() { keyStatus["B"] = false; writeInfo("UnPress B");});
 			button.style.bottom = (DPAD_BUTTON_HEIGHT_PERCENT * 1) + '%';
 			button.style.right = (DPAD_BUTTON_WIDTH_PERCENT * 0) + '%';
 			buttons["B"] = button;
+			buttons["B"].innerHTML = txtB;
 		}
-		if (intBtnCnt >= 3) {
+		if (txtX) {
 			button = createActionButton("X", function() { keyStatus["X"] = true; writeInfo("Press X");}, function() { keyStatus["X"] = false; writeInfo("UnPress X");});
 			button.style.bottom = (DPAD_BUTTON_HEIGHT_PERCENT * 0) + '%';
 			button.style.right = (DPAD_BUTTON_WIDTH_PERCENT * 1) + '%';
 			buttons["X"] = button;
+			buttons["X"].innerHTML = txtX;
 		}
-		if (intBtnCnt >= 4) {
+		if (txtY) {
 			button = createActionButton("Y", function() { keyStatus["Y"] = true; writeInfo("Press Y");}, function() { keyStatus["Y"] = false; writeInfo("UnPress Y");});
 			button.style.bottom = (DPAD_BUTTON_HEIGHT_PERCENT * 1) + '%';
 			button.style.right = (DPAD_BUTTON_WIDTH_PERCENT * 1) + '%';
 			buttons["Y"] = button;
+			buttons["Y"].innerHTML = txtY;
 		}
 	}
 	
@@ -301,8 +305,7 @@
 		//document.getElementById("info").innerHTML = orgText;
 	}
 	
-	VPad.init = function(size, bIsEightWay, intBtnCnt) {
-		intBtnCnt = intBtnCnt || 1;
+	VPad.init = function(size, bIsEightWay, txtA, txtB, txtX, txtY) {
 		if (size == "S") {
 			DPAD_BUTTON_WIDTH_PERCENT = 6;
 			DPAD_BUTTON_HEIGHT_PERCENT = 4;
@@ -312,7 +315,7 @@
 			DPAD_BUTTON_HEIGHT_PERCENT = 8;
 		}
 		createDPad(bIsEightWay);
-		createAction(intBtnCnt);
+		createAction(txtA, txtB, txtX, txtY);
 	}
 
 	VPad.getStatus = function() {

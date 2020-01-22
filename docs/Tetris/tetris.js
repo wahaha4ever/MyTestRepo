@@ -387,12 +387,14 @@
 	var animateInterval = 80;	
 	
 	// variable for refresh per frame
+	var DEFT_ACTIONINTERVAL = 1000;
 	var then = Date.now();
 	var now;	
 	var actionInterval = 1000;		
 	var myReq;
 	var level;
 	var score;
+	var shapeCnt;
 	
 	var vpadConfig = {};
 	
@@ -408,7 +410,7 @@
 		let canvas = document.getElementById("myCanvas");
 		let devicePixelRatio = window.devicePixelRatio !== undefined ? window.devicePixelRatio : 1;
 		
-		document.getElementById("info").innerHTML = window.innerWidth + "X" + window.innerHeight + "</br>" + devicePixelRatio;
+		document.getElementById("screenSize").innerHTML = window.innerWidth + "X" + window.innerHeight;
 		
 		canvas.style.width ='100%';
 		canvas.style.height='100%';
@@ -475,8 +477,10 @@
 	resizeCanvas();
 	
 	var init = function() {
+		shapeCnt = 0;
 		level = 1;
 		score = 0;
+		actionInterval = DEFT_ACTIONINTERVAL;
 		grid.fnInit();
 		drawBuff(grid, blockSize);
 		
@@ -629,6 +633,10 @@
 		resizeCanvas();
 	});
 	
+	function showLevel(lv){
+		document.getElementById("level").innerHTML = lv;
+	}	
+	
 	function showScore(score){
 		document.getElementById("score").innerHTML = score;
 	}
@@ -691,8 +699,7 @@
 				
 				// apply data and screen image into grid
 				grid.fnApplyShape(shape, getIndexR(grid, currY), currX);
-				drawShapeBuff2Buff(currX, currY, blockSize);
-				
+				drawShapeBuff2Buff(currX, currY, blockSize);				
 				if (shape.fnIsBoom()){
 					// boom
 					cancelAnimationFrame(myReq);					
@@ -700,7 +707,17 @@
 					animeID = 0;
 					myReq = requestAnimationFrame( () => renderLoop(animateInterval, animeBoomLoop, null, animeFinish) );
 				}
-				else {				
+				else {
+					shapeCnt++;
+					if (shapeCnt % 20 == 0)
+					{
+						if (actionInterval - 100 > 100)
+						{
+							actionInterval -= 100
+							level++;
+						}
+					}
+					
 					arrIdx = grid.fnGetFullRowIdx();
 					if (arrIdx.length > 0)
 					{
@@ -713,7 +730,6 @@
 					else {
 						// normal flow
 						initFromNext();
-						showScore(score);
 						if (!grid.fnIsValid(shape, getIndexR(grid, currY), currX)) {
 							console.log("Game Over");
 							gameStatus = STATUS_GAMEOVER;
@@ -723,7 +739,8 @@
 				}
 			}
 		}	
-		
+		showLevel(level);
+		showScore(score);
 		drawBuff2Screen(currX, currY, blockSize, predY);
 		if (gameStatus == STATUS_PROCESS) {
 			cancelAnimationFrame(myReq);
@@ -790,6 +807,7 @@
 		arrIdx = [];
 		gameStatus = STATUS_PROCESS;
 		initFromNext();
+		showLevel(level);
 		showScore(score);
 		predY = calcY(grid, shape, currX, currY);
 		myReq = requestAnimationFrame( mainLoop );			
@@ -822,7 +840,7 @@
 		}
 	}
 
-	VPad.init("M", false, 2);
+	VPad.init("M", false, "A", "B");
 	init();
 	
 })(this, VPad);
