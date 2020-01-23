@@ -388,6 +388,10 @@
 	
 	// variable for refresh per frame
 	var DEFT_ACTIONINTERVAL = 1000;
+	var DATA_LEVEL_UP_CNT = 20;
+	var DATA_INTERVAL_DELTA = 100;
+	var DATA_SCORE_ROW = 100;
+	
 	var then = Date.now();
 	var now;	
 	var actionInterval = 1000;		
@@ -709,11 +713,11 @@
 				}
 				else {
 					shapeCnt++;
-					if (shapeCnt % 20 == 0)
+					if (shapeCnt % DATA_LEVEL_UP_CNT == 0)
 					{
-						if (actionInterval - 100 > 100)
+						if (actionInterval - DATA_INTERVAL_DELTA > DATA_INTERVAL_DELTA)
 						{
-							actionInterval -= 100
+							actionInterval -= DATA_INTERVAL_DELTA
 							level++;
 						}
 					}
@@ -785,7 +789,7 @@
 				drawBuff(grid, blockSize);
 				drawBuff2Screen(currX, currY, blockSize, predY);
 				arrIdx.splice(0, 1);
-				score += 100;
+				score += DATA_SCORE_ROW;
 				animeID = 0;
 				return true;	// to next arrIdx
 			}
