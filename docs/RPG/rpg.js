@@ -273,8 +273,8 @@
 		}
 
 		primaryCtx.drawImage(buffCanvas1, 0, 0);
-		primaryCtx.drawImage(buffCanvas2, 0, 0);
 		primaryCtx.drawImage(buffCanvasChar, charPos.x - buffCanvasChar.width / 2, charPos.y - buffCanvasChar.height / 2);
+		primaryCtx.drawImage(buffCanvas2, 0, 0);
 	}
 	
 	
