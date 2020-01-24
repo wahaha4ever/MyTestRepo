@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<!--<meta name="viewport" content="width=device-width, initial-scale=1" >-->
+	<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport" />
+	<meta content="yes" name="apple-mobile-web-app-capable" />
+	<meta content="black" name="apple-mobile-web-app-status-bar-style" />
+	<meta content="telephone=no,email=no" name="format-detection" />
+	<meta name="apple-mobile-web-app-title" content="My Testing Angular">
+	<link rel="apple-touch-icon" href="icon-192x192.png">
+	<link rel="apple-touch-startup-image" href="icon-192x192.png">
+	<style>
+	* { margin:0; padding:0; } 
+	html, body {
+	  width:  100%;
+	  height: 100%;
+	  margin: 0;
+	}
+	canvas { display:block; }
+	#canvasCtrl {
+		position:fixed;
+		right:0;top:40px;
+		width: 100%;
+		height: 100%;
+	}
+	</style>
+</head>
+<body>
+<label for="tileSize">Tile Size</label>
+<input type="text" id="tileSize" value="32"></input>
+<br/>
+<label for="rowCnt">Size</label>
+<input type="text" id="rowCnt" value="10"></input>
+<input type="text" id="colCnt" value="10"></input>
+<select id="layer" value="2">
+<option value="1">Layer 1</option>
+<option value="2">Layer 2</option>
+<option value="3">All</option>
+</select>
+<button type="button" id="btnReload">Reload</button>
+</div>
+<div id="canvasCtrl">
+	<canvas id="myCanvas" width="100" height="50" style="border:1px solid #000000;">
+	</canvas>
+</div>
+	<script src="..\VPad\vpad.js"></script>
+	<script src="rpgMaker.js"></script>
+</body>
+<html>
