@@ -25,14 +25,16 @@
 		height: 100%;
 	}
 	</style>
+	<script src="https://code.jquery.com/jquery-3.4.1.min.js" crossorigin="anonymous"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.9/angular.min.js"></script>
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
 </head>
 <body>
 <label for="tileSize">Tile Size</label>
 <input type="text" id="tileSize" value="32"></input>
 <br/>
 <label for="rowCnt">Size</label>
-<input type="text" id="rowCnt" value="10"></input>
-<input type="text" id="colCnt" value="10"></input>
+<input type="text" id="rowCnt" value="10"></input><span>x</span><input type="text" id="colCnt" value="10"></input>
 <select id="layer" value="2">
 <option value="1">Layer 1</option>
 <option value="2">Layer 2</option>
@@ -43,8 +45,10 @@
 <div id="canvasCtrl">
 	<canvas id="myCanvas" width="100" height="50" style="border:1px solid #000000;">
 	</canvas>
+	<canvas id="tilesetCanvas" width="100" height="50" style="border:1px solid #000000;">
+	</canvas>	
 </div>
-	<script src="..\VPad\vpad.js"></script>
 	<script src="rpgMaker.js"></script>
+	<script src="rpgMakerA.js"></script>
 </body>
 <html>

@@ -180,7 +180,7 @@
 			jsonInfo = CoreLib.ByteToJson(bytes);
 			loadImage(jsonInfo.image, function() {
 				initMap(buffCtx1, jsonInfo.layer1, tilesetImage, jsonInfo.tileSize, jsonInfo.imageNumTiles);
-				initMap(buffCtx2, jsonInfo.layer2, tilesetImage, jsonInfo.tileSize, jsonInfo.imageNumTiles);
+				//initMap(buffCtx2, jsonInfo.layer2, tilesetImage, jsonInfo.tileSize, jsonInfo.imageNumTiles);
 			});
 			then = Date.now();
 			myReq = requestAnimationFrame( () => renderLoop(1000, null, drawBuff2Screen, null) );
@@ -216,32 +216,33 @@
 		let y1 = (y % tileSize);
 		let x1 = (x % tileSize);
 		
-		if (data != 0) {
-			// one tile split into 4 cells			
-			// 1 2
-			// 4 8
-			let current = 0;
-			if (y1 < tileSize / 2) {
-				if (x1 < tileSize / 2) {
-					current = 1;
-				}
-				else {
-					current = 2;
-				}
-			} else {
-				if (x1 < tileSize / 2) {
-					current = 4;
-				}
-				else {
-					current = 8;
-				}
-			}
-			if ((data & current) != current)
-				return 0;
-			else 
-				return 1;
-		}
-		return 0;
+		return data;
+		//if (data != 0) {
+		//	// one tile split into 4 cells			
+		//	// 1 2
+		//	// 4 8
+		//	let current = 0;
+		//	if (y1 < tileSize / 2) {
+		//		if (x1 < tileSize / 2) {
+		//			current = 1;
+		//		}
+		//		else {
+		//			current = 2;
+		//		}
+		//	} else {
+		//		if (x1 < tileSize / 2) {
+		//			current = 4;
+		//		}
+		//		else {
+		//			current = 8;
+		//		}
+		//	}
+		//	if ((data & current) != current)
+		//		return 0;
+		//	else 
+		//		return 1;
+		//}
+		//return 0;
 	}
 	
 	function drawBuff2Screen() {
