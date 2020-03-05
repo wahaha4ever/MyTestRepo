@@ -115,39 +115,45 @@
 		drawGridline(primaryCtx, maxX, maxY, tileSize);			
 	}
 	
-	function init() {
+	function reinit() {
+	}
+	
+	function init(reinit) {
+		reinit = reinit || false;
 		//loadImage(jsonInfo.image, function() {
 		let tileSize = document.getElementById("tileSize").value;
 		let maxY = document.getElementById("rowCnt").value;
-		let maxX = document.getElementById("colCnt").value;		
+		let maxX = document.getElementById("colCnt").value;	
+		let tileImageName = document.getElementById("tileImage").value;		
 		
 		initStorage(maxX, maxY, 0);
-		
-		//initCanvas();	
 		
 		let canvas = document.getElementById("myCanvas");
 		canvas.width = maxY * tileSize;
 		canvas.height = maxX * tileSize;
 		primaryCtx = canvas.getContext("2d");
+		primaryCtx.fillStyle = "#000";
 		drawGridline(primaryCtx, maxX, maxY, tileSize);		
-		initCanvasEvent(canvas, function(mousePos) {
-			let ix = Math.floor(mousePos.x / tileSize);
-			let iy = Math.floor(mousePos.y / tileSize);
-			//console.log(ix + ":" + iy);
-			if (activeLayer == 1)
-				layer1[iy][ix] = selectedTileID;
-			else
-				layer2[iy][ix] = selectedTileID;
-			
-			let tileRow = (selectedTileID / imageNumTiles) | 0;
-			let tileCol = (selectedTileID % imageNumTiles) | 0;
-			primaryCtx.fillStyle = "#000";
-			primaryCtx.fillRect((ix * tileSize), (iy * tileSize), tileSize, tileSize);
-			primaryCtx.drawImage(tilesetImage, (tileCol * tileSize), (tileRow * tileSize), tileSize, tileSize, (ix * tileSize), (iy * tileSize), tileSize, tileSize);   
-			
-		});		
+		if (!reinit) {
+			initCanvasEvent(canvas, function(mousePos) {
+				let ix = Math.floor(mousePos.x / tileSize);
+				let iy = Math.floor(mousePos.y / tileSize);
+				//console.log(ix + ":" + iy);
+				if (activeLayer == 1)
+					layer1[iy][ix] = selectedTileID;
+				else
+					layer2[iy][ix] = selectedTileID;
+				
+				let tileRow = (selectedTileID / imageNumTiles) | 0;
+				let tileCol = (selectedTileID % imageNumTiles) | 0;
+				primaryCtx.fillRect((ix * tileSize), (iy * tileSize), tileSize, tileSize);
+				primaryCtx.drawImage(tilesetImage, (tileCol * tileSize), (tileRow * tileSize), tileSize, tileSize, (ix * tileSize), (iy * tileSize), tileSize, tileSize);   
+				
+			});		
+		}
 		
-		loadImage("./tileset.png", function() {
+		
+		loadImage(tileImageName, function() {
 			let tilesetCanvas = document.getElementById("tilesetCanvas");
 			tilesetCanvas.width = tilesetImage.width;
 			tilesetCanvas.height = tilesetImage.height;
@@ -159,32 +165,43 @@
 			drawGridline(tilesetCtx, maxTX, maxTY, tileSize);
 			
 			imageNumTiles = maxTX;
-			initCanvasEvent(tilesetCanvas, function(mousePos) {
-				let ix = Math.floor(mousePos.x / tileSize);
-				let iy = Math.floor(mousePos.y / tileSize);
-				selectedTileID = (iy * imageNumTiles) + ix;
-				//console.log(selectedTileID);
+			
+			if (!reinit) {
+				initCanvasEvent(tilesetCanvas, function(mousePos) {
+					let ix = Math.floor(mousePos.x / tileSize);
+					let iy = Math.floor(mousePos.y / tileSize);
+					selectedTileID = (iy * imageNumTiles) + ix;
+					//console.log(selectedTileID);
+				});
+			}
+		});
+		
+		if (!reinit) {
+			let optLayer = document.getElementById("layer");
+			optLayer.addEventListener("change", function() {
+				//alert(this.value);
+				activeLayer = this.value;
+				switchLayer(activeLayer);
 			});
-		});
-		
-		let optLayer = document.getElementById("layer");
-		optLayer.addEventListener("change", function() {
-			//alert(this.value);
-			activeLayer = this.value;
-			switchLayer(activeLayer);
-		});
-		
-		let btnExport = document.getElementById("btnExport");
-		btnExport.addEventListener("click", function() {
-			document.getElementById("layerA").value = JSON.stringify(layer1);
-			document.getElementById("layerB").value = JSON.stringify(layer2);
-		});
-		
-		let btnImport = document.getElementById("btnImport");
-		btnImport.addEventListener("click", function() {
-			layer1 = JSON.parse(document.getElementById("layerA").value);
-			layer2 = JSON.parse(document.getElementById("layerB").value);
-		});
+			
+			let btnExport = document.getElementById("btnExport");
+			btnExport.addEventListener("click", function() {
+				document.getElementById("layerA").value = JSON.stringify(layer1);
+				document.getElementById("layerB").value = JSON.stringify(layer2);
+			});
+			
+			let btnImport = document.getElementById("btnImport");
+			btnImport.addEventListener("click", function() {
+				layer1 = JSON.parse(document.getElementById("layerA").value);
+				layer2 = JSON.parse(document.getElementById("layerB").value);
+			});
+			
+			
+			let btnReload = document.getElementById("btnReload");
+			btnReload.addEventListener("click", function() {
+				init(true);
+			});
+		}
 	}
 	
 	function drawGridline(ctx, maxX, maxY, blockSize){
@@ -197,7 +214,7 @@
 		}
 		for (var i = 0; i <= maxX; i++){
 			ctx.moveTo(0, i * blockSize);
-			ctx.lineTo(maxX * blockSize, i * blockSize);
+			ctx.lineTo(maxY * blockSize, i * blockSize);
 			ctx.stroke();
 		}
 	}
