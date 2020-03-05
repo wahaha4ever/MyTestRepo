@@ -89,17 +89,12 @@
 		primaryCtx.fillStyle = "#FFF";
 		primaryCtx.fillRect(0, 0, (maxX * tileSize), (maxY * tileSize));
 		
-		if (layerID == 1)
+		if (layerID >= 1)
 			drawLayer(layer1, tileSize);
-		else if (layerID == 2)
+		if (layerID >= 2)
 			drawLayer(layer2, tileSize);
-		else if (layerID == 3)
+		if (layerID >= 3)
 			drawLayer(layer3, tileSize);
-		else {
-			drawLayer(layer1, tileSize);
-			drawLayer(layer2, tileSize);
-			drawLayer(layer3, tileSize);
-		}
 	}
 	
 	function drawLayer(arrLayer, tileSize){
@@ -143,7 +138,7 @@
 			initCanvasEvent(canvas, function(mousePos) {
 				let ix = Math.floor(mousePos.x / tileSize);
 				let iy = Math.floor(mousePos.y / tileSize);
-				//console.log(ix + ":" + iy);
+				//console.log(ix + ":" + iy);				
 				if (activeLayer == 1)
 					layer1[iy][ix] = selectedTileID;
 				else if (activeLayer == 2)
@@ -153,9 +148,26 @@
 				else
 					layer3[iy][ix] = selectedTileID;
 				
-				let tileRow = (selectedTileID / imageNumTiles) | 0;
-				let tileCol = (selectedTileID % imageNumTiles) | 0;
+	
+				primaryCtx.fillStyle = "#000";		
 				primaryCtx.fillRect((ix * tileSize), (iy * tileSize), tileSize, tileSize);
+				if (activeLayer >= 1) {
+					let tR = Math.floor(layer1[iy][ix] / imageNumTiles) || 0;
+					let tC = Math.floor(layer1[iy][ix] % imageNumTiles) || 0;
+					primaryCtx.drawImage(tilesetImage, (tC * tileSize), (tR * tileSize), tileSize, tileSize, (ix * tileSize), (iy * tileSize), tileSize, tileSize);   
+				}
+				if (activeLayer >= 2) {
+					let tR = Math.floor(layer2[iy][ix] / imageNumTiles) || 0;
+					let tC = Math.floor(layer2[iy][ix] % imageNumTiles) || 0;
+					primaryCtx.drawImage(tilesetImage, (tC * tileSize), (tR * tileSize), tileSize, tileSize, (ix * tileSize), (iy * tileSize), tileSize, tileSize);   
+				}
+				if (activeLayer >= 3) {
+					let tR = Math.floor(layer3[iy][ix] / imageNumTiles) || 0;
+					let tC = Math.floor(layer3[iy][ix] % imageNumTiles) || 0;
+					primaryCtx.drawImage(tilesetImage, (tC * tileSize), (tR * tileSize), tileSize, tileSize, (ix * tileSize), (iy * tileSize), tileSize, tileSize);   
+				}				
+				let tileRow = Math.floor(selectedTileID / imageNumTiles) || 0;
+				let tileCol = Math.floor(selectedTileID % imageNumTiles) || 0;
 				primaryCtx.drawImage(tilesetImage, (tileCol * tileSize), (tileRow * tileSize), tileSize, tileSize, (ix * tileSize), (iy * tileSize), tileSize, tileSize);   
 				
 			});		
@@ -180,7 +192,7 @@
 					let ix = Math.floor(mousePos.x / tileSize);
 					let iy = Math.floor(mousePos.y / tileSize);
 					selectedTileID = (iy * imageNumTiles) + ix;
-					//console.log(selectedTileID);
+					console.log(selectedTileID);
 				});
 			}
 		});
