@@ -23,6 +23,7 @@
 		right:0;top:40px;
 		width: 100%;
 		height: 100%;
+		border: black 1px solid;
 	}
 	</style>
 	<script src="https://code.jquery.com/jquery-3.4.1.min.js" crossorigin="anonymous"></script>
@@ -30,17 +31,20 @@
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
 </head>
 <body>
+<div>
 <label for="tileSize">Tile Size</label>
-<input type="text" id="tileSize" value="32"></input>
-<br/>
+<input type="text" id="tileSize" value="32" style="width:20px"></input>
 <label for="rowCnt">Size</label>
-<input type="text" id="rowCnt" value="10"></input><span>x</span><input type="text" id="colCnt" value="10"></input>
-<select id="layer" value="2">
-<option value="1">Layer 1</option>
-<option value="2">Layer 2</option>
-<option value="3">All</option>
+<input type="text" id="rowCnt" value="10" style="width:20px"></input><span>x</span><input type="text" id="colCnt" value="10" style="width:20px"></input>
+<select id="layer" value="1">
+	<option value="1">Layer 1</option>
+	<option value="2">Layer 2</option>
+	<option value="3">All</option>
 </select>
-<button type="button" id="btnReload">Reload</button>
+<button type="button" id="btnExport">Export</button>
+<textarea id="layerA" style="width:100px" rows="1"></textarea>
+<textarea id="layerB" style="width:100px" rows="1"></textarea>
+<button type="button" id="btnImport">Import</button>
 </div>
 <div id="canvasCtrl">
 	<canvas id="myCanvas" width="100" height="50" style="border:1px solid #000000;">
@@ -48,7 +52,6 @@
 	<canvas id="tilesetCanvas" width="100" height="50" style="border:1px solid #000000;">
 	</canvas>	
 </div>
-	<script src="rpgMaker.js"></script>
-	<script src="rpgMakerA.js"></script>
+<script src="rpgMaker.js"></script>
 </body>
 <html>

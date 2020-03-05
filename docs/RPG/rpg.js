@@ -196,6 +196,7 @@
 	
 	function initMap(ctx, layerArray, tilesetImage, tileSize, imageNumTiles) {	
 		ctx.fillStyle = "#f00";
+		let displayTileSize = 24;
 		for (var y = 0; y < layerArray.length; y++)
 			for (var x = 0; x < layerArray[y].length; x++)
 				if (layerArray[y][x] != 0)
@@ -203,7 +204,8 @@
 					var tile = layerArray[y][x];
 					var tileRow = (tile / imageNumTiles) | 0;
 					var tileCol = (tile % imageNumTiles) | 0;
-					ctx.drawImage(tilesetImage, (tileCol * tileSize), (tileRow * tileSize), tileSize, tileSize, (x * tileSize), (y * tileSize), tileSize, tileSize);      
+					//ctx.drawImage(tilesetImage, (tileCol * tileSize), (tileRow * tileSize), tileSize, tileSize, (x * tileSize), (y * tileSize), tileSize, tileSize);      
+					ctx.drawImage(tilesetImage, (tileCol * tileSize), (tileRow * tileSize), tileSize, tileSize, (x * displayTileSize), (y * displayTileSize), displayTileSize, displayTileSize);      
 					//ctx.fillRect(x * tileSize, y * tileSize, tileSize, tileSize);
 				}
 	}
