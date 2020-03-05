@@ -11,6 +11,7 @@
 	var baseLayer = [];
 	var layer1 = [];
 	var layer2 = [];
+	var layer3 = [];
 	var selectedTileID = 0;
 	var imageNumTiles;
 	var activeLayer = 1;
@@ -76,6 +77,7 @@
 		}
 		layer1 = JSON.parse(JSON.stringify(content));
 		layer2 = JSON.parse(JSON.stringify(content));
+		layer3 = JSON.parse(JSON.stringify(content));
 	}
 	
 	function switchLayer(layerID)
@@ -89,11 +91,14 @@
 		
 		if (layerID == 1)
 			drawLayer(layer1, tileSize);
-		if (layerID == 2)
+		else if (layerID == 2)
 			drawLayer(layer2, tileSize);
-		if (layerID == 3) {
+		else if (layerID == 3)
+			drawLayer(layer3, tileSize);
+		else {
 			drawLayer(layer1, tileSize);
 			drawLayer(layer2, tileSize);
+			drawLayer(layer3, tileSize);
 		}
 	}
 	
@@ -141,8 +146,12 @@
 				//console.log(ix + ":" + iy);
 				if (activeLayer == 1)
 					layer1[iy][ix] = selectedTileID;
-				else
+				else if (activeLayer == 2)
 					layer2[iy][ix] = selectedTileID;
+				else if (activeLayer == 3)
+					layer3[iy][ix] = selectedTileID;
+				else
+					layer3[iy][ix] = selectedTileID;
 				
 				let tileRow = (selectedTileID / imageNumTiles) | 0;
 				let tileCol = (selectedTileID % imageNumTiles) | 0;
@@ -188,12 +197,14 @@
 			btnExport.addEventListener("click", function() {
 				document.getElementById("layerA").value = JSON.stringify(layer1);
 				document.getElementById("layerB").value = JSON.stringify(layer2);
+				document.getElementById("layerC").value = JSON.stringify(layer3);
 			});
 			
 			let btnImport = document.getElementById("btnImport");
 			btnImport.addEventListener("click", function() {
 				layer1 = JSON.parse(document.getElementById("layerA").value);
 				layer2 = JSON.parse(document.getElementById("layerB").value);
+				layer3 = JSON.parse(document.getElementById("layerC").value);
 			});
 			
 			
