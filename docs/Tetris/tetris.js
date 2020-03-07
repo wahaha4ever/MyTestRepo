@@ -355,11 +355,11 @@
 	var pause = function() {
 		if (gameStatus == STATUS_PROCESS) {
 			gameStatus = STATUS_PAUSE;
-			cancelAnimationFrame(myReq);
+			//cancelAnimationFrame(myReq);
 		}
 		else {
 			gameStatus = STATUS_PROCESS;
-			myReq = requestAnimationFrame( mainLoop );
+			//myReq = requestAnimationFrame( mainLoop );
 		}
 	}
 	
@@ -666,9 +666,7 @@
 	});
 	document.getElementById("btnResume").addEventListener("click", function() {
 		gameStatus = STATUS_PROCESS;
-		myReq = requestAnimationFrame( mainLoop );
-		drawStatus();
-		
+		drawStatus();		
 	});
 	document.getElementById("btnRestart").addEventListener("click", function() {
 		init();
