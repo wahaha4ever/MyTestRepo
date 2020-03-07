@@ -414,10 +414,23 @@
 		let canvas = document.getElementById("myCanvas");
 		let devicePixelRatio = window.devicePixelRatio !== undefined ? window.devicePixelRatio : 1;
 		
-		document.getElementById("screenSize").innerHTML = window.innerWidth + "X" + window.innerHeight;
+		//document.getElementById("screenSize").innerHTML = window.innerWidth + "X" + window.innerHeight;
+		//document.getElementById("screenSize").innerHTML = screen.width + "x" + screen.height + ":" + window.orientation;
+		//document.getElementById("screenSize").innerHTML = window.innerWidth + "X" + window.innerHeight + "(" + screen.width + "x" + screen.height + ":" + window.orientation + ")";
 		
+		if (Math.abs(window.orientation) === 90) {
+			// Landscape
+			//canvas.style.width = screen.height;
+			//canvas.style.height = screen.width;
+		}
+		else {
+			// Portrait
+			//canvas.style.width = screen.width + "px";
+			//canvas.style.height = screen.height + "px";
+		}
 		canvas.style.width ='100%';
-		canvas.style.height='100%';
+		canvas.style.height ='100%';
+		document.getElementById("screenSize").innerHTML = canvas.offsetWidth + "X" + canvas.offsetHeight + "|" + window.innerWidth + "X" + window.innerHeight + "(" + screen.width + "x" + screen.height + ":" + window.orientation + ")";
 		canvas.width  = canvas.offsetWidth;
 		canvas.height = canvas.offsetHeight;
 		
@@ -441,7 +454,7 @@
 		buffCanvasShape.width = blockSize * 5;
 		buffCanvasShape.height = blockSize * 5;
 		
-		if (gameStatus == STATUS_PROCESS)
+		if (gameStatus == STATUS_PROCESS || gameStatus == STATUS_PAUSE || gameStatus == STATUS_GAMEOVER)
 		{
 			drawBuff(grid, blockSize);
 			drawShapeBuff(shape, blockSize);
@@ -474,6 +487,7 @@
 		
 		primaryCtx.save();
 	}
+
 	initCanvas();	
 
 	window.addEventListener('resize', resizeCanvas, false);
@@ -521,6 +535,14 @@
 		else {
 			element.classList.remove("infoShow");
 		}
+		
+		var popupPause = document.getElementById("infoPause");
+		if (gameStatus == STATUS_PAUSE) {
+			popupPause.classList.add("infoShow");
+		}
+		else {
+			popupPause.classList.remove("infoShow");
+		}
 	}
 	
 	var drawBuff = function(grid, blockSize) {
@@ -531,7 +553,7 @@
 	
 	var drawBuff2Screen = function(px, py, blockSize, predY) {
 		primaryCtx.drawImage(buffCanvas, 0, 0);
-		if (gameStatus == STATUS_PROCESS) {
+		if (gameStatus == STATUS_PROCESS || gameStatus == STATUS_PAUSE || gameStatus == STATUS_GAMEOVER) {
 			primaryCtx.drawImage(buffCanvasShape, px * blockSize, py * blockSize);
 			primaryCtx.save();
 			primaryCtx.globalAlpha = 0.4;
@@ -561,7 +583,7 @@
 	
 	
 
-	
+	/* keyboard control */
 	var keyConfig = {
 		Left : { Code : 37, Value : false },
 		Right : { Code : 39, Value : false },
@@ -616,20 +638,39 @@
 	
 	document.addEventListener( 'keydown', onKeyDown, false );
 	document.addEventListener( 'keyup', onKeyUp, false );
-	document.getElementById("btnLeft").addEventListener("click", function(){
-		moveLeft(grid, shape);
-	});
-	document.getElementById("btnRight").addEventListener("click", function(){
-		moveRight(grid, shape);
-	});
-	document.getElementById("btnDown").addEventListener("click", function(){
-		moveDown(grid, shape);
-	});
-	document.getElementById("btnRotate").addEventListener("click", function(){
-		moveRotation(grid, shape, true);
-		drawShapeBuff(shape, blockSize);
-	});
+	
+	
+	
+	//document.getElementById("btnLeft").addEventListener("click", function(){
+	//	moveLeft(grid, shape);
+	//});
+	//document.getElementById("btnRight").addEventListener("click", function(){
+	//	moveRight(grid, shape);
+	//});
+	//document.getElementById("btnDown").addEventListener("click", function(){
+	//	moveDown(grid, shape);
+	//});
+	//document.getElementById("btnRotate").addEventListener("click", function(){
+	//	moveRotation(grid, shape, true);
+	//	drawShapeBuff(shape, blockSize);
+	//});
 	document.getElementById("btnRetry").addEventListener("click", function(){
+		init();
+		drawStatus();
+	});
+	document.getElementById("btnPause").addEventListener("click", function() {
+		if (gameStatus != STATUS_PAUSE) {
+			gameStatus = STATUS_PAUSE;
+			drawStatus();
+		}
+	});
+	document.getElementById("btnResume").addEventListener("click", function() {
+		gameStatus = STATUS_PROCESS;
+		myReq = requestAnimationFrame( mainLoop );
+		drawStatus();
+		
+	});
+	document.getElementById("btnRestart").addEventListener("click", function() {
 		init();
 		drawStatus();		
 	});
@@ -692,61 +733,64 @@
 		}
 		vpadConfig = JSON.parse(JSON.stringify(keyConfig));
 		
-		if (elapsed > actionInterval) {
-			then = now - (elapsed % actionInterval)
-			
-			// Put your drawing code here
-			currY++;
-			if (!grid.fnIsValid(shape, getIndexR(grid, currY), currX))
-			{
-				currY--;
+		
+		if (gameStatus == STATUS_PROCESS) {
+			if (elapsed > actionInterval) {
+				then = now - (elapsed % actionInterval)
 				
-				// apply data and screen image into grid
-				grid.fnApplyShape(shape, getIndexR(grid, currY), currX);
-				drawShapeBuff2Buff(currX, currY, blockSize);				
-				if (shape.fnIsBoom()){
-					// boom
-					cancelAnimationFrame(myReq);					
-					gameStatus = STATUS_REMOVING;
-					animeID = 0;
-					myReq = requestAnimationFrame( () => renderLoop(animateInterval, animeBoomLoop, null, animeFinish) );
-				}
-				else {
-					shapeCnt++;
-					if (shapeCnt % DATA_LEVEL_UP_CNT == 0)
-					{
-						if (actionInterval - DATA_INTERVAL_DELTA > DATA_INTERVAL_DELTA)
-						{
-							actionInterval -= DATA_INTERVAL_DELTA
-							level++;
-						}
-					}
+				// Put your drawing code here
+				currY++;
+				if (!grid.fnIsValid(shape, getIndexR(grid, currY), currX))
+				{
+					currY--;
 					
-					arrIdx = grid.fnGetFullRowIdx();
-					if (arrIdx.length > 0)
-					{
-						// remove row
+					// apply data and screen image into grid
+					grid.fnApplyShape(shape, getIndexR(grid, currY), currX);
+					drawShapeBuff2Buff(currX, currY, blockSize);				
+					if (shape.fnIsBoom()){
+						// boom
 						cancelAnimationFrame(myReq);					
 						gameStatus = STATUS_REMOVING;
 						animeID = 0;
-						myReq = requestAnimationFrame( () => renderLoop(animateInterval, animeLoop, null, animeFinish) );
+						myReq = requestAnimationFrame( () => renderLoop(animateInterval, animeBoomLoop, null, animeFinish) );
 					}
 					else {
-						// normal flow
-						initFromNext();
-						if (!grid.fnIsValid(shape, getIndexR(grid, currY), currX)) {
-							console.log("Game Over");
-							gameStatus = STATUS_GAMEOVER;
-							drawStatus();
+						shapeCnt++;
+						if (shapeCnt % DATA_LEVEL_UP_CNT == 0)
+						{
+							if (actionInterval - DATA_INTERVAL_DELTA > DATA_INTERVAL_DELTA)
+							{
+								actionInterval -= DATA_INTERVAL_DELTA
+								level++;
+							}
+						}
+						
+						arrIdx = grid.fnGetFullRowIdx();
+						if (arrIdx.length > 0)
+						{
+							// remove row
+							cancelAnimationFrame(myReq);					
+							gameStatus = STATUS_REMOVING;
+							animeID = 0;
+							myReq = requestAnimationFrame( () => renderLoop(animateInterval, animeLoop, null, animeFinish) );
+						}
+						else {
+							// normal flow
+							initFromNext();
+							if (!grid.fnIsValid(shape, getIndexR(grid, currY), currX)) {
+								console.log("Game Over");
+								gameStatus = STATUS_GAMEOVER;
+								drawStatus();
+							}
 						}
 					}
 				}
 			}
-		}	
-		showLevel(level);
-		showScore(score);
+			showLevel(level);
+			showScore(score);
+		}
 		drawBuff2Screen(currX, currY, blockSize, predY);
-		if (gameStatus == STATUS_PROCESS) {
+		if (gameStatus == STATUS_PROCESS || gameStatus == STATUS_PAUSE || gameStatus == STATUS_GAMEOVER) {
 			cancelAnimationFrame(myReq);
 			myReq = requestAnimationFrame( mainLoop );
 		}
@@ -845,6 +889,7 @@
 	}
 
 	VPad.init("M", false, "A", "B");
+	//vpadConfig = VPad.getStatus();
 	init();
 	
 })(this, VPad);
