@@ -192,7 +192,7 @@
 					let ix = Math.floor(mousePos.x / tileSize);
 					let iy = Math.floor(mousePos.y / tileSize);
 					selectedTileID = (iy * imageNumTiles) + ix;
-					console.log(selectedTileID);
+					//console.log(selectedTileID);
 				});
 			}
 		});

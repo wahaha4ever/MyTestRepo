@@ -3,7 +3,7 @@
 //reference : https://github.com/straker/endless-runner-html5-game
 //https://www.uihere.com/free-cliparts/sprite-tile-based-video-game-opengameart-org-tiles-2186332
 (function(window){
-	
+	'use strict';
 	var CoreLib = {}
 	CoreLib.LoadBytes = function (path/*String*/, callback)
 	{
@@ -58,11 +58,13 @@
 	
 	var tilesetImage;
 	var jsonInfo;
-	
+	var mapAssoc = [];
+	var currentMap = null;
+	var currentData = 0;
 	
 	var drawing = false;
 	var mousePos = { x:0, y:0 };
-	var charPos = { x:33, y:0 };
+	var charPos = { x:0, y:0 };
 	var lastPos = mousePos;
 	var ratio = 0;
 	
@@ -179,7 +181,15 @@
 		CoreLib.LoadBytes("leve1.json", function(bytes) {
 			jsonInfo = CoreLib.ByteToJson(bytes);
 			loadImage(jsonInfo.image, function() {
-				initMap(buffCtx1, jsonInfo.layer1, tilesetImage, jsonInfo.tileSize, jsonInfo.imageNumTiles);
+				mapAssoc = initMapAssociation(jsonInfo.map);				
+				//currentMap = jsonInfo.map.find(x => x.id == 1);
+				//currentData = -1;
+				//charPos = getCharPost(currentData, currentMap.baseLayer, jsonInfo.tileSize);
+				//showMap(buffCtx1, currentMap.baseLayer, tilesetImage, jsonInfo.tileSize, jsonInfo.imageNumTiles);
+				
+				
+				switchMap(-1, -1, mapAssoc, jsonInfo, buffCtx1);
+				//initMap(buffCtx1, jsonInfo.layer1, tilesetImage, jsonInfo.tileSize, jsonInfo.imageNumTiles);
 				//initMap(buffCtx2, jsonInfo.layer2, tilesetImage, jsonInfo.tileSize, jsonInfo.imageNumTiles);
 			});
 			then = Date.now();
@@ -190,35 +200,109 @@
 	function loadImage(path, fnDrawImage){
 		tilesetImage = new Image();
 		tilesetImage.src = path;
+		tilesetImage.crossorigin = "anonymous";
 		tilesetImage.onload = fnDrawImage
 	}
 	
-	
-	function initMap(ctx, layerArray, tilesetImage, tileSize, imageNumTiles) {	
-		ctx.fillStyle = "#f00";
-		let displayTileSize = 24;
+	function showMap(ctx, layerArray, tilesetImage, tileSize, imageNumTiles) {	
+		//ctx.fillStyle = "#f00";
+		let displayTileSize = tileSize;//24;
 		for (var y = 0; y < layerArray.length; y++)
 			for (var x = 0; x < layerArray[y].length; x++)
 				if (layerArray[y][x] != 0)
 				{
 					var tile = layerArray[y][x];
-					var tileRow = (tile / imageNumTiles) | 0;
-					var tileCol = (tile % imageNumTiles) | 0;
+					var tileRow = Math.floor(tile / imageNumTiles) | 0;
+					var tileCol = Math.floor(tile % imageNumTiles) | 0;
 					//ctx.drawImage(tilesetImage, (tileCol * tileSize), (tileRow * tileSize), tileSize, tileSize, (x * tileSize), (y * tileSize), tileSize, tileSize);      
 					ctx.drawImage(tilesetImage, (tileCol * tileSize), (tileRow * tileSize), tileSize, tileSize, (x * displayTileSize), (y * displayTileSize), displayTileSize, displayTileSize);      
 					//ctx.fillRect(x * tileSize, y * tileSize, tileSize, tileSize);
 				}
 	}
 	
+
+	
+	
+	function initMapAssociation(mapArray){
+		let mapAssoc = [];	
+		for (var i = 0; i<mapArray.length; i++){
+			let id = mapArray[i].id;
+			let baseLayer = mapArray[i].baseLayer;
+			for (var y = 0; y < baseLayer.length; y++) {
+				for (var x = 0; x < baseLayer[y].length; x++) {
+					if (baseLayer[y][x] != 0) {
+						mapAssoc.push({ id : id, door : baseLayer[y][x]});
+					}
+				}
+			}
+		}
+		return mapAssoc;
+	}
+	
+	function getCharPost(doorID, baseLayer, tileSize) {
+		let charPost = {};
+		charPost.x = Math.floor(tileSize / 2);
+		charPost.y = Math.floor(tileSize / 2);
+		for (var y = 0; y < baseLayer.length; y++) {
+			for (var x = 0; x < baseLayer[y].length; x++) {
+				if (baseLayer[y][x] == doorID) {
+					charPost.x = x * tileSize + Math.floor(tileSize / 2);
+					charPost.y = y * tileSize + Math.floor(tileSize / 2);
+					return charPost;
+				}
+			}
+		}
+		return charPost;
+	}
+	
+	function isEnter(tileSize, tileX, tileY, posX, posY) {
+		//let dx = posX % tileSize;
+		//let dy = posY % tileSize;
+		
+		//let hitArea = Math.max(tileSize * 0.1, 4);
+		//if (dx <= tileSize = hitArea
+		return true;
+	}
+	
+	function getMapID(doorID, currentMapID, mapAssoc) {
+		for(var i = 0; i< mapAssoc.length; i++) {
+			if (mapAssoc[i].door == doorID && mapAssoc[i].id != currentMapID) {
+				// change map
+				return mapAssoc[i].id;
+			}
+		}
+		return 0;
+	}
+	
+	function switchMap(doorID, currentMapID, mapAssoc, jsonInfo, ctx) {
+		let newMapID = getMapID(doorID, currentMapID, mapAssoc);
+		console.log(newMapID);
+		if (newMapID == 0)
+			return;
+			
+		if (currentMap) {
+			ctx.fillStyle = "#000";
+			ctx.fillRect(0, 0, 1000, 1000);		
+		}
+		else {
+			ctx.fillStyle = "#000";
+			ctx.fillRect(0, 0, 1000, 1000);
+		}
+		currentMap = jsonInfo.map.find(x => x.id == newMapID);		
+		currentData = doorID;
+		charPos = getCharPost(currentData, currentMap.baseLayer, jsonInfo.tileSize);
+		showMap(ctx, currentMap.baseLayer, tilesetImage, jsonInfo.tileSize, jsonInfo.imageNumTiles);
+	}
+	
 	function getData(layerArray, x, y, tileSize) {
 		let r = Math.floor(y / tileSize);
 		let c = Math.floor(x / tileSize);
 		let data = layerArray[r][c];
-		
-		let y1 = (y % tileSize);
-		let x1 = (x % tileSize);
-		
 		return data;
+		
+		//let y1 = (y % tileSize);
+		//let x1 = (x % tileSize);	
+		//
 		//if (data != 0) {
 		//	// one tile split into 4 cells			
 		//	// 1 2
@@ -269,10 +353,24 @@
 			else if (mousePos.x < charPos.x)
 				charPos.x--;
 		}
-		let data = getData(jsonInfo.baseLayer, charPos.x, charPos.y, jsonInfo.tileSize);
-		if (data != 0){
+		//let data = getData(jsonInfo.baseLayer, charPos.x, charPos.y, jsonInfo.tileSize);
+		let data = getData(currentMap.baseLayer, charPos.x, charPos.y, jsonInfo.tileSize);
+		if (data == 1){
+			// rollback
 			charPos.x = orgCharPos.x;
 			charPos.y = orgCharPos.y;
+		}
+		else {
+			if (data != currentData) {
+				currentData = data;
+				console.log(currentData);
+				if (data > 1) {
+					switchMap(data, currentMap.id, mapAssoc, jsonInfo, buffCtx1);
+				}
+				
+				
+			}
+			
 		}
 
 		primaryCtx.drawImage(buffCanvas1, 0, 0);
