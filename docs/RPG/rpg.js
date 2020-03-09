@@ -281,23 +281,29 @@
 			return;
 			
 		if (currentMap) {
-			ctx.fillStyle = "#000";
+			ctx.fillStyle = "#FFF";
 			ctx.fillRect(0, 0, 1000, 1000);		
 		}
 		else {
-			ctx.fillStyle = "#000";
+			ctx.fillStyle = "#FFF";
 			ctx.fillRect(0, 0, 1000, 1000);
 		}
 		currentMap = jsonInfo.map.find(x => x.id == newMapID);		
 		currentData = doorID;
 		charPos = getCharPost(currentData, currentMap.baseLayer, jsonInfo.tileSize);
-		showMap(ctx, currentMap.baseLayer, tilesetImage, jsonInfo.tileSize, jsonInfo.imageNumTiles);
+		mousePos.x = charPos.x;
+		mousePos.y = charPos.y;
+		showMap(ctx, currentMap.layer1, tilesetImage, jsonInfo.tileSize, jsonInfo.imageNumTiles);
 	}
 	
 	function getData(layerArray, x, y, tileSize) {
 		let r = Math.floor(y / tileSize);
 		let c = Math.floor(x / tileSize);
-		let data = layerArray[r][c];
+		
+		let data = 1;
+		if (layerArray.length > r)
+			if (layerArray[r].length > c)
+				data = layerArray[r][c];
 		return data;
 		
 		//let y1 = (y % tileSize);

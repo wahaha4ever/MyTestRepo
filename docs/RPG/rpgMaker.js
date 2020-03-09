@@ -67,15 +67,15 @@
 	
 	function initStorage(maxX, maxY, deftValue) {
 		let content = [];
-		for ( var r = 0; r < maxY; r++ ){
+		for ( var r = 0; r < maxX; r++ ){
 			let data = []
-			for ( var c = 0; c < maxX; c++ ){
+			for ( var c = 0; c < maxY; c++ ){
 				let value = deftValue;
 				data.push(value);
 			}
 			content.push(data);
 		}
-		layer1 = JSON.parse(JSON.stringify(content));
+		layer1 = JSON.parse(JSON.stringify(content));		
 		layer2 = JSON.parse(JSON.stringify(content));
 		layer3 = JSON.parse(JSON.stringify(content));
 	}
@@ -126,6 +126,7 @@
 		let maxX = document.getElementById("colCnt").value;	
 		let tileImageName = document.getElementById("tileImage").value;		
 		
+		console.log(maxX + "," + maxY);
 		initStorage(maxX, maxY, 0);
 		
 		let canvas = document.getElementById("myCanvas");
