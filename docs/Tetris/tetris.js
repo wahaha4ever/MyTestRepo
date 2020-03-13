@@ -122,6 +122,12 @@
 			this.noOfRow = noOfRow;
 			this.fnInit();
 		}
+		fnLoadJsonContent(jsonContent) {
+			this.content = JSON.parse(jsonContent)
+		}
+		fnGetJsonContent() {
+			return JSON.stringify(this.content);
+		}
 		fnInit() {
 			this.content = [];
 			for ( var r = 0; r < this.noOfRow; r++ ){
@@ -489,9 +495,24 @@
 	}
 
 	initCanvas();	
+	
+	var focusOut = function() {
+		let json = grid.fnGetJsonContent();
+		localStorage.setItem("grid", json);
+		let shapeCode = shape.fnGetShapeCode();
+		localStorage.setItem("currentShape", shapeCode);
+		let nextShapeCode = nextShape.fnGetShapeCode();
+		localStorage.setItem("nextShape", nextShapeCode);
+	}
+	
+	var focusIn = function() {
+		console.log("In");
+	}
 
 	window.addEventListener('resize', resizeCanvas, false);
 	window.addEventListener('orientationchange', resizeCanvas, false);
+	window.addEventListener('blur', focusOut, false);
+	window.addEventListener('focus', focusIn, false);
 	resizeCanvas();
 	
 	var init = function() {
@@ -500,8 +521,17 @@
 		score = 0;
 		actionInterval = DEFT_ACTIONINTERVAL;
 		grid.fnInit();
+		if (localStorage.getItem("grid")){
+			grid.fnLoadJsonContent(localStorage.getItem("grid"));
+		}
 		drawBuff(grid, blockSize);
 		
+		//if (localStorage.getItem("nextShape")) {
+		//	nextShape.fnInit(localStorage.getItem("nextShape"));
+		//}
+		//if (localStorage.getItem("currentShape")) {
+		//	shape.fnInit(localStorage.getItem("currentShape"));
+		//}
 		nextShape.fnInit();
 		initFromNext();
 		
