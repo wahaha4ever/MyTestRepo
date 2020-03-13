@@ -175,6 +175,64 @@
 		
 	}
 	
+	function initKeyboard() {
+		/* keyboard control */
+		var keyConfig = {
+			Left : { Code : 37, Value : false },
+			Right : { Code : 39, Value : false },
+			Down : { Code : 40, Value : false },
+			RotateC : { Code : 38, Value : false },
+			RotateCA : { Code : 96, Value : false },
+			Pause : { Code : 27, Value : false }
+		}
+		
+		var onKeyDown = function ( event ) {
+			for(var key in keyConfig) { 
+				if (event.keyCode == keyConfig[key].Code) {
+					keyConfig[key].Value = true;
+				}
+			};
+			
+			//if (keyConfig.Left.Value) {
+			//	moveLeft(grid, shape);
+			//	//drawBuff();
+			//}
+			//if (keyConfig.Right.Value) {
+			//	moveRight(grid, shape);
+			//	//drawBuff();
+			//}
+			//if (keyConfig.Down.Value) {
+			//	moveDown(grid, shape);
+			//	//drawBuff();
+			//}
+			//if (keyConfig.RotateC.Value) {
+			//	moveRotation(grid, shape, true);
+			//	drawShapeBuff(shape, blockSize);
+			//	//drawBuff();
+			//}
+			//if (keyConfig.RotateCA.Value) {			
+			//	moveRotation(grid, shape, false);		
+			//	drawShapeBuff(shape, blockSize);
+			//	//drawBuff();
+			//}
+			//if (keyConfig.Pause.Value) {
+			//	pause();
+			//	//drawBuff();
+			//}
+		};
+			
+		var onKeyUp = function ( event ) {
+			for(var key in keyConfig) { 					
+				if (event.keyCode == keyConfig[key].Code) {
+					keyConfig[key].Value = false;
+				}
+			};
+		};
+		
+		document.addEventListener( 'keydown', onKeyDown, false );
+		document.addEventListener( 'keyup', onKeyUp, false );
+	}
+	
 	function init() {
 		initCanvas();
 		initCanvasTouchEvent();
@@ -359,25 +417,58 @@
 			else if (mousePos.x < charPos.x)
 				charPos.x--;
 		}
-		//let data = getData(jsonInfo.baseLayer, charPos.x, charPos.y, jsonInfo.tileSize);
-		let data = getData(currentMap.baseLayer, charPos.x, charPos.y, jsonInfo.tileSize);
-		if (data == 1){
-			// rollback
+		let newCharPos = {};
+		newCharPos.x = charPos.x;
+		newCharPos.y = charPos.y;
+		
+		
+		if (getData(currentMap.baseLayer, newCharPos.x, newCharPos.y, jsonInfo.tileSize) != 1) {
+			charPos.x = newCharPos.x;
+			charPos.y = newCharPos.y;
+		}
+		else if (getData(currentMap.baseLayer, orgCharPos.x, newCharPos.y, jsonInfo.tileSize) != 1) {
 			charPos.x = orgCharPos.x;
+			charPos.y = newCharPos.y;
+		}
+		else if (getData(currentMap.baseLayer, newCharPos.x, orgCharPos.y, jsonInfo.tileSize) != 1) {
+			charPos.x = newCharPos.x;
 			charPos.y = orgCharPos.y;
 		}
 		else {
-			if (data != currentData) {
-				currentData = data;
-				console.log(currentData);
-				if (data > 1) {
-					switchMap(data, currentMap.id, mapAssoc, jsonInfo, buffCtx1);
-				}
-				
-				
+			charPos.x = orgCharPos.x;
+			charPos.y = orgCharPos.y;
+		}
+		let data = getData(jsonInfo.baseLayer, charPos.x, charPos.y, jsonInfo.tileSize);
+		if (data != currentData) {
+			currentData = data;
+			console.log(currentData);
+			if (data > 1) {
+				switchMap(data, currentMap.id, mapAssoc, jsonInfo, buffCtx1);
 			}
 			
+			
 		}
+		
+		
+		////let data = getData(jsonInfo.baseLayer, charPos.x, charPos.y, jsonInfo.tileSize);
+		//let data = getData(currentMap.baseLayer, charPos.x, charPos.y, jsonInfo.tileSize);
+		//if (data == 1){
+		//	// rollback
+		//	charPos.x = orgCharPos.x;
+		//	charPos.y = orgCharPos.y;
+		//}
+		//else {
+		//	if (data != currentData) {
+		//		currentData = data;
+		//		console.log(currentData);
+		//		if (data > 1) {
+		//			switchMap(data, currentMap.id, mapAssoc, jsonInfo, buffCtx1);
+		//		}
+		//		
+		//		
+		//	}
+		//	
+		//}
 
 		primaryCtx.drawImage(buffCanvas1, 0, 0);
 		primaryCtx.drawImage(buffCanvasChar, charPos.x - buffCanvasChar.width / 2, charPos.y - buffCanvasChar.height / 2);
