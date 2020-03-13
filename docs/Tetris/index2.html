@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<!--<meta name="viewport" content="width=device-width, initial-scale=1" >-->
+	<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport" />
+	<meta content="yes" name="apple-mobile-web-app-capable" />
+	<meta content="black" name="apple-mobile-web-app-status-bar-style" />
+	<meta content="telephone=no,email=no" name="format-detection" />
+	<meta name="apple-mobile-web-app-title" content="Tetris">
+	<link rel="apple-touch-icon" href="icon-192x192.png">
+	<link rel="apple-touch-startup-image" href="icon-192x192.png">
+	<style>
+	* { margin:0; padding:0; } 
+	html, body {
+	  width:  100%;
+	  height: 100%;
+	  margin: 0;
+	}
+	canvas { display:block; }
+
+	#buttomCtrl {
+		position:fixed; 
+		height : 20px;
+		bottom : 0px;
+		left : 0px;
+		right: 0px;
+		/*background-color:green;*/
+		text-align: center;
+	}
+	#canvasCtrl {
+		position:fixed;
+		left : 10px;
+		right : 10px;
+		top : 20px;
+		bottom : 20px;
+		border:1px solid red;
+	}
+	.info {
+		color:white;
+		position:fixed;
+		top: 40%;
+		background-color : black;
+		left:0px;
+		right:0px;
+		text-align: center;
+		visibility:hidden;
+		padding-top : 10px;
+		padding-bottom : 10px;
+	}
+	.info button {
+		width : 100px;
+	}
+	.infoShow {
+		visibility:visible;
+	}
+	.gameInfo {
+		position:fixed;
+		top:0px;
+		left:0px;
+		width:100%;
+		height:20px;
+		text-align:center;
+	}
+	.gameInfo .left{
+		padding-left:2px;
+		padding-right:2px;
+		float: left;
+	}
+	.gameInfo .right{
+		padding-left:2px;
+		padding-right:2px;
+		float: right;
+	}
+	/*@media (orientation: landscape) {
+	  body {
+		transform: rotate(-90deg);
+	  }
+	}*/
+	</style>
+</head>
+<body>
+<div id="topCtrl" class="gameInfo">
+	<span class="right">Score : <span id="score"></span></span>
+	<span class="left">Level : <span id="level"></span></span>
+	<div id="screenSize" style="color:red;"></div>
+</div>
+<div id="canvasCtrl">
+	<canvas id="myCanvas" width="100" height="50" style="border:1px solid #00ff00;"></canvas>
+	<canvas id="predCanvas", width="50" height="10" style="border:1px solid #00FFFF;"></canvas>
+</div>
+<!--<div id="leftCtrl" style="">
+	<button type="button" id="btnLeft">Left</button>
+	<button type="button" id="btnRotate">Rotate</button>
+</div>
+<div id="rightCtrl" style="">
+	<button type="button" id="btnRight">Right</button>
+	<button type="button" id="btnDown">Down</button>
+</div>-->
+<div id="buttomCtrl">
+	<button type="button" id="btnResize">Resize</button>
+	<button type="button" id="btnPause">Pause</button>
+</div>
+
+<div id="infoPause" class="info">
+	<span>Pause</span><br>
+	<button type="button" id="btnResume">Resume</button>
+	<button type="button" id="btnRestart">Retry</button>
+</div>
+<div id="infoGameOver" class="info">
+	<span>Game Over</span></br>
+	<button type="button" id="btnRetry">Retry</button>
+</div>
+	<script src="..\VPad\vpad.js"></script>
+	<script src="tetris2.js"></script>
+</body>
+<html>
