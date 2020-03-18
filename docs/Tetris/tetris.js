@@ -886,7 +886,7 @@
 		}
 	}
 
-	VPad.init("M", false, "A", "B");
+	VPad.init("M", false, "Rright", "Rleft");
 	//vpadConfig = VPad.getStatus();
 	init();
 	

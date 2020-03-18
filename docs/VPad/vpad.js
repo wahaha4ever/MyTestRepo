@@ -16,9 +16,10 @@
 	var keyStatus = {};
 	var lastDPadPressed = null;
 	
-	function initButton(id, fnPress, fnUnpress){
+	function initButton(id, txt, fnPress, fnUnpress){
 		let button = document.createElement("div");
 		button.id = id;
+		button.className = "dp dp" + txt;
 		button.style.cssText = CONTROLS_CSS;
 		button.style.width = DPAD_BUTTON_WIDTH_PERCENT + '%';
 		button.style.height = DPAD_BUTTON_HEIGHT_PERCENT + '%';
@@ -33,7 +34,7 @@
 	function createDPad(bIsEightWay) {
 		let button;
 		if (bIsEightWay) {
-			button = createDPadButton("1", function() { 
+			button = createDPadButton("1", "left-down", function() { 
 				keyStatus["left"] = true; keyStatus["down"] = true; writeInfo("Press 1");
 			}, function() { 
 				keyStatus["left"] = false; keyStatus["down"] = false; writeInfo("UnPress 1");
@@ -43,7 +44,7 @@
 			dpad["1"] = button;
 		}
 		
-		button = createDPadButton("2", function() { 
+		button = createDPadButton("2", "down", function() { 
 			keyStatus["down"] = true; writeInfo("Press 2");
 		}, function() { 
 			keyStatus["down"] = false; writeInfo("UnPress 2");
@@ -53,7 +54,7 @@
 		dpad["2"] = button;
 		
 		if (bIsEightWay) {
-			button = createDPadButton("3", function() { 
+			button = createDPadButton("3", "right-down", function() { 
 				keyStatus["right"] = true; keyStatus["down"] = true; writeInfo("Press 3");
 			}, function() { 
 				keyStatus["right"] = false; keyStatus["down"] = false; writeInfo("UnPress 3");
@@ -63,7 +64,7 @@
 			dpad["3"] = button;
 		}
 
-		button = createDPadButton("4", function() { 
+		button = createDPadButton("4", "left", function() { 
 			keyStatus["left"] = true; writeInfo("Press 4");
 		}, function() { 
 			keyStatus["left"] = false; writeInfo("UnPress 4");
@@ -72,12 +73,12 @@
 		button.style.left = (DPAD_BUTTON_WIDTH_PERCENT * 0) + '%';
 		dpad["4"] = button;	
 		
-		button = createDPadButton("5", null, null);
+		button = createDPadButton("5", "center", null, null);
 		button.style.bottom = (DPAD_BUTTON_HEIGHT_PERCENT * 1) + '%';
 		button.style.left = (DPAD_BUTTON_WIDTH_PERCENT * 1) + '%';
 		dpad["5"] = button;	
 		
-		button = createDPadButton("6", function() { 
+		button = createDPadButton("6", "right", function() { 
 			keyStatus["right"] = true; writeInfo("Press 6");
 		}, function() { 
 			keyStatus["right"] = false; writeInfo("UnPress 6");
@@ -87,7 +88,7 @@
 		dpad["6"] = button;	
 		
 		if (bIsEightWay) {
-			button = createDPadButton("7", function() { 
+			button = createDPadButton("7", "left-up", function() { 
 				keyStatus["left"] = true; keyStatus["up"] = true; writeInfo("Press 7");
 			}, function() { 
 				keyStatus["left"] = false; keyStatus["up"] = false; writeInfo("UnPress 7");
@@ -97,7 +98,7 @@
 			dpad["7"] = button;
 		}
 		
-		button = createDPadButton("8", function() { 
+		button = createDPadButton("8", "up", function() { 
 			keyStatus["up"] = true; writeInfo("Press 8");
 		}, function() { 
 			keyStatus["up"] = false; writeInfo("UnPress 8");
@@ -107,7 +108,7 @@
 		dpad["8"] = button;
 
 		if (bIsEightWay) {	
-			button = createDPadButton("9", function() { 
+			button = createDPadButton("9", "right-up", function() { 
 				keyStatus["right"] = true; keyStatus["up"] = true; writeInfo("Press 9");
 			}, function() { 
 				keyStatus["right"] = false; keyStatus["up"] = false; writeInfo("UnPress 9");
@@ -119,7 +120,7 @@
 
 	}
 	
-	function createDPadButton(id, fnPress, fnUnpress) {
+	function createDPadButton(id, txt, fnPress, fnUnpress) {
 		//let button = document.createElement("div");
 		//button.id = id;
 		//button.style.cssText = CONTROLS_CSS;
@@ -129,7 +130,7 @@
 		//button.style.position = 'absolute';
 		//button.press = () => { button.style.backgroundColor = "yellow"; fnPress(); };
 		//button.unpress = () => { button.style.backgroundColor = "red"; fnUnpress(); };
-		let button = initButton(id, fnPress, fnUnpress);
+		let button = initButton(id, txt, fnPress, fnUnpress);
 		
 		// press handler for basic touchstart case
 		button.addEventListener('touchstart', function(event) {
@@ -202,36 +203,36 @@
 	function createAction(txtA, txtB, txtX, txtY) {
 		let button;
 		if (txtA) {
-			button = createActionButton("A", function() { keyStatus["A"] = true; writeInfo("Press A");}, function() { keyStatus["A"] = false; writeInfo("UnPress A");});
+			button = createActionButton("A", txtA, function() { keyStatus["A"] = true; writeInfo("Press A");}, function() { keyStatus["A"] = false; writeInfo("UnPress A");});
 			button.style.bottom = (DPAD_BUTTON_HEIGHT_PERCENT * 0) + '%';
 			button.style.right = (DPAD_BUTTON_WIDTH_PERCENT * 0) + '%';
 			buttons["A"] = button;
-			buttons["A"].innerHTML = txtA;
+			//buttons["A"].innerHTML = txtA;
 		}
 		if (txtB) {
-			button = createActionButton("B", function() { keyStatus["B"] = true; writeInfo("Press B");}, function() { keyStatus["B"] = false; writeInfo("UnPress B");});
+			button = createActionButton("B", txtB, function() { keyStatus["B"] = true; writeInfo("Press B");}, function() { keyStatus["B"] = false; writeInfo("UnPress B");});
 			button.style.bottom = (DPAD_BUTTON_HEIGHT_PERCENT * 1) + '%';
 			button.style.right = (DPAD_BUTTON_WIDTH_PERCENT * 0) + '%';
 			buttons["B"] = button;
-			buttons["B"].innerHTML = txtB;
+			//buttons["B"].innerHTML = txtB;
 		}
 		if (txtX) {
-			button = createActionButton("X", function() { keyStatus["X"] = true; writeInfo("Press X");}, function() { keyStatus["X"] = false; writeInfo("UnPress X");});
+			button = createActionButton("X", txtX, function() { keyStatus["X"] = true; writeInfo("Press X");}, function() { keyStatus["X"] = false; writeInfo("UnPress X");});
 			button.style.bottom = (DPAD_BUTTON_HEIGHT_PERCENT * 0) + '%';
 			button.style.right = (DPAD_BUTTON_WIDTH_PERCENT * 1) + '%';
 			buttons["X"] = button;
-			buttons["X"].innerHTML = txtX;
+			//buttons["X"].innerHTML = txtX;
 		}
 		if (txtY) {
-			button = createActionButton("Y", function() { keyStatus["Y"] = true; writeInfo("Press Y");}, function() { keyStatus["Y"] = false; writeInfo("UnPress Y");});
+			button = createActionButton("Y", txtY, function() { keyStatus["Y"] = true; writeInfo("Press Y");}, function() { keyStatus["Y"] = false; writeInfo("UnPress Y");});
 			button.style.bottom = (DPAD_BUTTON_HEIGHT_PERCENT * 1) + '%';
 			button.style.right = (DPAD_BUTTON_WIDTH_PERCENT * 1) + '%';
 			buttons["Y"] = button;
-			buttons["Y"].innerHTML = txtY;
+			//buttons["Y"].innerHTML = txtY;
 		}
 	}
 	
-	function createActionButton(id, fnPress, fnUnpress) {
+	function createActionButton(id, txt, fnPress, fnUnpress) {
 		//let button = document.createElement("div");
 		//button.id = id;
 		//button.style.cssText = CONTROLS_CSS;
@@ -240,7 +241,7 @@
 		//button.style.position = 'absolute';
 		//button.press = () => { button.style.backgroundColor = "yellow"; fnPress(); };
 		//button.unpress = () => { button.style.backgroundColor = "red"; fnUnpress(); };
-		let button = initButton(id, fnPress, fnUnpress);
+		let button = initButton(id, txt, fnPress, fnUnpress);
 		
 		// press handler for basic touchstart case
 		button.addEventListener('touchstart', function(event) {
