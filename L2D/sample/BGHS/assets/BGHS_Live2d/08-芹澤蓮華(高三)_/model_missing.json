@@ -1,0 +1,130 @@
+{
+  "name": "renge",
+  "model": "../swm_06.moc",
+  "textures": [
+    "../../0-face/08_face_00.png"
+  ],
+  "hit_areas": [
+    {
+      "name": "head",
+      "id": "D_REF.HEAD"
+    },
+    {
+      "name": "body",
+      "id": "D_REF.BODY"
+    }
+  ],
+  "motions": {
+    "idle": [
+      {
+        "name": "m01",
+        "file": "../../0-motions/m01.mtn",
+        "expression": "f01.exp.json",
+        "priority": 9,
+        "weight": 1
+      },
+      {
+        "name": "m02",
+        "file": "../../0-motions/m02.mtn",
+        "expression": "f01.exp.json",
+        "priority": 9,
+        "weight": 1
+      },
+      {
+        "name": "m04",
+        "file": "../../0-motions/m04.mtn",
+        "expression": "f02.exp.json",
+        "priority": 9,
+        "weight": 1
+      }
+    ],
+    "tap_head": [
+      {
+        "name": "m03",
+        "file": "../../0-motions/m03.mtn",
+        "expression": "f02.exp.json",
+        "priority": 9,
+        "weight": 1
+      },
+      {
+        "name": "m06",
+        "file": "../../0-motions/m06.mtn",
+        "expression": "f04.exp.json",
+        "priority": 9,
+        "weight": 1
+      }
+    ],
+    "tap_body": [
+      {
+        "name": "m05",
+        "file": "../../0-motions/m05.mtn",
+        "expression": "f03.exp.json",
+        "priority": 9,
+        "weight": 1
+      },
+      {
+        "name": "m03",
+        "file": "../../0-motions/m03.mtn",
+        "expression": "f04.exp.json",
+        "priority": 9,
+        "weight": 1
+      }
+    ]
+  },
+  "expressions": [
+    {
+      "name": "f01.exp.json",
+      "file": "../../0-expressions/f01.exp.json"
+    },
+    {
+      "name": "f02.exp.json",
+      "file": "../../0-expressions/f02.exp.json"
+    },
+    {
+      "name": "f03.exp.json",
+      "file": "../../0-expressions/f03.exp.json"
+    },
+    {
+      "name": "f04.exp.json",
+      "file": "../../0-expressions/f04.exp.json"
+    },
+    {
+      "name": "f05.exp.json",
+      "file": "../../0-expressions/f05.exp.json"
+    },
+    {
+      "name": "f06.exp.json",
+      "file": "../../0-expressions/f06.exp.json"
+    },
+    {
+      "name": "f07.exp.json",
+      "file": "../../0-expressions/f07.exp.json"
+    },
+    {
+      "name": "f08.exp.json",
+      "file": "../../0-expressions/f08.exp.json"
+    },
+    {
+      "name": "f09.exp.json",
+      "file": "../../0-expressions/f09.exp.json"
+    },
+    {
+      "name": "f10.exp.json",
+      "file": "../../0-expressions/f10.exp.json"
+    },
+    {
+      "name": "f20.exp.json",
+      "file": "../../0-expressions/f20.exp.json"
+    },
+    {
+      "name": "f21.exp.json",
+      "file": "../../0-expressions/f21.exp.json"
+    },
+    {
+      "name": "f22.exp.json",
+      "file": "../../0-expressions/f22.exp.json"
+    }
+  ],
+  "physics": "../physics.json",
+  "lip_sync": "true"
+}
