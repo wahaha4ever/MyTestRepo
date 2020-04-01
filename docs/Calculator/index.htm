@@ -11,63 +11,11 @@
 <header class="navbar">
 	<a class="navbar-brand" href="#">Navbar</a>
 </header>
-<div class="container-fluid text-center">
-	<nav aria-label="Page navigation example">
-	  <ul class="pagination justify-content-center">
-		<li class="page-item"><a class="page-link" href="#">1</a></li>
-		<li class="page-item"><a class="page-link" href="#">2</a></li>
-		<li class="page-item"><a class="page-link" href="#">3</a></li>
-		<li class="page-item"><a class="page-link" href="#">4</a></li>
-		<li class="page-item"><a class="page-link" href="#">5</a></li>
-		<li class="page-item"><a class="page-link" href="#">6</a></li>
-		<li class="page-item"><a class="page-link" href="#">7</a></li>
-		<li class="page-item"><a class="page-link" href="#">8</a></li>
-		<li class="page-item"><a class="page-link" href="#">9</a></li>
-		<li class="page-item"><a class="page-link" href="#">10</a></li>
-	  </ul>
-	</nav>
-	<div class="d-flex p-2 bd-highlight justify-content-center">4 + 3 =</div>
-</div>
 	<div id="hello-example"></div>
 	<div id="react-question"></div>
 	<div id="react-input"></div>
 	<div id="root"></div>
   	<script crossorigin type="text/babel" src="./Calculator.js"></script>
 	<script crossorigin src="./Formula.js"></script>
-	<script type="text/babel">
-// Obtain the root 
-    const rootElement = document.getElementById('root')
-// Create a ES6 class component    
-    class ShoppingList extends React.Component { 
-// Use the render function to return JSX component      
-    render() { 
-        return (
-        <div className="shopping-list">
-        <h1>Shopping List for {this.props.name}</h1>
-          <ul>
-            <li>Instagram</li>
-            <li>WhatsApp</li>
-            <li>Oculus</li>
-          </ul>
-        </div>
-      );
-      } 
-    }
-// Create a function to wrap up your component
-function App(){
-  return(
-  <div>
-    <ShoppingList name="@luispagarcia on Dev.to!"/>
-  </div>
-  )
-}
-
-
-// Use the ReactDOM.render to show your component on the browser
-    ReactDOM.render(
-      <App />,
-      rootElement
-    )
-	</script>
 </body>
 </html>

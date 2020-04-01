@@ -12,13 +12,32 @@ function UserButton(props) {
 		</button>
 	);
 }
-
+{/*<li><a class="page-link" href="#" data_a={props.a} data_b={props.b} data_oper={props.oper} key={props.keyx}>{props.keyx}</a></li>*/}
 function QuestionItem(props) {
-	return(
-		<li><a class="page-link" href="#" data_a={props.a} data_b={props.b} data_oper={props.oper} key={props.keyx}>{props.keyx}</a></li>
+	let className = props.selected ? "btn btn-primary" : "btn btn-outline-primary";
+	if (props.isans) {
+		if (props.iscorrect)
+			className = props.selected ? "btn btn-success" : "btn btn-outline-success";
+		else 
+			className = props.selected ? "btn btn-danger" : "btn btn-outline-danger";
+	}
+	return(			
+		<button type="button" class={className} value={props.keyx} onClick={props.onClick}>
+			{props.keyx}
+		</button>
 	)
 }
 
+function checkAns(a, b, oper, ans){
+	if (!ans)
+		return false;
+	if (oper == "0") {
+		return (a + b == ans);
+	}
+	else {
+		return (a - b == ans);
+	}		
+}
 
 function initQuestion() {
 	let questions = [];
@@ -60,26 +79,28 @@ function getRandomInt(max) {
 class QuestionList extends React.Component {
 	constructor(props) {
 		super(props);
-		this.state = {
-			question : initQuestion()
-		}
 	}
-	
 	render() {
-		const list = this.state.question.map((x, i) => {
+		const list = this.props.questions.map((x, i) => {
+			let selected = false;
+			if (this.props.currentIdx == i)
+				selected = true;
+			
+			let isAns = x.ans ? true : false;
+			let isCorrect = checkAns(x.a, x.b, x.oper, x.ans);
 			return(
-				<QuestionItem a={x.a} b={x.b} keyx={i+1} oper={x.oper}/>
+				<QuestionItem keyx={i+1} selected={selected} isans={isAns} iscorrect={isCorrect} onClick={()=> this.props.onClick(i)}/>
 			)
 		});
+
 		return(
-			<nav aria-label="Page navigation example">
-				<ul class="pagination justify-content-center">
-					{list}
-				</ul>
-			</nav>
+			<div class="btn-group" role="group">
+				{list}
+			</div>
 		)
 	}
 }
+
 
 class UserInput extends React.Component {
 	renderUserButton(i) {
@@ -117,21 +138,86 @@ class UserInput extends React.Component {
 	}
 }
 
+
 class Game extends React.Component {
 	constructor(props) {
 		super(props);
+		this.state = {
+			questions : initQuestion(),
+			currentIdx : 0,
+			currentAns : null
+		}
 	}
 	
 	handleClick(i) { 
-		alert(i);
+		let ans = this.state.currentAns;
+		if (i == "N") {
+			ans = null;
+			this.setState({
+				currentAns: ans
+			});
+		}
+		else if (i == "Y") {
+			{/* answer and open next question */}
+			const q = this.state.questions;
+			const currentQ = q[this.state.currentIdx];
+			currentQ.ans = ans;			
+			if (currentQ.ans) {
+				currentQ.correct = checkAns(currentQ.a, currentQ.b, currentQ.oper, currentQ.ans);
+			}
+			else {
+				currentQ.correct = null;
+			}
+			
+			let nextIdx = this.state.currentIdx;
+			nextIdx++;
+			if (nextIdx >= this.state.questions.length){
+				nextIdx = 0;
+			}
+			this.setState({
+				currentIdx: nextIdx,
+				currentAns: q[nextIdx].ans
+			});			
+		}
+		else {
+			ans = this.state.currentAns ? this.state.currentAns + i : i;
+			this.setState({
+				currentAns: ans
+			});
+		}
+	}
+	
+	handleQuestionClick(i) {
+		const q = this.state.questions;
+		const currentQ = q[this.state.currentIdx];
+		currentQ.ans = this.state.currentAns;
+		if (currentQ.ans) {
+			currentQ.correct = checkAns(currentQ.a, currentQ.b, currentQ.oper, currentQ.ans);
+		}
+		else {
+			currentQ.correct = null;
+		}
+		this.setState({
+			currentIdx: i,
+			currentAns: q[i].ans
+		});
 	}
 	
 	//
 	//
 	render() {
+		const currentQ = this.state.questions[this.state.currentIdx];
+		const symbol = currentQ.oper == "0" ? "+" : "-";
+		{/*const displayQ = () => {
+			const symbol = currentQ.oper == "0" ? "+" : "-";
+			return (
+				<div>{currentQ.a} {symbol} {currentQ.b} = </div>
+			)
+		}*/}
 		return(
 			<div>
-				<QuestionList/>	
+				<QuestionList questions={this.state.questions} currentIdx={this.state.currentIdx} onClick={(i) => this.handleQuestionClick(i)}/>	
+				<div>{currentQ.a} {symbol} {currentQ.b} = {this.state.currentAns}</div>
 				<UserInput onClick={(i) => this.handleClick(i)}/>
 			</div>
 		);
