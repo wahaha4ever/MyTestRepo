@@ -1,9 +1,9 @@
 //import React from 'react';
 //import ReactDOM from 'react-dom';
 
-const myelement = <h1>I Love JSX!</h1>;
+//const myelement = <h1>I Love JSX!</h1>;
 
-ReactDOM.render(myelement, document.getElementById('hello-example'));
+//ReactDOM.render(myelement, document.getElementById('hello-example'));
 
 function UserButton(props) {
 	return(
@@ -25,6 +25,19 @@ function QuestionItem(props) {
 		<button type="button" class={className} value={props.keyx} onClick={props.onClick}>
 			{props.keyx}
 		</button>
+	)
+}
+
+function DisplayItem(props) {
+	let q = props.question;
+	let className = "";
+	if (q.ans && q.correct)
+		className = "correct";
+	else if (q.ans && !q.correct)
+		className = "error";
+	const symbol = q.oper == "0" ? "+" : "-";
+	return(
+		<div class={className}>{q.a} {symbol} {q.b} = {q.ans}</div>
 	)
 }
 
@@ -138,6 +151,31 @@ class UserInput extends React.Component {
 	}
 }
 
+class Result extends React.Component {
+	constructor(props) {
+		super(props);		
+	}
+	
+	render() {
+		let cnt = 0;
+		let ans = 0;
+		this.props.questions.map((x, i) => {
+			if (x.ans)
+				ans++;
+			if (x.correct)
+				cnt++;
+		});
+		const result = ans == this.props.questions.length
+		return(
+			<div>
+				<span>Game Completed!</span><br/>
+				<span>You got {cnt} out of {this.props.questions.length}</span><br/>
+				<button type="button" class="btn btn-primary" onClick={this.props.onClick}>Retry</button>
+			</div>
+		)
+	}
+}
+
 
 class Game extends React.Component {
 	constructor(props) {
@@ -149,44 +187,15 @@ class Game extends React.Component {
 		}
 	}
 	
-	handleClick(i) { 
-		let ans = this.state.currentAns;
-		if (i == "N") {
-			ans = null;
-			this.setState({
-				currentAns: ans
-			});
-		}
-		else if (i == "Y") {
-			{/* answer and open next question */}
-			const q = this.state.questions;
-			const currentQ = q[this.state.currentIdx];
-			currentQ.ans = ans;			
-			if (currentQ.ans) {
-				currentQ.correct = checkAns(currentQ.a, currentQ.b, currentQ.oper, currentQ.ans);
-			}
-			else {
-				currentQ.correct = null;
-			}
-			
-			let nextIdx = this.state.currentIdx;
-			nextIdx++;
-			if (nextIdx >= this.state.questions.length){
-				nextIdx = 0;
-			}
-			this.setState({
-				currentIdx: nextIdx,
-				currentAns: q[nextIdx].ans
-			});			
-		}
-		else {
-			ans = this.state.currentAns ? this.state.currentAns + i : i;
-			this.setState({
-				currentAns: ans
-			});
-		}
+	handleRetryClick() {
+		this.setState({
+			questions : initQuestion(),
+			currentIdx : 0,
+			currentAns : null
+		})	
 	}
 	
+	//change question by user
 	handleQuestionClick(i) {
 		const q = this.state.questions;
 		const currentQ = q[this.state.currentIdx];
@@ -203,25 +212,45 @@ class Game extends React.Component {
 		});
 	}
 	
-	//
-	//
+	handleClick(i) { 
+		let ans = this.state.currentAns;
+		if (i == "N") {
+			ans = null;
+			this.setState({
+				currentAns: ans
+			});
+		}
+		else if (i == "Y") {
+			{/* answer and open next question */}
+			let nextIdx = this.state.currentIdx;
+			nextIdx++;
+			if (nextIdx >= this.state.questions.length){
+				nextIdx = 0;
+			}
+			
+			this.handleQuestionClick(nextIdx);
+		}
+		else {
+			ans = this.state.currentAns ? this.state.currentAns + i : i;
+			this.setState({
+				currentAns: ans
+			});
+		}
+	}
+	
 	render() {
 		const currentQ = this.state.questions[this.state.currentIdx];
 		const symbol = currentQ.oper == "0" ? "+" : "-";
-		{/*const displayQ = () => {
-			const symbol = currentQ.oper == "0" ? "+" : "-";
-			return (
-				<div>{currentQ.a} {symbol} {currentQ.b} = </div>
-			)
-		}*/}
 		return(
 			<div>
 				<QuestionList questions={this.state.questions} currentIdx={this.state.currentIdx} onClick={(i) => this.handleQuestionClick(i)}/>	
-				<div>{currentQ.a} {symbol} {currentQ.b} = {this.state.currentAns}</div>
-				<UserInput onClick={(i) => this.handleClick(i)}/>
+				<div class="display">{currentQ.a} {symbol} {currentQ.b} = {this.state.currentAns}</div>				
+				<DisplayItem question={currentQ}/>
+				<UserInput questions={this.state.questions} onClick={(i) => this.handleClick(i)}/>
+				<Result questions={this.state.questions} onClick={() => this.handleRetryClick()}/>
 			</div>
 		);
 	}
 }
 
-ReactDOM.render(<Game />, document.getElementById('react-input'));
+ReactDOM.render(<Game />, document.getElementById('root'));

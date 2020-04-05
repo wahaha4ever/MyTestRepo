@@ -249,9 +249,11 @@
 				switchMap(-1, -1, mapAssoc, jsonInfo, buffCtx1);
 				//initMap(buffCtx1, jsonInfo.layer1, tilesetImage, jsonInfo.tileSize, jsonInfo.imageNumTiles);
 				//initMap(buffCtx2, jsonInfo.layer2, tilesetImage, jsonInfo.tileSize, jsonInfo.imageNumTiles);
+				
+				then = Date.now();
+				myReq = requestAnimationFrame( () => renderLoop(1000, null, drawBuff2Screen, null) );
 			});
-			then = Date.now();
-			myReq = requestAnimationFrame( () => renderLoop(1000, null, drawBuff2Screen, null) );
+
 		});
 	}
 	
@@ -359,9 +361,11 @@
 		let c = Math.floor(x / tileSize);
 		
 		let data = 1;
-		if (layerArray.length > r)
-			if (layerArray[r].length > c)
+		if (layerArray.length > r && r >= 0) {
+			if (layerArray[r].length > c && c >= 0) {
 				data = layerArray[r][c];
+			}
+		}
 		return data;
 		
 		//let y1 = (y % tileSize);
@@ -396,14 +400,60 @@
 	}
 	
 	function drawBuff2Screen() {
+		//console.log(mousePos);
 		let y = Math.abs(mousePos.y - charPos.y);
 		let x = Math.abs(mousePos.x - charPos.x);
 		
 		let orgCharPos = {};
 		orgCharPos.x = charPos.x;
-		orgCharPos.y = charPos.y;
+		orgCharPos.y = charPos.y;	
 		
-		if ((y / x) >= ratio) {
+		//let newCharPos = {};
+		//newCharPos.x = charPos.x;
+		//newCharPos.y = charPos.y;
+		//
+		//if (mousePos.y > charPos.y)
+		//	newCharPos.y++;
+		//else if (mousePos.y < charPos.y)
+		//	newCharPos.y--;		
+		//if (mousePos.x > charPos.x)
+		//	newCharPos.x++;
+		//else if (mousePos.x < charPos.x)
+		//	newCharPos.x--;
+		//	
+        //
+		//
+		//if ((y / x) >= ratio) {
+		//	// handle y first
+		//	if (getData(currentMap.baseLayer, orgCharPos.x, newCharPos.y, jsonInfo.tileSize) != 1) {
+		//		charPos.x = orgCharPos.x;
+		//		charPos.y = newCharPos.y;
+		//	}
+		//	else if (getData(currentMap.baseLayer, newCharPos.x, orgCharPos.y, jsonInfo.tileSize) != 1) {
+		//		charPos.x = newCharPos.x;
+		//		charPos.y = orgCharPos.y;
+		//	}
+		//} else {
+		//	// handle x first
+		//	if (getData(currentMap.baseLayer, newCharPos.x, orgCharPos.y, jsonInfo.tileSize) != 1) {
+		//		charPos.x = newCharPos.x;
+		//		charPos.y = orgCharPos.y;
+		//	}
+		//	else if (getData(currentMap.baseLayer, orgCharPos.x, newCharPos.y, jsonInfo.tileSize) != 1) {
+		//		charPos.x = orgCharPos.x;
+		//		charPos.y = newCharPos.y;
+		//	}
+		//}
+		
+		//let data = getData(jsonInfo.baseLayer, charPos.x, charPos.y, jsonInfo.tileSize);
+		//if (data != currentData) {
+		//	currentData = data;
+		//	if (data > 1) {
+		//		switchMap(data, currentMap.id, mapAssoc, jsonInfo, buffCtx1);
+		//	}
+		//}
+		
+		if ((y / x) >= ratio) {		
 			// handle y
 			if (mousePos.y > charPos.y)
 				charPos.y++;
@@ -417,58 +467,27 @@
 			else if (mousePos.x < charPos.x)
 				charPos.x--;
 		}
-		let newCharPos = {};
-		newCharPos.x = charPos.x;
-		newCharPos.y = charPos.y;
+
 		
-		
-		if (getData(currentMap.baseLayer, newCharPos.x, newCharPos.y, jsonInfo.tileSize) != 1) {
-			charPos.x = newCharPos.x;
-			charPos.y = newCharPos.y;
-		}
-		else if (getData(currentMap.baseLayer, orgCharPos.x, newCharPos.y, jsonInfo.tileSize) != 1) {
+		//let data = getData(jsonInfo.baseLayer, charPos.x, charPos.y, jsonInfo.tileSize);
+		let data = getData(currentMap.baseLayer, charPos.x, charPos.y, jsonInfo.tileSize);
+		if (data == 1){
+			// rollback
 			charPos.x = orgCharPos.x;
-			charPos.y = newCharPos.y;
-		}
-		else if (getData(currentMap.baseLayer, newCharPos.x, orgCharPos.y, jsonInfo.tileSize) != 1) {
-			charPos.x = newCharPos.x;
 			charPos.y = orgCharPos.y;
 		}
 		else {
-			charPos.x = orgCharPos.x;
-			charPos.y = orgCharPos.y;
-		}
-		let data = getData(jsonInfo.baseLayer, charPos.x, charPos.y, jsonInfo.tileSize);
-		if (data != currentData) {
-			currentData = data;
-			console.log(currentData);
-			if (data > 1) {
-				switchMap(data, currentMap.id, mapAssoc, jsonInfo, buffCtx1);
+			if (data != currentData) {
+				currentData = data;
+				console.log(currentData);
+				if (data > 1) {
+					switchMap(data, currentMap.id, mapAssoc, jsonInfo, buffCtx1);
+				}
+				
+				
 			}
 			
-			
 		}
-		
-		
-		////let data = getData(jsonInfo.baseLayer, charPos.x, charPos.y, jsonInfo.tileSize);
-		//let data = getData(currentMap.baseLayer, charPos.x, charPos.y, jsonInfo.tileSize);
-		//if (data == 1){
-		//	// rollback
-		//	charPos.x = orgCharPos.x;
-		//	charPos.y = orgCharPos.y;
-		//}
-		//else {
-		//	if (data != currentData) {
-		//		currentData = data;
-		//		console.log(currentData);
-		//		if (data > 1) {
-		//			switchMap(data, currentMap.id, mapAssoc, jsonInfo, buffCtx1);
-		//		}
-		//		
-		//		
-		//	}
-		//	
-		//}
 
 		primaryCtx.drawImage(buffCanvas1, 0, 0);
 		primaryCtx.drawImage(buffCanvasChar, charPos.x - buffCanvasChar.width / 2, charPos.y - buffCanvasChar.height / 2);
