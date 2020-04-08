@@ -5,22 +5,30 @@
 
 //ReactDOM.render(myelement, document.getElementById('hello-example'));
 
+let GameStatus = {}
+GameStatus.INIT = "10";
+GameStatus.PROCESS = "20";
+GameStatus.END = "30"
+
 function UserButton(props) {
 	return(
-		<button type="button" class="btn btn-secondary" value={props.value} onClick={props.onClick}>
-			{props.value}
+		<button type="button" class="btn btn-secondary btn-lg" value={props.value} onClick={props.onClick}>
+			{props.text}
 		</button>
 	);
 }
 {/*<li><a class="page-link" href="#" data_a={props.a} data_b={props.b} data_oper={props.oper} key={props.keyx}>{props.keyx}</a></li>*/}
 function QuestionItem(props) {
-	let className = props.selected ? "btn btn-primary" : "btn btn-outline-primary";
+	const classNameBase = "btn btn-lg";
+	let className = props.selected ? "btn-primary" : "btn-outline-primary";
 	if (props.isans) {
 		if (props.iscorrect)
-			className = props.selected ? "btn btn-success" : "btn btn-outline-success";
+			className = props.selected ? "btn-success" : "btn-outline-success";
 		else 
-			className = props.selected ? "btn btn-danger" : "btn btn-outline-danger";
+			className = props.selected ? "btn-danger" : "btn-outline-danger";
 	}
+	
+	className = classNameBase + " " + className;
 	return(			
 		<button type="button" class={className} value={props.keyx} onClick={props.onClick}>
 			{props.keyx}
@@ -98,9 +106,14 @@ class QuestionList extends React.Component {
 			let selected = false;
 			if (this.props.currentIdx == i)
 				selected = true;
+				
+			let isAns = false;
+			let isCorrect = null;
+			if (this.props.status == GameStatus.END) {
+				isAns = x.ans == null ? false : true;
+				isCorrect = checkAns(x.a, x.b, x.oper, x.ans);
+			}
 			
-			let isAns = x.ans ? true : false;
-			let isCorrect = checkAns(x.a, x.b, x.oper, x.ans);
 			return(
 				<QuestionItem keyx={i+1} selected={selected} isans={isAns} iscorrect={isCorrect} onClick={()=> this.props.onClick(i)}/>
 			)
@@ -116,35 +129,37 @@ class QuestionList extends React.Component {
 
 
 class UserInput extends React.Component {
-	renderUserButton(i) {
+	renderUserButton(text, value) {
 		return(
-			<UserButton value={i} onClick={() => this.props.onClick(i)} />
+			<UserButton text={text} value={value} onClick={() => this.props.onClick(value)} />
 		);
 	}
 
 	render() {
-
+		let className = "btn-group-vertical";
+		if (this.props.status != GameStatus.PROCESS)
+			className += " hide";
 		return(
-			<div class="btn-group-vertical">
+			<div class={className}>
 				<div class="btn-group" role="group">
-					{this.renderUserButton("7")}
-					{this.renderUserButton("8")}
-					{this.renderUserButton("9")}
+					{this.renderUserButton("7", "7")}
+					{this.renderUserButton("8", "8")}
+					{this.renderUserButton("9", "9")}
 				</div>
 				<div class="btn-group" role="group">
-					{this.renderUserButton("4")}
-					{this.renderUserButton("5")}
-					{this.renderUserButton("6")}
+					{this.renderUserButton("4", "4")}
+					{this.renderUserButton("5", "5")}
+					{this.renderUserButton("6", "6")}
 				</div>
 				<div class="btn-group" role="group">
-					{this.renderUserButton("1")}
-					{this.renderUserButton("2")}
-					{this.renderUserButton("3")}
+					{this.renderUserButton("1", "1")}
+					{this.renderUserButton("2", "2")}
+					{this.renderUserButton("3", "3")}
 				</div>
 				<div class="btn-group" role="group">
-					{this.renderUserButton("N")}
-					{this.renderUserButton("0")}
-					{this.renderUserButton("Y")}
+					{this.renderUserButton("Clear", "C")}
+					{this.renderUserButton("0", "0")}
+					{this.renderUserButton("OK", "Y")}
 				</div>
 			</div>
 		);
@@ -160,14 +175,18 @@ class Result extends React.Component {
 		let cnt = 0;
 		let ans = 0;
 		this.props.questions.map((x, i) => {
-			if (x.ans)
+			if (!(x.ans === null)) {
 				ans++;
-			if (x.correct)
-				cnt++;
+				if (x.correct)
+					cnt++;
+			}
 		});
 		const result = ans == this.props.questions.length
+		let className = "btn-group-vertical";
+		if (this.props.status != GameStatus.END)
+			className += " hide";
 		return(
-			<div>
+			<div class={className}>
 				<span>Game Completed!</span><br/>
 				<span>You got {cnt} out of {this.props.questions.length}</span><br/>
 				<button type="button" class="btn btn-primary" onClick={this.props.onClick}>Retry</button>
@@ -181,26 +200,20 @@ class Game extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
+			status : GameStatus.PROCESS, 
+			gameType : 1,			// "1" : one way;
 			questions : initQuestion(),
 			currentIdx : 0,
 			currentAns : null
 		}
 	}
 	
-	handleRetryClick() {
-		this.setState({
-			questions : initQuestion(),
-			currentIdx : 0,
-			currentAns : null
-		})	
-	}
-	
-	//change question by user
-	handleQuestionClick(i) {
+	fnQestionChange(i) {
+		// mark answer for old question
 		const q = this.state.questions;
 		const currentQ = q[this.state.currentIdx];
 		currentQ.ans = this.state.currentAns;
-		if (currentQ.ans) {
+		if (!(currentQ.ans == null)) {
 			currentQ.correct = checkAns(currentQ.a, currentQ.b, currentQ.oper, currentQ.ans);
 		}
 		else {
@@ -212,9 +225,27 @@ class Game extends React.Component {
 		});
 	}
 	
+	handleRetryClick() {
+		this.setState({
+			status : GameStatus.PROCESS,
+			questions : initQuestion(),
+			currentIdx : 0,
+			currentAns : null
+		})	
+	}	
+	
+	//change question by user
+	handleQuestionClick(i) {
+	
+		//if (this.state.gameType != "1") {
+		if (this.state.status == GameStatus.END) {
+			this.fnQestionChange(i);
+		}
+	}
+	
 	handleClick(i) { 
 		let ans = this.state.currentAns;
-		if (i == "N") {
+		if (i == "C") {
 			ans = null;
 			this.setState({
 				currentAns: ans
@@ -222,16 +253,26 @@ class Game extends React.Component {
 		}
 		else if (i == "Y") {
 			{/* answer and open next question */}
-			let nextIdx = this.state.currentIdx;
-			nextIdx++;
-			if (nextIdx >= this.state.questions.length){
-				nextIdx = 0;
+			console.log(ans);
+			if (!(ans == null)) {
+				if (this.state.gameType == "1") {
+					if ((this.state.currentIdx + 1) == this.state.questions.length) {
+						this.setState({
+							status : GameStatus.END
+						});
+					}
+				}
+				let nextIdx = this.state.currentIdx + 1;
+				if (nextIdx >= this.state.questions.length){
+					nextIdx = 0;
+				}
+				this.fnQestionChange(nextIdx);
+				
 			}
-			
-			this.handleQuestionClick(nextIdx);
 		}
 		else {
 			ans = this.state.currentAns ? this.state.currentAns + i : i;
+			ans = parseInt(ans, 10);
 			this.setState({
 				currentAns: ans
 			});
@@ -243,11 +284,11 @@ class Game extends React.Component {
 		const symbol = currentQ.oper == "0" ? "+" : "-";
 		return(
 			<div>
-				<QuestionList questions={this.state.questions} currentIdx={this.state.currentIdx} onClick={(i) => this.handleQuestionClick(i)}/>	
-				<div class="display">{currentQ.a} {symbol} {currentQ.b} = {this.state.currentAns}</div>				
-				<DisplayItem question={currentQ}/>
-				<UserInput questions={this.state.questions} onClick={(i) => this.handleClick(i)}/>
-				<Result questions={this.state.questions} onClick={() => this.handleRetryClick()}/>
+				<QuestionList questions={this.state.questions} currentIdx={this.state.currentIdx} status={this.state.status} onClick={(i) => this.handleQuestionClick(i)}/>	
+				<div class="display"><h1>{currentQ.a} {symbol} {currentQ.b} = {this.state.currentAns}</h1></div>				
+				{/*<DisplayItem question={currentQ}/>*/}
+				<UserInput questions={this.state.questions} status={this.state.status} onClick={(i) => this.handleClick(i)}/>
+				<Result questions={this.state.questions} status={this.state.status} onClick={() => this.handleRetryClick()}/>
 			</div>
 		);
 	}
