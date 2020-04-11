@@ -7,8 +7,10 @@
 
 let GameStatus = {}
 GameStatus.INIT = "10";
+GameStatus.STANDBY = "15";
 GameStatus.PROCESS = "20";
 GameStatus.END = "30"
+
 
 function UserButton(props) {
 	return(
@@ -41,7 +43,7 @@ function DisplayItem(props) {
 	let status = props.status;
 	let currentAns = props.currentAns;
 	
-	let className = status == GameStatus.INIT ? "hide" : "";
+	let className = status == GameStatus.INIT || status == GameStatus.STANDBY ? "hide" : "";
 	
 	//if (status == GameStatus.END) {
 	//	if (q.ans && q.correct)
@@ -57,7 +59,9 @@ function DisplayItem(props) {
 	else
 		symbol = "X";
 	return(
-		<div class={className}><h1>{q.a} {symbol} {q.b} = {currentAns}</h1></div>
+		<div class={className}>
+			<h1>{q.a} {symbol} {q.b} = {currentAns}</h1>
+		</div>
 	)
 }
 
@@ -120,7 +124,7 @@ function initQuestion2(config) {
 					correct = true;
 					break;
 				}
-				if (oper == 1 && a >= b) {
+				if (oper == 1 && a > b) {
 					correct = true;
 					break;
 				}
@@ -173,6 +177,19 @@ function initQuestion() {
 
 function getRandomInt(max) {
 	return Math.floor(Math.random() * Math.floor(max));
+}
+
+class Start extends React.Component {
+	constructor(props) {
+		super(props);
+	}
+	render() {
+		return(
+			<div>
+				<button type="button" class="btn btn-Primary btn-lg" onClick={this.props.onClick}>Start!</button>
+			</div>
+		)
+	}
 }
 
 class QuestionList extends React.Component {
@@ -333,27 +350,6 @@ class Setup extends React.Component {
 									<button class="btn btn-primary btn-block" type="button" onClick={this.props.onClickStart}>Start</button>
 								</div>
 							</div>
-					{/*<div class="input-group">
-						<div class="input-group-prepend">
-							<input type="checkbox" value="plus" checked={plus} onChange={this.props.onChangeChk} />		
-							<label>Plus</label>
-						</div>
-						<input type="text" value={plusDigit} name="plusDigit" onChange={this.props.onChangeTxt} />
-					</div>	
-					<label>Plus</label>
-					<input type="checkbox" value="plus" checked={plus} onChange={this.props.onChangeChk} />
-					<input type="text" value={plusDigit} name="plusDigit" onChange={this.props.onChangeTxt} />
-					<br/>
-					<label>Minus</label>
-					<input type="checkbox" value="sub" checked={sub} onChange={this.props.onChangeChk} />
-					<input type="text" value={subDigit} name="subDigit" onChange={this.props.onChangeTxt} />
-					<br/>
-					<label>Multiply</label>
-					<input type="checkbox" value="multiply" checked={multiply} onChange={this.props.onChangeChk} />
-					<input type="text" value={multiplyX} name="multiplyX" onChange={this.props.onChangeTxt} /> x 
-					<input type="text" value={multiplyY} name="multiplyY" onChange={this.props.onChangeTxt} />
-					<br/>
-					<button type="button" onClick={this.props.onClickStart}>Start</button>*/}
 						</div>
 					</div>
 				</div>
@@ -378,9 +374,10 @@ class Game extends React.Component {
 			},
 			status : GameStatus.INIT, 
 			gameType : 1,			// "1" : one way;
-			questions : initQuestion(),
+			questions : [],//initQuestion(),
 			currentIdx : 0,
-			currentAns : null
+			currentAns : null,
+			startTime : null
 		}
 	}
 	
@@ -388,7 +385,7 @@ class Game extends React.Component {
 		let questions = initQuestion2(config);
 		this.setState({
 			questions : questions,
-			status : GameStatus.PROCESS,
+			status : GameStatus.STANDBY,
 			currentIdx : 0,
 			currentAns : null
 		});
@@ -413,6 +410,13 @@ class Game extends React.Component {
 	
 	handleInit = e =>  {
 		this.fnInit(this.state.config);
+	}
+	
+	handleStart = e => {
+		this.setState({
+			status : GameStatus.PROCESS,
+			startTime : Date.now()
+		});
 	}
 	
 	handleTxtChanged = e => {
@@ -499,14 +503,16 @@ class Game extends React.Component {
 	}
 	
 	render() {
-		const currentQ = this.state.questions[this.state.currentIdx];
-		const symbol = currentQ.oper == "0" ? "+" : "-";
+		const currentQ = this.state.questions.length > this.state.currentIdx ? this.state.questions[this.state.currentIdx] : null;
+		//const symbol = currentQ.oper == "0" ? "+" : "-";
+		const status = this.state.status;
 		return(
-			<div>
+			<div>				
 				<Setup status={this.state.status} config={this.state.config} onChangeChk={this.handleTickChanged} onChangeTxt={this.handleTxtChanged} onClickStart={this.handleInit} />
 				<QuestionList questions={this.state.questions} currentIdx={this.state.currentIdx} status={this.state.status} onClick={(i) => this.handleQuestionClick(i)}/>	
 				{/*<div class="display"><h1>{currentQ.a} {symbol} {currentQ.b} = {this.state.currentAns}</h1></div>*/}
-				<DisplayItem question={currentQ} status={this.state.status} currentAns={this.state.currentAns}/>
+				{ currentQ ? <DisplayItem question={currentQ} status={this.state.status} currentAns={this.state.currentAns}/> : null }
+				{ status == GameStatus.STANDBY && <Start onClick={this.handleStart}/> }
 				<UserInput questions={this.state.questions} status={this.state.status} onClick={(i) => this.handleClick(i)}/>
 				<Result questions={this.state.questions} status={this.state.status} onClickRetry={this.handleResultClick} onClickReinit={this.handleResultClick}/>
 			</div>
