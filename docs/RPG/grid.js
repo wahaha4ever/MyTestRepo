@@ -102,7 +102,6 @@
 				keyConfig[key].value = true;
 			}
 		};
-		console.log(keyConfig);
 	};
 
 	var onKeyUp = function ( event ) {
@@ -111,8 +110,8 @@
 				keyConfig[key].value = false;
 			}
 		};
-		console.log(keyConfig);
 	};
+	
 	document.addEventListener( 'keydown', onKeyDown, false );
 	document.addEventListener( 'keyup', onKeyUp, false );
 	var Controller = {};
@@ -176,22 +175,102 @@
 			this.displayTileSize = displayTileSize
 			this.x = 0;
 			this.y = 0;
-			this.SPEED = 10;
+			this.SPEED = 100;
 			this.width = width;
 			this.height = height;
-			this.img = img;		
-			
+			this.img = img;			
 		}
 		
 		fnMove(delta, dirX, dirY, scenario){
-			this.x += dirX * this.SPEED * delta;
-			this.y += dirY * this.SPEED * delta;
+			//this.x += dirX * this.SPEED * delta;
+			//this.y += dirY * this.SPEED * delta;
+			
+			this.fnCollision(delta, dirX, dirY, scenario);
 			
 			let maxX = scenario.getWidth(this.displayTileSize);
 			let maxY = scenario.getHeight(this.displayTileSize);
 			
 			this.x = Math.max(0, Math.min(this.x, maxX));
 			this.y = Math.max(0, Math.min(this.y, maxY));
+		}
+		fnDraw(ctx, scenario) {
+			//ctx.fillRect(this.screenX - (this.width / 2), this.screenY - (this.height / 2), this.width, this.height);
+			let tilesetImage = Core.getImages("hero");
+			
+			ctx.save();
+			ctx.translate(-1 * this.width / 2, -1 * this.height / 2);
+			ctx.drawImage(tilesetImage, 0, 0, this.width, this.height, this.screenX, this.screenY, this.width, this.height);
+			ctx.restore();
+			
+			ctx.save();
+			let left = -1 * Math.abs(scenario.getHeroProp().body["offsetL"]);
+			let top = -1 * Math.abs(scenario.getHeroProp().body["offsetT"]);			
+			let bodyWidth = Math.abs(scenario.getHeroProp().body["offsetL"]) + Math.abs(scenario.getHeroProp().body["offsetR"]);
+			let bodyHeight = Math.abs(scenario.getHeroProp().body["offsetT"]) + Math.abs(scenario.getHeroProp().body["offsetB"]);
+			
+			ctx.translate(left, top);
+			ctx.fillRect(this.screenX, this.screenY, bodyWidth, bodyHeight);
+			ctx.restore();
+			//let left = this.screenX + scenario.getHeroProp().body["offsetL"];
+			//let top = this.screenY + scenario.getHeroProp().body["offsetT"];			
+			//let bodyWidth = Math.abs(scenario.getHeroProp().body["offsetL"]) + Math.abs(scenario.getHeroProp().body["offsetR"]);
+			//let bodyHeight = Math.abs(scenario.getHeroProp().body["offsetT"]) + Math.abs(scenario.getHeroProp().body["offsetB"]);
+			//
+			//let tilesetImage = Core.getImages("hero");
+			//
+			//ctx.save();
+			////ctx.translate(-1 * this.width / 2, -1 * this.height / 2);
+			//ctx.drawImage(tilesetImage, 0, 0, this.width, this.height, this.screenX, this.screenY, this.width, this.height);
+			//
+			//ctx.fillRect(this.screenX, this.screenY, 10, 10);
+			//
+			////ctx.beginPath();
+			////ctx.lineWidth = "1";
+			////ctx.strokeStyle = "black";
+			//////ctx.rect(left, top, bodyWidth, bodyHeight);
+			////ctx.rect(this.screenX, this.screenY, bodyWidth, bodyHeight);
+			////ctx.stroke();
+			//ctx.restore();
+			
+		}
+		
+		fnCollision(delta, dirX, dirY, scenario) {
+			let oldX = this.x;
+			let oldY = this.y;
+			//let newX = this.x + dirX * this.SPEED * delta;
+			//let newY = this.y + dirY * this.SPEED * delta;
+			let deltaX = dirX * this.SPEED * delta;
+			let deltaY = dirY * this.SPEED * delta;
+			
+			let left = oldX + scenario.getHeroProp().body["offsetL"];
+			let right = oldX + scenario.getHeroProp().body["offsetR"];
+			let top = oldY + scenario.getHeroProp().body["offsetT"];
+			let bottom = oldY + scenario.getHeroProp().body["offsetB"];
+			
+			if (scenario.getTile(left + deltaX, top, this.displayTileSize) != 1
+				&& scenario.getTile(left + deltaX, bottom, this.displayTileSize) != 1
+				&& scenario.getTile(right + deltaX, top, this.displayTileSize) != 1
+				&& scenario.getTile(right + deltaX, bottom, this.displayTileSize) != 1)
+			{
+				this.x += deltaX;
+				// to-do : set x to tile's max / min
+
+			}
+			if (scenario.getTile(left, top + deltaY, this.displayTileSize) != 1
+				&& scenario.getTile(left, bottom + deltaY, this.displayTileSize) != 1
+				&& scenario.getTile(right, top + deltaY, this.displayTileSize) != 1
+				&& scenario.getTile(right, bottom + deltaY, this.displayTileSize) != 1)
+			{
+				this.y += deltaY;
+				// to-do : set y to tile's max / min
+			}
+			
+			
+			
+			//if (scenario.getTile(oldX + deltaX, oldY, this.displayTileSize) != 1)
+			//	this.x += deltaX;
+			//if (scenario.getTile(oldX, oldY + deltaY, this.displayTileSize) != 1)
+			//	this.y += deltaY;
 		}
 	}
 	
@@ -203,8 +282,11 @@
 			
 			this.mapAssoc = this._initAssocition(this.jsonInfo.map);
 		}
-		getImage() {
-			return this.jsonInfo.image;
+		getHeroProp() {
+			return this.jsonInfo.hero;
+		}
+		getImage(key) {
+			return this.jsonInfo.image.find(x => x.id == key);
 		}
 		getCurrentMap() {
 			return this.jsonInfo.map.find(x => x.id == this.currentIdx);
@@ -216,6 +298,20 @@
 		getHeight(displayTileSize) {
 			displayTileSize = displayTileSize || this.tileSize;
 			return this.getCurrentMap().baseLayer[0].length * displayTileSize;
+		}		
+		getTileMin(ix, displayTileSize) {
+			return ix * displayTileSize;
+		}
+		getTileMax(ix, displayTileSize) {
+			return ((ix + 1) * displayTileSize) - 1;
+		}		
+		getIndex(pt, displayTileSize){
+			return Math.floor(pt / displayTileSize);
+		}
+		getTile(ptX, ptY, displayTileSize) {
+			let iX = this.getIndex(ptX, displayTileSize);
+			let iY = this.getIndex(ptY, displayTileSize);
+			return this.getCurrentMap().baseLayer[iY][iX];
 		}
 		setCurrentMap(id) {
 			this.currentIdx = id;
@@ -279,17 +375,20 @@
 			Core.initCtx();
 			
 			let p = [];
-			p.push(Core.loadImage("map", Game.scenario.getImage()));
-			p.push(Core.loadImage("hero", Game.scenario.getImage()));
-			Promise.all(p).then(function (loaded) {				
+			for(var i in jsonInfo.image) {
+				p.push(Core.loadImage(jsonInfo.image[i].id, jsonInfo.image[i].src));
+			}
+			//p.push(Core.loadImage("map", Game.scenario.getImage()));
+			//p.push(Core.loadImage("hero", Game.scenario.getImage()));
+			Promise.all(p).then(function (loaded) {		
 				Game.camera = new Camera(Core.width, Core.height, Game.displayTileSize);
 				Game.hero = new Hero(16, 16, Game.displayTileSize, Core.getImages("hero"));
-				Game.hero.x = 300;
-				Game.hero.y = 300;
+				Game.hero.x = 200;
+				Game.hero.y = 200;
 				Game.camera.fnFollow(Game.hero);
 				Game.camera.fnUpdate(Game.scenario);
-				Game.render();
-				//window.requestAnimationFrame(Game.tick);
+				//Game.render();
+				window.requestAnimationFrame(Game.tick);
 			});
 			
 		});
@@ -310,17 +409,17 @@
 		Game.render();
 	};
 	Game.update = function(delta) {
-		var sts = Controller.getStatus();
+		var sts = JSON.parse(JSON.stringify(Controller.getStatus()));
 		let dirX = 0;
 		let dirY = 0;
 		for(var key in sts) {
-			if (key.type == "Left" && key.value)
+			if (key == "Left" && sts[key].value)
 				dirX = -1;
-			if (key.type == "Right" && key.value)
+			if (key == "Right" && sts[key].value)
 				dirX = 1;
-			if (key.type == "Up" && key.value)
+			if (key == "Up" && sts[key].value)
 				dirY = -1;
-			if (key.type == "Down" && key.value)
+			if (key == "Down" && sts[key].value)
 				dirY = 1;
 		}
 		this.hero.fnMove(delta, dirX, dirY, this.scenario);
@@ -328,7 +427,8 @@
 	}
 	Game.render = function() {	
 		this.renderMap2(Core.ctx, this.displayTileSize);
-		Core.ctx.fillRect(this.hero.screenX - (this.hero.width / 2), this.hero.screenY - (this.hero.height / 2), this.hero.width, this.hero.height);
+		this.hero.fnDraw(Core.ctx, this.scenario);
+		//Core.ctx.fillRect(this.hero.screenX - (this.hero.width / 2), this.hero.screenY - (this.hero.height / 2), this.hero.width, this.hero.height);
 		
 		//myReq = requestAnimationFrame(() => renderLoop(1000, Game.update, fnStdAction, fnFinishAction));
 		//Core.ctx.drawImage(

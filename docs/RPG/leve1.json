@@ -1,6 +1,17 @@
 {
 	"name" : "Level1",
-	"image" : "tileset.png",
+	"image" : [
+		{ "id" : "map", "src" : "tileset.png" },
+		{ "id" : "map2", "src" : "tileset.png" },
+		{ "id" : "hero", "src" : "tilesetHero.png" }
+	],
+	"hero" : {
+		"width" : 16,
+		"height" : 16,
+		"body" : {
+			"offsetL" : -5, "offsetR" : 5, "offsetT" : 0, "offsetB" : 8
+		}
+	},
 	"tileSize" : 32,
 	"imageNumTiles" : 16,
 	"map" : [
