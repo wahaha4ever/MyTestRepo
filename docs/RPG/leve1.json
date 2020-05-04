@@ -6,10 +6,12 @@
 		{ "id" : "hero", "src" : "tilesetHero.png" }
 	],
 	"hero" : {
-		"width" : 16,
-		"height" : 16,
+		"tileSizeWidth" : 16,
+		"tileSizeHeight" : 16,
+		"displayTileWidth" : 32,
+		"displayTileHeight" : 32,
 		"body" : {
-			"offsetL" : -5, "offsetR" : 5, "offsetT" : 0, "offsetB" : 8
+			"offsetL" : -10, "offsetR" : 10, "offsetT" : 0, "offsetB" : 16
 		}
 	},
 	"tileSize" : 32,
