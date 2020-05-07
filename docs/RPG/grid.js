@@ -174,7 +174,7 @@
 		constructor (width, height, img) {
 			this.x = 0;
 			this.y = 0;
-			this.SPEED = 100;
+			this.SPEED = 300;
 			this.width = width;
 			this.height = height;
 			this.displayTileWidth = width;
@@ -186,6 +186,7 @@
 			this.maxFrameDuration = 60;
 			this.tileX = 0;
 			this.tileY = 0;
+			this.currentTileNo = -1;
 			
 		}
 		
@@ -284,6 +285,8 @@
 				this.y += deltaY;
 				// to-do : set y to tile's max / min
 			}
+			
+			
 		}
 	}
 	
@@ -295,6 +298,42 @@
 			this.displayTileSize = displayTileSize;
 			this.mapAssoc = this._initAssocition(this.jsonInfo.map);
 		}
+		isHit(postX, postY) {
+			let ix = this.getIndex(postX);
+			let iy = this.getIndex(postY);
+			let min = Math.floor(this.displayTileSize / 2) - 6;
+			let max = Math.floor(this.displayTileSize / 2) + 6;
+			
+			let x = postX - this.getTileMin(ix);
+			let y = postY - this.getTileMin(iy);
+			
+			if (x >= min && x <= max)
+				if (y >= min && y <= max)
+					return true;
+				
+			return false;
+			//for(let y in this.getCurrentMap().baseLayer) {
+			//	for(let x in this.getCurrentMap().baseLayer[y]) {
+			//		if (this.getCurrentMap().baseLayer[y][x] != 0 && this.getCurrentMap().baseLayer[y][x] != 1) {
+			//			
+			//			result.x = this.getTileMin(x) + this.displayTileSize / 2;
+			//			result.y = this.getTileMin(y) + this.displayTileSize / 2;
+			//		}
+			//	}
+			//}
+		}
+		getInitPost(doorID) {
+			let result = { x : 100, y : 100 }
+			for(let y in this.getCurrentMap().baseLayer) {
+				for(let x in this.getCurrentMap().baseLayer[y]) {
+					if (this.getCurrentMap().baseLayer[y][x] == doorID) {
+						result.x = this.getTileMin(x) + this.displayTileSize / 2;
+						result.y = this.getTileMin(y) + this.displayTileSize / 2;
+					}
+				}
+			}
+			return result;
+		}
 		getHeroProp() {
 			return this.jsonInfo.hero;
 		}
@@ -305,26 +344,29 @@
 			return this.jsonInfo.map.find(x => x.id == this.currentIdx);
 		}		
 		getWidth() {
-			return this.getCurrentMap().baseLayer.length * this.displayTileSize;
+			return this.getCurrentMap().baseLayer[0].length * this.displayTileSize;
 		}
 		getHeight() {
-			return this.getCurrentMap().baseLayer[0].length * this.displayTileSize;
+			return this.getCurrentMap().baseLayer.length * this.displayTileSize;
 		}		
-		getTileMin(ix) {
-			return ix * this.displayTileSize;
+		getTileMin(i) {
+			return i * this.displayTileSize;
 		}
-		getTileMax(ix) {
-			return ((ix + 1) * this.displayTileSize) - 1;
+		getTileMax(i) {
+			return ((i + 1) * this.displayTileSize) - 1;
 		}		
 		getIndex(pt){
 			return Math.floor(pt / this.displayTileSize);
 		}
 		getTile(ptX, ptY) {
+			let result = 1;
 			let iX = this.getIndex(ptX, this.displayTileSize);
 			let iY = this.getIndex(ptY, this.displayTileSize);
-			return this.getCurrentMap().baseLayer[iY][iX];
-		}
-		
+			if (iY < this.getCurrentMap().baseLayer.length)
+				if (iX < this.getCurrentMap().baseLayer[iY].length)
+					return this.getCurrentMap().baseLayer[iY][iX];
+			return result;			
+		}		
 		setCurrentMap(id) {
 			this.currentIdx = id;
 		}
@@ -359,7 +401,7 @@
 	
 	
 	var Game = {}
-	Game.displayTileSize = 128;
+	Game.displayTileSize = 64;
 	Game.camera = null;
 	Game.hero = null;
 	Game.scenario = null;
@@ -386,8 +428,11 @@
 				Game.hero = new Hero(heroProp.tileSizeWidth, heroProp.tileSizeHeight, Core.getImages("hero"));
 				Game.hero.displayTileWidth = heroProp.displayTileWidth;
 				Game.hero.displayTileHeight = heroProp.displayTileHeight;
-				Game.hero.x = 200;
-				Game.hero.y = 200;
+				let post = Game.scenario.getInitPost(-1);
+				console.log(post);
+				Game.hero.currentTileNo = -1;
+				Game.hero.x = post.x;
+				Game.hero.y = post.y;
 				Game.camera.fnFollow(Game.hero);
 				Game.camera.fnUpdate(Game.scenario);
 				//Game.render();
@@ -426,7 +471,29 @@
 				dirY = 1;
 		}
 		this.hero.fnMove(delta, dirX, dirY, this.scenario);
+		
+		let tileNo = this.scenario.getTile(this.hero.x, this.hero.y)
+		if (tileNo != this.hero.currentTileNo) {
+			if (this.scenario.isHit(this.hero.x, this.hero.y)	
+				&& tileNo > 1)
+				this.UpdateMap(tileNo);
+			else
+				this.hero.currentTileNo = -1;
+		}
+		else{			
+		}
+		
 		this.camera.fnUpdate(this.scenario);
+	}
+	
+	Game.UpdateMap = function(doorID) {
+		this.scenario.switchMap(doorID);
+		let post = this.scenario.getInitPost(doorID);
+		console.log(post);
+		this.hero.currentTileNo = doorID;
+		this.hero.x = post.x;
+		this.hero.y = post.y;
+		this.camera.fnFollow(this.hero);
 	}
 	Game.render = function() {	
 		this.renderMap2(Core.ctx, this.displayTileSize);
@@ -444,15 +511,17 @@
 	}
 	Game.renderMap2 = function(ctx, displayTileSize) {
 		let layerArray = this.scenario.getCurrentMap().layer1;
-		let tilesetImage = Core.getImages("map");
+		let tilesetImage = Core.getImages(this.scenario.getCurrentMap().texture || "map");
 		let imageNumTiles = this.scenario.jsonInfo.imageNumTiles;
 		let tileSize = this.scenario.jsonInfo.tileSize;
 		displayTileSize = displayTileSize || tileSize;
 		
 		let ixStart = Math.floor(this.camera.x / displayTileSize);
-		let ixEnd = Math.ceil((this.camera.x + this.camera.width) / displayTileSize);		
+		let ixEnd = Math.ceil((this.camera.x + this.camera.width) / displayTileSize);
+		ixEnd = Math.min(ixEnd, this.scenario.getCurrentMap().baseLayer[0].length);
 		let iyStart = Math.floor(this.camera.y / displayTileSize);
 		let iyEnd = Math.ceil((this.camera.y + this.camera.height) / displayTileSize);
+		iyEnd = Math.min(iyEnd, this.scenario.getCurrentMap().baseLayer.length);
 		let xOffset = this.camera.x - (ixStart * displayTileSize);
 		let yOffset = this.camera.y - (iyStart * displayTileSize);
 		
