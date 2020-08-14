@@ -140,8 +140,8 @@
 			this.following.screenY = 0;
 		}
 		fnUpdate(scenario) {
-			let maxX = scenario.getWidth(this.displayTileSize) - this.width;
-			let maxY = scenario.getHeight(this.displayTileSize) - this.height;
+			let maxX = scenario.getWidth() - this.width;
+			let maxY = scenario.getHeight() - this.height;
 			// assume followed sprite should be placed at the center of the screen
 			// whenever possible
 			this.following.screenX = this.width / 2;
@@ -171,14 +171,23 @@
 	}
 	class Hero {
 		
-		constructor (width, height, displayTileSize, img) {
-			this.displayTileSize = displayTileSize
+		constructor (width, height, img) {
 			this.x = 0;
 			this.y = 0;
-			this.SPEED = 100;
+			this.SPEED = 300;
 			this.width = width;
 			this.height = height;
-			this.img = img;			
+			this.displayTileWidth = width;
+			this.displayTileHeight = height;
+			this.img = img;
+			this.curFrame = 0;
+			this.maxFrame = 3;
+			this.curFrameDuration = 0;
+			this.maxFrameDuration = 60;
+			this.tileX = 0;
+			this.tileY = 0;
+			this.currentTileNo = -1;
+			
 		}
 		
 		fnMove(delta, dirX, dirY, scenario){
@@ -187,19 +196,52 @@
 			
 			this.fnCollision(delta, dirX, dirY, scenario);
 			
-			let maxX = scenario.getWidth(this.displayTileSize);
-			let maxY = scenario.getHeight(this.displayTileSize);
+			
+			if (dirY > 0)
+				this.tileY = 0 * this.height;
+			if (dirY < 0)
+				this.tileY = 1 * this.height;
+			if (dirX > 0)
+				this.tileY = 2 * this.height;
+			if (dirX < 0)
+				this.tileY = 3 * this.height;
+			
+			if (dirX == 0 && dirY == 0)
+				this._fnSetFrame(true);
+			else
+				this._fnSetFrame(false);
+
+			let maxX = scenario.getWidth();
+			let maxY = scenario.getHeight();
 			
 			this.x = Math.max(0, Math.min(this.x, maxX));
 			this.y = Math.max(0, Math.min(this.y, maxY));
 		}
+		_fnSetFrame(isReset) {
+			//https://www.simplifiedcoding.net/javascript-sprite-animation-tutorial-html5-canvas/
+			isReset = isReset || false;
+			if (isReset) {
+				this.curFrame = 0;
+				this.curFrameDuration = 0;
+			}
+			else {
+				this.curFrameDuration = ++this.curFrameDuration % this.maxFrameDuration;
+				if (this.curFrameDuration == 0)
+				{
+					this.curFrame = ++this.curFrame % this.maxFrame;
+				}
+			}
+			this.tileX = this.curFrame * this.width;
+			//let srcY = 0;
+			//return { x : srcX, y : srcY };
+		}
 		fnDraw(ctx, scenario) {
-			//ctx.fillRect(this.screenX - (this.width / 2), this.screenY - (this.height / 2), this.width, this.height);
 			let tilesetImage = Core.getImages("hero");
-			
 			ctx.save();
-			ctx.translate(-1 * this.width / 2, -1 * this.height / 2);
-			ctx.drawImage(tilesetImage, 0, 0, this.width, this.height, this.screenX, this.screenY, this.width, this.height);
+			ctx.translate(-1 * this.displayTileWidth / 2, -1 * this.displayTileHeight / 2);
+			ctx.drawImage(tilesetImage, this.tileX, this.tileY, this.width, this.height, this.screenX, this.screenY, this.displayTileWidth, this.displayTileHeight);
+			//ctx.translate(-1 * this.width / 2, -1 * this.height / 2);
+			//ctx.drawImage(tilesetImage, this.tileX, this.tileY, this.width, this.height, this.screenX, this.screenY, this.width, this.height);
 			ctx.restore();
 			
 			ctx.save();
@@ -210,28 +252,7 @@
 			
 			ctx.translate(left, top);
 			ctx.fillRect(this.screenX, this.screenY, bodyWidth, bodyHeight);
-			ctx.restore();
-			//let left = this.screenX + scenario.getHeroProp().body["offsetL"];
-			//let top = this.screenY + scenario.getHeroProp().body["offsetT"];			
-			//let bodyWidth = Math.abs(scenario.getHeroProp().body["offsetL"]) + Math.abs(scenario.getHeroProp().body["offsetR"]);
-			//let bodyHeight = Math.abs(scenario.getHeroProp().body["offsetT"]) + Math.abs(scenario.getHeroProp().body["offsetB"]);
-			//
-			//let tilesetImage = Core.getImages("hero");
-			//
-			//ctx.save();
-			////ctx.translate(-1 * this.width / 2, -1 * this.height / 2);
-			//ctx.drawImage(tilesetImage, 0, 0, this.width, this.height, this.screenX, this.screenY, this.width, this.height);
-			//
-			//ctx.fillRect(this.screenX, this.screenY, 10, 10);
-			//
-			////ctx.beginPath();
-			////ctx.lineWidth = "1";
-			////ctx.strokeStyle = "black";
-			//////ctx.rect(left, top, bodyWidth, bodyHeight);
-			////ctx.rect(this.screenX, this.screenY, bodyWidth, bodyHeight);
-			////ctx.stroke();
-			//ctx.restore();
-			
+			ctx.restore();			
 		}
 		
 		fnCollision(delta, dirX, dirY, scenario) {
@@ -247,40 +268,71 @@
 			let top = oldY + scenario.getHeroProp().body["offsetT"];
 			let bottom = oldY + scenario.getHeroProp().body["offsetB"];
 			
-			if (scenario.getTile(left + deltaX, top, this.displayTileSize) != 1
-				&& scenario.getTile(left + deltaX, bottom, this.displayTileSize) != 1
-				&& scenario.getTile(right + deltaX, top, this.displayTileSize) != 1
-				&& scenario.getTile(right + deltaX, bottom, this.displayTileSize) != 1)
+			if (scenario.getTile(left + deltaX, top) != 1
+				&& scenario.getTile(left + deltaX, bottom) != 1
+				&& scenario.getTile(right + deltaX, top) != 1
+				&& scenario.getTile(right + deltaX, bottom) != 1)
 			{
 				this.x += deltaX;
 				// to-do : set x to tile's max / min
 
 			}
-			if (scenario.getTile(left, top + deltaY, this.displayTileSize) != 1
-				&& scenario.getTile(left, bottom + deltaY, this.displayTileSize) != 1
-				&& scenario.getTile(right, top + deltaY, this.displayTileSize) != 1
-				&& scenario.getTile(right, bottom + deltaY, this.displayTileSize) != 1)
+			if (scenario.getTile(left, top + deltaY) != 1
+				&& scenario.getTile(left, bottom + deltaY) != 1
+				&& scenario.getTile(right, top + deltaY) != 1
+				&& scenario.getTile(right, bottom + deltaY) != 1)
 			{
 				this.y += deltaY;
 				// to-do : set y to tile's max / min
 			}
 			
 			
-			
-			//if (scenario.getTile(oldX + deltaX, oldY, this.displayTileSize) != 1)
-			//	this.x += deltaX;
-			//if (scenario.getTile(oldX, oldY + deltaY, this.displayTileSize) != 1)
-			//	this.y += deltaY;
 		}
 	}
 	
 	class Scenario {
-		constructor(jsonInfo) {
+		constructor(jsonInfo, displayTileSize) {
 			this.jsonInfo = jsonInfo;
 			this.currentIdx = 1;
 			this.mapAssoc = [];
-			
+			this.displayTileSize = displayTileSize;
 			this.mapAssoc = this._initAssocition(this.jsonInfo.map);
+		}
+		isHit(postX, postY) {
+			let ix = this.getIndex(postX);
+			let iy = this.getIndex(postY);
+			let min = Math.floor(this.displayTileSize / 2) - 6;
+			let max = Math.floor(this.displayTileSize / 2) + 6;
+			
+			let x = postX - this.getTileMin(ix);
+			let y = postY - this.getTileMin(iy);
+			
+			if (x >= min && x <= max)
+				if (y >= min && y <= max)
+					return true;
+				
+			return false;
+			//for(let y in this.getCurrentMap().baseLayer) {
+			//	for(let x in this.getCurrentMap().baseLayer[y]) {
+			//		if (this.getCurrentMap().baseLayer[y][x] != 0 && this.getCurrentMap().baseLayer[y][x] != 1) {
+			//			
+			//			result.x = this.getTileMin(x) + this.displayTileSize / 2;
+			//			result.y = this.getTileMin(y) + this.displayTileSize / 2;
+			//		}
+			//	}
+			//}
+		}
+		getInitPost(doorID) {
+			let result = { x : 100, y : 100 }
+			for(let y in this.getCurrentMap().baseLayer) {
+				for(let x in this.getCurrentMap().baseLayer[y]) {
+					if (this.getCurrentMap().baseLayer[y][x] == doorID) {
+						result.x = this.getTileMin(x) + this.displayTileSize / 2;
+						result.y = this.getTileMin(y) + this.displayTileSize / 2;
+					}
+				}
+			}
+			return result;
 		}
 		getHeroProp() {
 			return this.jsonInfo.hero;
@@ -290,29 +342,31 @@
 		}
 		getCurrentMap() {
 			return this.jsonInfo.map.find(x => x.id == this.currentIdx);
-		}
-		getWidth(displayTileSize) {
-			displayTileSize = displayTileSize || this.jsonInfo.tileSize;
-			return this.getCurrentMap().baseLayer.length * displayTileSize;
-		}
-		getHeight(displayTileSize) {
-			displayTileSize = displayTileSize || this.tileSize;
-			return this.getCurrentMap().baseLayer[0].length * displayTileSize;
 		}		
-		getTileMin(ix, displayTileSize) {
-			return ix * displayTileSize;
+		getWidth() {
+			return this.getCurrentMap().baseLayer[0].length * this.displayTileSize;
 		}
-		getTileMax(ix, displayTileSize) {
-			return ((ix + 1) * displayTileSize) - 1;
+		getHeight() {
+			return this.getCurrentMap().baseLayer.length * this.displayTileSize;
 		}		
-		getIndex(pt, displayTileSize){
-			return Math.floor(pt / displayTileSize);
+		getTileMin(i) {
+			return i * this.displayTileSize;
 		}
-		getTile(ptX, ptY, displayTileSize) {
-			let iX = this.getIndex(ptX, displayTileSize);
-			let iY = this.getIndex(ptY, displayTileSize);
-			return this.getCurrentMap().baseLayer[iY][iX];
+		getTileMax(i) {
+			return ((i + 1) * this.displayTileSize) - 1;
+		}		
+		getIndex(pt){
+			return Math.floor(pt / this.displayTileSize);
 		}
+		getTile(ptX, ptY) {
+			let result = 1;
+			let iX = this.getIndex(ptX, this.displayTileSize);
+			let iY = this.getIndex(ptY, this.displayTileSize);
+			if (iY < this.getCurrentMap().baseLayer.length)
+				if (iX < this.getCurrentMap().baseLayer[iY].length)
+					return this.getCurrentMap().baseLayer[iY][iX];
+			return result;			
+		}		
 		setCurrentMap(id) {
 			this.currentIdx = id;
 		}
@@ -347,29 +401,16 @@
 	
 	
 	var Game = {}
-	Game.displayTileSize = 128;
+	Game.displayTileSize = 64;
 	Game.camera = null;
 	Game.hero = null;
 	Game.scenario = null;
 	Game._previousElapsed = 0;
 	
 	Game.init = function() {
-		Core.loadBytes("leve1.json", function(bytes){
-			//Game.jsonInfo = Core.byteToJson(bytes);
-			//Game.jsonInfo.currentIdx = 0;
-			//Game.jsonInfo.getCurrentMap = function() {
-			//	return this.map.find(x => x.id == this.currentIdx);
-			//};
-			//Game.jsonInfo.getWidth = function(displayTileSize) {
-			//	displayTileSize = displayTileSize || this.tileSize;
-			//	return this.getCurrentMap().baseLayer.length * displayTileSize;
-			//};
-			//Game.jsonInfo.getHeight = function(displayTileSize) {
-			//	displayTileSize = displayTileSize || this.tileSize;
-			//	return this.getCurrentMap().baseLayer[0].length * displayTileSize;
-			//};			
+		Core.loadBytes("leve1.json", function(bytes){		
 			let jsonInfo = Core.byteToJson(bytes);			
-			Game.scenario = new Scenario(jsonInfo);
+			Game.scenario = new Scenario(jsonInfo, Game.displayTileSize);
 			
 			Controller.initEventListener();
 			Core.initCtx();
@@ -381,10 +422,17 @@
 			//p.push(Core.loadImage("map", Game.scenario.getImage()));
 			//p.push(Core.loadImage("hero", Game.scenario.getImage()));
 			Promise.all(p).then(function (loaded) {		
-				Game.camera = new Camera(Core.width, Core.height, Game.displayTileSize);
-				Game.hero = new Hero(16, 16, Game.displayTileSize, Core.getImages("hero"));
-				Game.hero.x = 200;
-				Game.hero.y = 200;
+				Game.camera = new Camera(Core.width, Core.height, Game.displayTileSize);				
+				
+				let heroProp = Game.scenario.getHeroProp();
+				Game.hero = new Hero(heroProp.tileSizeWidth, heroProp.tileSizeHeight, Core.getImages("hero"));
+				Game.hero.displayTileWidth = heroProp.displayTileWidth;
+				Game.hero.displayTileHeight = heroProp.displayTileHeight;
+				let post = Game.scenario.getInitPost(-1);
+				console.log(post);
+				Game.hero.currentTileNo = -1;
+				Game.hero.x = post.x;
+				Game.hero.y = post.y;
 				Game.camera.fnFollow(Game.hero);
 				Game.camera.fnUpdate(Game.scenario);
 				//Game.render();
@@ -423,7 +471,29 @@
 				dirY = 1;
 		}
 		this.hero.fnMove(delta, dirX, dirY, this.scenario);
+		
+		let tileNo = this.scenario.getTile(this.hero.x, this.hero.y)
+		if (tileNo != this.hero.currentTileNo) {
+			if (this.scenario.isHit(this.hero.x, this.hero.y)	
+				&& tileNo > 1)
+				this.UpdateMap(tileNo);
+			else
+				this.hero.currentTileNo = -1;
+		}
+		else{			
+		}
+		
 		this.camera.fnUpdate(this.scenario);
+	}
+	
+	Game.UpdateMap = function(doorID) {
+		this.scenario.switchMap(doorID);
+		let post = this.scenario.getInitPost(doorID);
+		console.log(post);
+		this.hero.currentTileNo = doorID;
+		this.hero.x = post.x;
+		this.hero.y = post.y;
+		this.camera.fnFollow(this.hero);
 	}
 	Game.render = function() {	
 		this.renderMap2(Core.ctx, this.displayTileSize);
@@ -441,15 +511,17 @@
 	}
 	Game.renderMap2 = function(ctx, displayTileSize) {
 		let layerArray = this.scenario.getCurrentMap().layer1;
-		let tilesetImage = Core.getImages("map");
+		let tilesetImage = Core.getImages(this.scenario.getCurrentMap().texture || "map");
 		let imageNumTiles = this.scenario.jsonInfo.imageNumTiles;
 		let tileSize = this.scenario.jsonInfo.tileSize;
 		displayTileSize = displayTileSize || tileSize;
 		
 		let ixStart = Math.floor(this.camera.x / displayTileSize);
-		let ixEnd = Math.ceil((this.camera.x + this.camera.width) / displayTileSize);		
+		let ixEnd = Math.ceil((this.camera.x + this.camera.width) / displayTileSize);
+		ixEnd = Math.min(ixEnd, this.scenario.getCurrentMap().baseLayer[0].length);
 		let iyStart = Math.floor(this.camera.y / displayTileSize);
 		let iyEnd = Math.ceil((this.camera.y + this.camera.height) / displayTileSize);
+		iyEnd = Math.min(iyEnd, this.scenario.getCurrentMap().baseLayer.length);
 		let xOffset = this.camera.x - (ixStart * displayTileSize);
 		let yOffset = this.camera.y - (iyStart * displayTileSize);
 		
@@ -474,21 +546,21 @@
 				
 		
 	}
-	Game.renderMap = function(ctx, displayTileSize) {
-		let layerArray = this.scenario.getCurrentMap().baseLayer;
-		let tilesetImage = Core.getImages("map");
-		let imageNumTiles = this.scenario.jsonInfo.imageNumTiles;
-		let tileSize = this.scenario.jsonInfo.tileSize;
-		displayTileSize = displayTileSize || tileSize;
-		for (var y = 0; y < layerArray.length; y++)
-			for (var x = 0; x < layerArray[y].length; x++)
-				if (layerArray[y][x] != 0)
-				{
-					var tile = layerArray[y][x];
-					var tileRow = Math.floor(tile / imageNumTiles) | 0;
-					var tileCol = Math.floor(tile % imageNumTiles) | 0;
-					//ctx.drawImage(tilesetImage, (tileCol * tileSize), (tileRow * tileSize), tileSize, tileSize, (x * tileSize), (y * tileSize), tileSize, tileSize);      
-					ctx.drawImage(tilesetImage, (tileCol * tileSize), (tileRow * tileSize), tileSize, tileSize, (x * displayTileSize), (y * displayTileSize), displayTileSize, displayTileSize);      
-					//ctx.fillRect(x * tileSize, y * tileSize, tileSize, tileSize);
-				}
-	}
+	//Game.renderMap = function(ctx, displayTileSize) {
+	//	let layerArray = this.scenario.getCurrentMap().baseLayer;
+	//	let tilesetImage = Core.getImages("map");
+	//	let imageNumTiles = this.scenario.jsonInfo.imageNumTiles;
+	//	let tileSize = this.scenario.jsonInfo.tileSize;
+	//	displayTileSize = displayTileSize || tileSize;
+	//	for (var y = 0; y < layerArray.length; y++)
+	//		for (var x = 0; x < layerArray[y].length; x++)
+	//			if (layerArray[y][x] != 0)
+	//			{
+	//				var tile = layerArray[y][x];
+	//				var tileRow = Math.floor(tile / imageNumTiles) | 0;
+	//				var tileCol = Math.floor(tile % imageNumTiles) | 0;
+	//				//ctx.drawImage(tilesetImage, (tileCol * tileSize), (tileRow * tileSize), tileSize, tileSize, (x * tileSize), (y * tileSize), tileSize, tileSize);      
+	//				ctx.drawImage(tilesetImage, (tileCol * tileSize), (tileRow * tileSize), tileSize, tileSize, (x * displayTileSize), (y * displayTileSize), displayTileSize, displayTileSize);      
+	//				//ctx.fillRect(x * tileSize, y * tileSize, tileSize, tileSize);
+	//			}
+	//}
