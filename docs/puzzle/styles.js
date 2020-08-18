@@ -11,7 +11,7 @@
 var ___CSS_LOADER_API_IMPORT___ = __webpack_require__(/*! ../node_modules/css-loader/dist/runtime/api.js */ "./node_modules/css-loader/dist/runtime/api.js");
 exports = ___CSS_LOADER_API_IMPORT___(true);
 // Module
-exports.push([module.i, "/* You can add global styles to this file, and also import other style files */\r\n* { margin:0; padding:0; }\r\nhtml, body {\r\n  width:  100%;\r\n  height: 100%;\r\n  margin: 0;\r\n}\r\n.img {\r\n    background-repeat: no-repeat;\r\n    background-size: cover;\r\n    background-position: center;\r\n    background-color: black;\r\n}", "",{"version":3,"sources":["styles.css"],"names":[],"mappings":"AAAA,8EAA8E;AAC9E,IAAI,QAAQ,EAAE,SAAS,EAAE;AAEzB;EACE,YAAY;EACZ,YAAY;EACZ,SAAS;AACX;AAEA;IACI,4BAA4B;IAC5B,sBAAsB;IACtB,2BAA2B;IAC3B,uBAAuB;AAC3B","file":"styles.css","sourcesContent":["/* You can add global styles to this file, and also import other style files */\r\n* { margin:0; padding:0; } \r\n\r\nhtml, body {\r\n  width:  100%;\r\n  height: 100%;\r\n  margin: 0;\r\n}\r\n\r\n.img {\r\n    background-repeat: no-repeat;\r\n    background-size: cover;\r\n    background-position: center;\r\n    background-color: black;\r\n}"]}]);
+exports.push([module.i, "/* You can add global styles to this file, and also import other style files */\r\n* { margin:0; padding:0; }\r\nhtml, body {\r\n  width:  100%;\r\n  height: 100%;\r\n  margin: 0;\r\n}\r\n.img {\r\n    background-repeat: no-repeat;\r\n    background-size: cover;\r\n    background-position: center;\r\n    background-color: black;\r\n}\r\n\r\n", "",{"version":3,"sources":["styles.css"],"names":[],"mappings":"AAAA,8EAA8E;AAC9E,IAAI,QAAQ,EAAE,SAAS,EAAE;AAEzB;EACE,YAAY;EACZ,YAAY;EACZ,SAAS;AACX;AAEA;IACI,4BAA4B;IAC5B,sBAAsB;IACtB,2BAA2B;IAC3B,uBAAuB;AAC3B","file":"styles.css","sourcesContent":["/* You can add global styles to this file, and also import other style files */\r\n* { margin:0; padding:0; } \r\n\r\nhtml, body {\r\n  width:  100%;\r\n  height: 100%;\r\n  margin: 0;\r\n}\r\n\r\n.img {\r\n    background-repeat: no-repeat;\r\n    background-size: cover;\r\n    background-position: center;\r\n    background-color: black;\r\n}\r\n\r\n"]}]);
 // Exports
 module.exports = exports;
 
@@ -439,7 +439,7 @@ module.exports = content.locals || {};
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(/*! C:\Users\cedadmin\Documents\GitHub\Angular\puzzle\src\styles.css */"./src/styles.css");
+module.exports = __webpack_require__(/*! F:\Source\patrick_th_lai\Github\Angular\puzzle\src\styles.css */"./src/styles.css");
 
 
 /***/ })
