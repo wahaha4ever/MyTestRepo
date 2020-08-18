@@ -172,8 +172,8 @@ class AppComponent {
     }
     onListenImage($event) {
         this.imageUrl = $event;
-        //this.Board = this.initTiles(this.initValues());
-        this.Board = this.initTiles(this.initTestValues());
+        this.Board = this.initTiles(this.initValues());
+        //this.Board = this.initTiles(this.initTestValues());
     }
     onListenChild($event) {
         if (this.timer == -1) {
