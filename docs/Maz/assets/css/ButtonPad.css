@@ -1,0 +1,16 @@
+.dp {
+	background-repeat : no-repeat;
+	background-size: 100% 100%;
+}
+.dpleft {
+	background-image: url("arrow-left.svg");
+}
+.dpright {
+	background-image: url("arrow-right.svg");
+}
+.dpup {
+	background-image: url("arrow-up.svg");
+}
+.dpdown {
+	background-image: url("arrow-down.svg");
+}
