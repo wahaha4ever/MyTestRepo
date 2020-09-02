@@ -9,6 +9,7 @@ var ButtonPad = function() {
 	var DPAD_BUTTON_HEIGHT_PERCENT = 12;
 	var COLOR_BUTTON_PRESS = "yellow";
 	var COLOR_BUTTON_UNPRESS = "red";
+	var STD_SIZE = 0;
 
 	var dpad = {};
 	var buttons = {};
@@ -20,8 +21,10 @@ var ButtonPad = function() {
 		button.id = id;
 		button.className = "dp dp" + txt;
 		button.style.cssText = CONTROLS_CSS;
-		button.style.width = DPAD_BUTTON_WIDTH_PERCENT + '%';
-		button.style.height = DPAD_BUTTON_HEIGHT_PERCENT + '%';
+		//button.style.width = DPAD_BUTTON_WIDTH_PERCENT + '%';
+		//button.style.height = DPAD_BUTTON_HEIGHT_PERCENT + '%';
+		button.style.width = STD_SIZE + 'px';
+		button.style.height = STD_SIZE + 'px';
 		button.style.backgroundColor = COLOR_BUTTON_UNPRESS;
 		button.style.position = 'absolute';
 		button.press = () => { if (fnPress) { button.style.backgroundColor = COLOR_BUTTON_PRESS; fnPress();} };
@@ -38,8 +41,10 @@ var ButtonPad = function() {
 			}, function() { 
 				keyStatus["left"] = false; keyStatus["down"] = false; writeInfo("UnPress 1");
 			});
-			button.style.bottom = (DPAD_BUTTON_HEIGHT_PERCENT * 0) + '%';
-			button.style.left = (DPAD_BUTTON_WIDTH_PERCENT * 0) + '%';
+			button.style.bottom = (STD_SIZE * 0) + 'px';
+			button.style.left = (STD_SIZE * 0) + 'px';
+			//button.style.bottom = (DPAD_BUTTON_HEIGHT_PERCENT * 0) + '%';
+			//button.style.left = (DPAD_BUTTON_WIDTH_PERCENT * 0) + '%';
 			dpad["1"] = button;
 		}
 		
@@ -48,8 +53,10 @@ var ButtonPad = function() {
 		}, function() { 
 			keyStatus["down"] = false; writeInfo("UnPress 2");
 		});
-		button.style.bottom = (DPAD_BUTTON_HEIGHT_PERCENT * 0) + '%';
-		button.style.left = (DPAD_BUTTON_WIDTH_PERCENT * 1) + '%';
+		button.style.bottom = (STD_SIZE * 0) + 'px';
+		button.style.left = (STD_SIZE * 1) + 'px';
+		//button.style.bottom = (DPAD_BUTTON_HEIGHT_PERCENT * 0) + '%';
+		//button.style.left = (DPAD_BUTTON_WIDTH_PERCENT * 1) + '%';
 		dpad["2"] = button;
 		
 		if (bIsEightWay) {
@@ -58,8 +65,10 @@ var ButtonPad = function() {
 			}, function() { 
 				keyStatus["right"] = false; keyStatus["down"] = false; writeInfo("UnPress 3");
 			});
-			button.style.bottom = (DPAD_BUTTON_HEIGHT_PERCENT * 0) + '%';
-			button.style.left = (DPAD_BUTTON_WIDTH_PERCENT * 2) + '%';
+			button.style.bottom = (STD_SIZE * 0) + 'px';
+			button.style.left = (STD_SIZE * 2) + 'px';
+			//button.style.bottom = (DPAD_BUTTON_HEIGHT_PERCENT * 0) + '%';
+			//button.style.left = (DPAD_BUTTON_WIDTH_PERCENT * 2) + '%';
 			dpad["3"] = button;
 		}
 
@@ -68,13 +77,17 @@ var ButtonPad = function() {
 		}, function() { 
 			keyStatus["left"] = false; writeInfo("UnPress 4");
 		});
-		button.style.bottom = (DPAD_BUTTON_HEIGHT_PERCENT * 1) + '%';
-		button.style.left = (DPAD_BUTTON_WIDTH_PERCENT * 0) + '%';
+		button.style.bottom = (STD_SIZE * 1) + 'px';
+		button.style.left = (STD_SIZE * 0) + 'px';
+		//button.style.bottom = (DPAD_BUTTON_HEIGHT_PERCENT * 1) + '%';
+		//button.style.left = (DPAD_BUTTON_WIDTH_PERCENT * 0) + '%';
 		dpad["4"] = button;	
 		
 		button = createDPadButton("5", "center", null, null);
-		button.style.bottom = (DPAD_BUTTON_HEIGHT_PERCENT * 1) + '%';
-		button.style.left = (DPAD_BUTTON_WIDTH_PERCENT * 1) + '%';
+		button.style.bottom = (STD_SIZE * 1) + 'px';
+		button.style.left = (STD_SIZE * 1) + 'px';
+		//button.style.bottom = (DPAD_BUTTON_HEIGHT_PERCENT * 1) + '%';
+		//button.style.left = (DPAD_BUTTON_WIDTH_PERCENT * 1) + '%';
 		dpad["5"] = button;	
 		
 		button = createDPadButton("6", "right", function() { 
@@ -82,8 +95,10 @@ var ButtonPad = function() {
 		}, function() { 
 			keyStatus["right"] = false; writeInfo("UnPress 6");
 		});
-		button.style.bottom = (DPAD_BUTTON_HEIGHT_PERCENT * 1) + '%';
-		button.style.left = (DPAD_BUTTON_WIDTH_PERCENT * 2) + '%';
+		button.style.bottom = (STD_SIZE * 1) + 'px';
+		button.style.left = (STD_SIZE * 2) + 'px';
+		//button.style.bottom = (DPAD_BUTTON_HEIGHT_PERCENT * 1) + '%';
+		//button.style.left = (DPAD_BUTTON_WIDTH_PERCENT * 2) + '%';
 		dpad["6"] = button;	
 		
 		if (bIsEightWay) {
@@ -92,8 +107,10 @@ var ButtonPad = function() {
 			}, function() { 
 				keyStatus["left"] = false; keyStatus["up"] = false; writeInfo("UnPress 7");
 			});
-			button.style.bottom = (DPAD_BUTTON_HEIGHT_PERCENT * 2) + '%';
-			button.style.left = (DPAD_BUTTON_WIDTH_PERCENT * 0) + '%';
+			button.style.bottom = (STD_SIZE * 2) + 'px';
+			button.style.left = (STD_SIZE * 0) + 'px';
+			//button.style.bottom = (DPAD_BUTTON_HEIGHT_PERCENT * 2) + '%';
+			//button.style.left = (DPAD_BUTTON_WIDTH_PERCENT * 0) + '%';
 			dpad["7"] = button;
 		}
 		
@@ -102,8 +119,10 @@ var ButtonPad = function() {
 		}, function() { 
 			keyStatus["up"] = false; writeInfo("UnPress 8");
 		});
-		button.style.bottom = (DPAD_BUTTON_HEIGHT_PERCENT * 2) + '%';
-		button.style.left = (DPAD_BUTTON_WIDTH_PERCENT * 1) + '%';
+		button.style.bottom = (STD_SIZE * 2) + 'px';
+		button.style.left = (STD_SIZE * 1) + 'px';
+		//button.style.bottom = (DPAD_BUTTON_HEIGHT_PERCENT * 2) + '%';
+		//button.style.left = (DPAD_BUTTON_WIDTH_PERCENT * 1) + '%';
 		dpad["8"] = button;
 
 		if (bIsEightWay) {	
@@ -112,8 +131,10 @@ var ButtonPad = function() {
 			}, function() { 
 				keyStatus["right"] = false; keyStatus["up"] = false; writeInfo("UnPress 9");
 			});
-			button.style.bottom = (DPAD_BUTTON_HEIGHT_PERCENT * 2) + '%';
-			button.style.left = (DPAD_BUTTON_WIDTH_PERCENT * 2) + '%';
+			button.style.bottom = (STD_SIZE * 2) + 'px';
+			button.style.left = (STD_SIZE * 2) + 'px';
+			//button.style.bottom = (DPAD_BUTTON_HEIGHT_PERCENT * 2) + '%';
+			//button.style.left = (DPAD_BUTTON_WIDTH_PERCENT * 2) + '%';
 			dpad["9"] = button;		
 		}
 
@@ -203,29 +224,37 @@ var ButtonPad = function() {
 		let button;
 		if (txtA) {
 			button = createActionButton("A", txtA, function() { keyStatus["A"] = true; writeInfo("Press A");}, function() { keyStatus["A"] = false; writeInfo("UnPress A");});
-			button.style.bottom = (DPAD_BUTTON_HEIGHT_PERCENT * 0) + '%';
-			button.style.right = (DPAD_BUTTON_WIDTH_PERCENT * 0) + '%';
+			button.style.bottom = (STD_SIZE * 0) + 'px';
+			button.style.right = (STD_SIZE * 0) + 'px';
+			//button.style.bottom = (DPAD_BUTTON_HEIGHT_PERCENT * 0) + '%';
+			//button.style.right = (DPAD_BUTTON_WIDTH_PERCENT * 0) + '%';
 			buttons["A"] = button;
 			//buttons["A"].innerHTML = txtA;
 		}
 		if (txtB) {
 			button = createActionButton("B", txtB, function() { keyStatus["B"] = true; writeInfo("Press B");}, function() { keyStatus["B"] = false; writeInfo("UnPress B");});
-			button.style.bottom = (DPAD_BUTTON_HEIGHT_PERCENT * 1) + '%';
-			button.style.right = (DPAD_BUTTON_WIDTH_PERCENT * 0) + '%';
+			button.style.bottom = (STD_SIZE * 1) + 'px';
+			button.style.right = (STD_SIZE * 0) + 'px';
+			//button.style.bottom = (DPAD_BUTTON_HEIGHT_PERCENT * 1) + '%';
+			//button.style.right = (DPAD_BUTTON_WIDTH_PERCENT * 0) + '%';
 			buttons["B"] = button;
 			//buttons["B"].innerHTML = txtB;
 		}
 		if (txtX) {
 			button = createActionButton("X", txtX, function() { keyStatus["X"] = true; writeInfo("Press X");}, function() { keyStatus["X"] = false; writeInfo("UnPress X");});
-			button.style.bottom = (DPAD_BUTTON_HEIGHT_PERCENT * 0) + '%';
-			button.style.right = (DPAD_BUTTON_WIDTH_PERCENT * 1) + '%';
+			button.style.bottom = (STD_SIZE * 0) + 'px';
+			button.style.right = (STD_SIZE * 1) + 'px';
+			//button.style.bottom = (DPAD_BUTTON_HEIGHT_PERCENT * 0) + '%';
+			//button.style.right = (DPAD_BUTTON_WIDTH_PERCENT * 1) + '%';
 			buttons["X"] = button;
 			//buttons["X"].innerHTML = txtX;
 		}
 		if (txtY) {
 			button = createActionButton("Y", txtY, function() { keyStatus["Y"] = true; writeInfo("Press Y");}, function() { keyStatus["Y"] = false; writeInfo("UnPress Y");});
-			button.style.bottom = (DPAD_BUTTON_HEIGHT_PERCENT * 1) + '%';
-			button.style.right = (DPAD_BUTTON_WIDTH_PERCENT * 1) + '%';
+			button.style.bottom = (STD_SIZE * 1) + 'px';
+			button.style.right = (STD_SIZE * 1) + 'px';
+			//button.style.bottom = (DPAD_BUTTON_HEIGHT_PERCENT * 1) + '%';
+			//button.style.right = (DPAD_BUTTON_WIDTH_PERCENT * 1) + '%';
 			buttons["Y"] = button;
 			//buttons["Y"].innerHTML = txtY;
 		}
@@ -306,6 +335,8 @@ var ButtonPad = function() {
 	}
 	
 	this.init = function(size, bIsEightWay, txtA, txtB, txtX, txtY) {
+		STD_SIZE = Math.floor(Math.min(window.innerWidth, window.innerHeight) / 9);
+
 		if (size == "S") {
 			DPAD_BUTTON_WIDTH_PERCENT = 6;
 			DPAD_BUTTON_HEIGHT_PERCENT = 4;
