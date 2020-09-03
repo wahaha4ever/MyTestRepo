@@ -77,7 +77,7 @@ function onWindowResize() {
 function initTouchControl() {
 	touchPad = new TouchPad("touchPad", document);
 	buttonPad = new ButtonPad();
-	buttonPad.init("L", true, "A", "B", "X", "Y");
+	buttonPad.init("S", true, "A", "B", "X", "Y");
 }
 
 function initKey(){
@@ -621,13 +621,20 @@ function animate() {
 			if ( canJump === true ) velocity.y += 350;
 			canJump = false;
 		}
-		if (buttonSts["B"]) {
+		if (buttonSts["X"]) {
 			cameraPrivotX.rotation.x = 0;
+		}
+
+		if (buttonSts["B"]) {
+			cameraPrivotY.rotateY(-gRotationFactor);		// rotate left
+		}
+		if (buttonSts["Y"]) {
+			cameraPrivotY.rotateY(gRotationFactor);		// rotate right
 		}
 
 
 		let cameraMove = touchPad.getRotation();
-		console.log(cameraMove.x);
+		//console.log(cameraMove.x);
 		if (cameraMove.x > 0.5)
 			cameraPrivotY.rotateY(-gRotationFactor);		// rotate left
 		else if (cameraMove.x < -0.5)

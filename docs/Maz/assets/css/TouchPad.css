@@ -10,7 +10,7 @@
     right : 10px;
     bottom : 10px;*/
 
-    top : 200px;
+    bottom : 40%;
     right : 10px;
     width : 100px;
     height : 100px;
@@ -23,4 +23,20 @@
     background-color : red;
     width: 100%;
     height: 100%;
+  }
+
+  .touchPad .touchArea .touchHandler{
+    background-color : blue;
+    position : relative;
+    width : 1px;
+    height : 1px;    
+  }
+
+  .touchHandler .touchHandlerCursor {
+    position: relative;
+    width : 10px;
+    height: 10px;
+    top : -5px;
+    left : -5px;
+    background-color : yellow;
   }

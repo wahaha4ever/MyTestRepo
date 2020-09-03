@@ -9,12 +9,30 @@ var ButtonPad = function() {
 	var DPAD_BUTTON_HEIGHT_PERCENT = 12;
 	var COLOR_BUTTON_PRESS = "yellow";
 	var COLOR_BUTTON_UNPRESS = "red";
-	var STD_SIZE = 0;
+	var STD_SIZE = 70;
+
+	var CLASS_LEFT_CONTAINER = "dpleftArea";
+	var CLASS_RIGHT_CONTAINER = "dprightArea";
 
 	var dpad = {};
 	var buttons = {};
 	var keyStatus = {};
 	var lastDPadPressed = null;
+
+	var leftCtnr = null;
+	var rightCtnr = null;
+	
+	//rightCtnr.className = "leftArea";
+	//leftCtnr.style.width = '50%';
+	//leftCtnr.style.height = '200px';
+
+	function initContainer(className, size) {
+		let ctnr = document.createElement("div");
+		ctnr.className = className;
+		ctnr.style.width = size + 'px';
+		ctnr.style.height = size + 'px';
+		return ctnr;
+	}
 	
 	function initButton(id, txt, fnPress, fnUnpress){
 		let button = document.createElement("div");
@@ -35,6 +53,10 @@ var ButtonPad = function() {
 	
 	function createDPad(bIsEightWay) {
 		let button;
+
+		leftCtnr = initContainer(CLASS_LEFT_CONTAINER, STD_SIZE * 3);
+		document.body.appendChild(leftCtnr);
+
 		if (bIsEightWay) {
 			button = createDPadButton("1", "left-down", function() { 
 				keyStatus["left"] = true; keyStatus["down"] = true; writeInfo("Press 1");
@@ -201,7 +223,8 @@ var ButtonPad = function() {
 				lastDPadPressed = null;
 			}
 		});
-		document.body.appendChild(button);
+		leftCtnr.appendChild(button);
+		//document.body.appendChild(button);
 		return button;
 	}
 	
@@ -222,6 +245,10 @@ var ButtonPad = function() {
 	
 	function createAction(txtA, txtB, txtX, txtY) {
 		let button;
+		
+		rightCtnr = initContainer(CLASS_RIGHT_CONTAINER, STD_SIZE * 2);
+		document.body.appendChild(rightCtnr);
+
 		if (txtA) {
 			button = createActionButton("A", txtA, function() { keyStatus["A"] = true; writeInfo("Press A");}, function() { keyStatus["A"] = false; writeInfo("UnPress A");});
 			button.style.bottom = (STD_SIZE * 0) + 'px';
@@ -324,7 +351,9 @@ var ButtonPad = function() {
 		//	event.preventDefault();
 		//	button.unpress();
 		//});
-		document.body.appendChild(button);
+
+		rightCtnr.appendChild(button);
+		//document.body.appendChild(button);
 		return button;
 	}
 	
@@ -335,16 +364,19 @@ var ButtonPad = function() {
 	}
 	
 	this.init = function(size, bIsEightWay, txtA, txtB, txtX, txtY) {
-		STD_SIZE = Math.floor(Math.min(window.innerWidth, window.innerHeight) / 9);
+		STD_SIZE = Math.min(STD_SIZE, Math.floor(Math.min(window.innerWidth, window.innerHeight) / 6));
 
-		if (size == "S") {
-			DPAD_BUTTON_WIDTH_PERCENT = 6;
-			DPAD_BUTTON_HEIGHT_PERCENT = 4;
-		}
-		if (size == "M") {
-			DPAD_BUTTON_WIDTH_PERCENT = 12;
-			DPAD_BUTTON_HEIGHT_PERCENT = 8;
-		}
+		//if (size == "S") {
+		//	//STD_SIZE = STD_SIZE / 4;
+		//	DPAD_BUTTON_WIDTH_PERCENT = 6;
+		//	DPAD_BUTTON_HEIGHT_PERCENT = 4;
+		//}
+		//if (size == "M") {
+		//	//STD_SIZE = STD_SIZE / 2;
+		//	DPAD_BUTTON_WIDTH_PERCENT = 12;
+		//	DPAD_BUTTON_HEIGHT_PERCENT = 8;
+		//}
+
 		createDPad(bIsEightWay);
 		createAction(txtA, txtB, txtX, txtY);
 	}
