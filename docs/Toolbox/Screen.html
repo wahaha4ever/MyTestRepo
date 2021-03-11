@@ -15,6 +15,11 @@
 	<div id="info"></div>
 	<button id="resize" onclick="return Change()">Change</button>
 	<script>
+		function getParameterByName(name) {
+			var match = RegExp('[?&]' + name + '=([^&]*)').exec(window.location.search);
+			return match && decodeURIComponent(match[1].replace(/\+/g, ' '));
+		}
+		
 		function orientationChangeCb(event)
 		{
 			let devicePixelRatio = window.devicePixelRatio !== undefined ? window.devicePixelRatio : 1;
@@ -45,8 +50,12 @@
 		let eventForOrientationChange =
 			'onorientationchange' in window ? 'orientationchange' : 'resize'
 		//window.addEventListener(eventForOrientationChange, orientationChangeCb, false);
-		//window.addEventListener('resize', orientationChangeCb, false);
-		window.addEventListener('orientationchange', orientationChangeCb, false);
+		if (getParameterByName("t") == "1") {
+			window.addEventListener('resize', orientationChangeCb, false);
+		}
+		else {
+			window.addEventListener('orientationchange', orientationChangeCb, false);
+		}
 		orientationChangeCb();
 	</script>
 </body>
