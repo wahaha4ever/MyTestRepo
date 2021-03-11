@@ -491,7 +491,7 @@
 	initCanvas();	
 
 	window.addEventListener('resize', resizeCanvas, false);
-	window.addEventListener('orientationchange', resizeCanvas, false);
+	//window.addEventListener('orientationchange', resizeCanvas, false);
 	resizeCanvas();
 	
 	var init = function() {
