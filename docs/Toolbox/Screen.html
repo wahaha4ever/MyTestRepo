@@ -83,6 +83,8 @@
 			window.addEventListener('orientationchange', orientationChangeCb, false);
 			window.addEventListener('resize', orientationChangeCb, false);
 		}
+		
+		// result : for iOS, homescreen app : use orientationchange even it is deprecated
 		orientationChangeCb();
 	</script>
 </body>
