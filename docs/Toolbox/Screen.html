@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<!--<meta name="viewport" content="width=device-width, initial-scale=1" >-->
+	<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport" />
+	<meta content="yes" name="apple-mobile-web-app-capable" />
+	<meta content="black" name="apple-mobile-web-app-status-bar-style" />
+	<meta content="telephone=no,email=no" name="format-detection" />
+	<meta name="apple-mobile-web-app-title" content="Tetris">
+	<link rel="apple-touch-icon" href="icon-192x192.png">
+	<link rel="apple-touch-startup-image" href="icon-192x192.png">
+</head>
+<body>
+	<div id="info"></div>
+	<button id="resize" onclick="return Change()">Change</button>
+	<script>
+		function orientationChangeCb(event)
+		{
+			let devicePixelRatio = window.devicePixelRatio !== undefined ? window.devicePixelRatio : 1;
+			let result = "devicePixelRatio : " +  devicePixelRatio + "<br/>";
+			
+			let isLand = isLandscape();
+			result += "isLandscape : " + isLand + "<br/>";
+			
+			result += "windows : " + window.innerWidth + "X" + window.innerHeight + " (" + window.orientation + ")" + "<br/>";
+			result += "screen : " + screen.width + "X" + screen.height + "<br/>";
+			document.getElementById("info").innerHTML = result;
+		}
+		
+		function isLandscape() {
+			if ('orientation' in window) {
+				return Math.abs(window.orientation) === 90
+			} else {
+				return window.innerWidth > window.innerHeight
+			}
+		}
+		
+		function Change() {
+			orientationChangeCb();
+			return false;
+		}
+		
+	
+		let eventForOrientationChange =
+			'onorientationchange' in window ? 'orientationchange' : 'resize'
+		//window.addEventListener(eventForOrientationChange, orientationChangeCb, false);
+		//window.addEventListener('resize', orientationChangeCb, false);
+		window.addEventListener('orientationchange', orientationChangeCb, false);
+		orientationChangeCb();
+	</script>
+</body>
+<html>
