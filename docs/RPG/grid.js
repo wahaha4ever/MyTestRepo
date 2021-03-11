@@ -31,14 +31,9 @@
 	Core.init = function(){};
 	Core.update = function(delta){};
 	Core.render = function(){};
-	Core.initCtx = function() {
-		let canvas = document.getElementById("myCanvas");
-		canvas.width = Core.width;//window.innerWidth;
-		canvas.height = Core.height;//window.innerHeight;
-		this.ctx = canvas.getContext("2d");
-	}
-	Core.width = 512;
-	Core.height = 512
+	//Core.width = 512;
+	//Core.height = 512;
+	Core.displayTileSize = 64;
 	Core.ctx = null;	
 	Core.images = {};
 	Core.loadImage = function(key, src) {
@@ -89,6 +84,33 @@
 		return jsonObj;
 	}
 	
+	Core.getCanvas = function() {
+		return document.getElementById("myCanvas");
+	}
+	Core.resizeCanvas = function() {
+		let canvas = Core.getCanvas();
+		canvas.style.width ='100%';
+		canvas.style.height ='100%';
+		
+		canvas.width  = canvas.offsetWidth;
+		canvas.height = canvas.offsetHeight;
+		
+		let blockH = Math.floor(canvas.height / 8);
+		let blockV = Math.floor(canvas.width / 8);		
+		Core.displayTileSize = Math.max(blockH, blockV);
+		//if (Game.scenario)
+		//	Game.scenario.displayTileSize = Core.displayTileSize;
+	}
+	Core.initCtx = function() {
+		let canvas = this.getCanvas();
+		//canvas.width = Core.width;//window.innerWidth;
+		//canvas.height = Core.height;//window.innerHeight;
+		window.addEventListener('resize', Core.resizeCanvas, false);
+		window.addEventListener('orientationchange', Core.resizeCanvas, false);
+		this.resizeCanvas();
+		this.ctx = canvas.getContext("2d");
+	}
+	
 	var keyConfig = {
 		Left : { code : 37, value : false },
 		Right : { code : 39, value : false },
@@ -126,13 +148,17 @@
 	
 	/* =============== framework end ==================== */
 	class Camera {	
-		constructor (width, height, displayTileSize) {
-			this.displayTileSize = displayTileSize;
-			this.width = width;
-			this.height = height;
+		constructor (canvas) {
+			this.canvas = canvas;
 			this.x = 0;
 			this.y = 0;
 			this.following = null
+		}
+		fnGetWidth() {
+			return this.canvas.width;			
+		}
+		fnGetHeight() {
+			return this.canvas.height;
 		}
 		fnFollow(sprite) {
 			this.following = sprite;
@@ -140,16 +166,16 @@
 			this.following.screenY = 0;
 		}
 		fnUpdate(scenario) {
-			let maxX = scenario.getWidth() - this.width;
-			let maxY = scenario.getHeight() - this.height;
+			let maxX = scenario.getWidth() - this.fnGetWidth();
+			let maxY = scenario.getHeight() - this.fnGetHeight();
 			// assume followed sprite should be placed at the center of the screen
 			// whenever possible
-			this.following.screenX = this.width / 2;
-			this.following.screenY = this.height / 2;
+			this.following.screenX = this.fnGetWidth() / 2;
+			this.following.screenY = this.fnGetHeight() / 2;
 
 			// make the camera follow the sprite
-			this.x = this.following.x - this.width / 2;
-			this.y = this.following.y - this.height / 2;
+			this.x = this.following.x - this.fnGetWidth() / 2;
+			this.y = this.following.y - this.fnGetHeight() / 2;
 			// clamp values
 			this.x = Math.max(0, Math.min(this.x, maxX));
 			this.y = Math.max(0, Math.min(this.y, maxY));
@@ -158,13 +184,13 @@
 			// and we have to change its screen coordinates
 
 			// left and right sides
-			if (this.following.x < this.width / 2 ||
-				this.following.x > maxX + this.width / 2) {
+			if (this.following.x < this.fnGetWidth() / 2 ||
+				this.following.x > maxX + this.fnGetWidth() / 2) {
 				this.following.screenX = this.following.x - this.x;
 			}
 			// top and bottom sides
-			if (this.following.y < this.height / 2 ||
-				this.following.y > maxY + this.height / 2) {
+			if (this.following.y < this.fnGetHeight() / 2 ||
+				this.following.y > maxY + this.fnGetHeight() / 2) {
 				this.following.screenY = this.following.y - this.y;
 			}
 		}
@@ -401,7 +427,7 @@
 	
 	
 	var Game = {}
-	Game.displayTileSize = 64;
+	//Game.displayTileSize = 64;
 	Game.camera = null;
 	Game.hero = null;
 	Game.scenario = null;
@@ -410,7 +436,7 @@
 	Game.init = function() {
 		Core.loadBytes("leve1.json", function(bytes){		
 			let jsonInfo = Core.byteToJson(bytes);			
-			Game.scenario = new Scenario(jsonInfo, Game.displayTileSize);
+			Game.scenario = new Scenario(jsonInfo, Core.displayTileSize);
 			
 			Controller.initEventListener();
 			Core.initCtx();
@@ -419,17 +445,15 @@
 			for(var i in jsonInfo.image) {
 				p.push(Core.loadImage(jsonInfo.image[i].id, jsonInfo.image[i].src));
 			}
-			//p.push(Core.loadImage("map", Game.scenario.getImage()));
-			//p.push(Core.loadImage("hero", Game.scenario.getImage()));
 			Promise.all(p).then(function (loaded) {		
-				Game.camera = new Camera(Core.width, Core.height, Game.displayTileSize);				
+				Game.camera = new Camera(Core.getCanvas());
 				
 				let heroProp = Game.scenario.getHeroProp();
 				Game.hero = new Hero(heroProp.tileSizeWidth, heroProp.tileSizeHeight, Core.getImages("hero"));
 				Game.hero.displayTileWidth = heroProp.displayTileWidth;
 				Game.hero.displayTileHeight = heroProp.displayTileHeight;
 				let post = Game.scenario.getInitPost(-1);
-				console.log(post);
+				//console.log(post);
 				Game.hero.currentTileNo = -1;
 				Game.hero.x = post.x;
 				Game.hero.y = post.y;
@@ -489,14 +513,15 @@
 	Game.UpdateMap = function(doorID) {
 		this.scenario.switchMap(doorID);
 		let post = this.scenario.getInitPost(doorID);
-		console.log(post);
+		//console.log(post);
 		this.hero.currentTileNo = doorID;
 		this.hero.x = post.x;
 		this.hero.y = post.y;
-		this.camera.fnFollow(this.hero);
+		this.camera.fnFollow(this.hero);		
 	}
 	Game.render = function() {	
-		this.renderMap2(Core.ctx, this.displayTileSize);
+		Core.ctx.clearRect(0, 0, Core.getCanvas().width, Core.getCanvas().height);
+		this.renderMap2(Core.ctx);
 		this.hero.fnDraw(Core.ctx, this.scenario);
 		//Core.ctx.fillRect(this.hero.screenX - (this.hero.width / 2), this.hero.screenY - (this.hero.height / 2), this.hero.width, this.hero.height);
 		
@@ -509,18 +534,18 @@
 		//	
 		//);
 	}
-	Game.renderMap2 = function(ctx, displayTileSize) {
+	Game.renderMap2 = function(ctx) {
 		let layerArray = this.scenario.getCurrentMap().layer1;
 		let tilesetImage = Core.getImages(this.scenario.getCurrentMap().texture || "map");
 		let imageNumTiles = this.scenario.jsonInfo.imageNumTiles;
 		let tileSize = this.scenario.jsonInfo.tileSize;
-		displayTileSize = displayTileSize || tileSize;
+		let displayTileSize = this.scenario.displayTileSize;
 		
 		let ixStart = Math.floor(this.camera.x / displayTileSize);
-		let ixEnd = Math.ceil((this.camera.x + this.camera.width) / displayTileSize);
+		let ixEnd = Math.ceil((this.camera.x + this.camera.fnGetWidth()) / displayTileSize);
 		ixEnd = Math.min(ixEnd, this.scenario.getCurrentMap().baseLayer[0].length);
 		let iyStart = Math.floor(this.camera.y / displayTileSize);
-		let iyEnd = Math.ceil((this.camera.y + this.camera.height) / displayTileSize);
+		let iyEnd = Math.ceil((this.camera.y + this.camera.fnGetHeight()) / displayTileSize);
 		iyEnd = Math.min(iyEnd, this.scenario.getCurrentMap().baseLayer.length);
 		let xOffset = this.camera.x - (ixStart * displayTileSize);
 		let yOffset = this.camera.y - (iyStart * displayTileSize);
