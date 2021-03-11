@@ -37,8 +37,13 @@
 			let isLand = isLandscape();
 			result += "isLandscape : " + isLand + "<br/>";
 			
-			result += "windows : " + window.innerWidth + "X" + window.innerHeight + " (" + window.orientation + ")" + "<br/>";
-			result += "screen : " + screen.width + "X" + screen.height + "<br/>";
+			result += "windows inner : " + window.innerWidth + "X" + window.innerHeight + " (" + window.orientation + ")" + "<br/>";
+			result += "windows outer : " + window.outerWidth + "X" + window.outerHeight + " (" + window.orientation + ")" + "<br/>";
+			result += "screen : " + screen.width + "X" + screen.height + "<br/>";			
+			
+			if(window.screen) {
+				result += "windows.screen : " + window.screen.availWidth + "X" + window.screen.availHeight + " (" + window.orientation + ")" + "<br/>";
+			}
 			document.getElementById("info").innerHTML = result;
 		}
 		
@@ -62,8 +67,12 @@
 		if (getParameterByName("t") == "1") {
 			window.addEventListener('resize', orientationChangeCb, false);
 		}
+		else if (getParameterByName("t") == "2") {
+			window.addEventListener('orientationchange', orientationChangeCb, false);
+		}
 		else {
 			window.addEventListener('orientationchange', orientationChangeCb, false);
+			window.addEventListener('resize', orientationChangeCb, false);
 		}
 		orientationChangeCb();
 	</script>
